@@ -1,16 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  XCircle, 
-  Copy, 
-  Download, 
-  Mail, 
-  ArrowRight,
-  Sparkles,
-  Award
-} from 'lucide-react';
+import Icon from '../components/Icon';
 
 export default function SampleReport() {
   const [copied, setCopied] = useState(false);
@@ -69,20 +59,20 @@ Best regards,
 [Your Name]
 [Your Title/Company]`;
 
-  const getStatusIcon = (status) => {
+  const StatusIcon = ({ status }) => {
     switch (status) {
       case 'present':
-        return <CheckCircle className="w-5 h-5 text-green-500" />;
+        return <Icon name="check_circle" className="text-green-500 !text-xl" />;
       case 'partial':
-        return <AlertCircle className="w-5 h-5 text-yellow-500" />;
+        return <Icon name="warning" className="text-yellow-500 !text-xl" />;
       case 'missing':
-        return <XCircle className="w-5 h-5 text-red-500" />;
+        return <Icon name="cancel" className="text-red-500 !text-xl" />;
       default:
         return null;
     }
   };
 
-  const getStatusText = (status) => {
+  const StatusText = ({ status }) => {
     switch (status) {
       case 'present':
         return <span className="text-green-600">Present</span>;
@@ -101,7 +91,7 @@ Best regards,
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <Sparkles className="w-8 h-8 text-white" />
+              <Icon name="auto_awesome" className="text-white !text-3xl" />
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -114,8 +104,8 @@ Best regards,
             to="/register"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:shadow-lg transition"
           >
-            Try It Yourself →
-            <ArrowRight className="w-4 h-4" />
+            Try It Yourself
+            <Icon name="arrow_forward" className="!text-lg" />
           </Link>
         </div>
       </div>
@@ -142,7 +132,7 @@ Best regards,
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-gray-500">AI READY</span>
-              <span className="text-2xl font-bold text-green-600">✅</span>
+              <Icon name="check_circle" className="text-green-600 !text-2xl" />
               <span className="text-2xl font-bold text-gray-900">91.7%</span>
               <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
                 Complete
@@ -160,10 +150,10 @@ Best regards,
             {fields.map((field, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-2">
-                  {getStatusIcon(field.status)}
+                  <StatusIcon status={field.status} />
                   <span className="text-sm font-medium text-gray-700">{field.name}</span>
                 </div>
-                {getStatusText(field.status)}
+                <StatusText status={field.status} />
               </div>
             ))}
           </div>
@@ -193,14 +183,14 @@ Best regards,
               onClick={handleCopyEmail}
               className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
             >
-              {copied ? '✅ Copied!' : <><Copy className="w-4 h-4" /> Copy Email</>}
+              {copied ? '✅ Copied!' : <><Icon name="content_copy" className="!text-base" /> Copy Email</>}
             </button>
             <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
-              <Download className="w-4 h-4" />
+              <Icon name="download" className="!text-base" />
               Download PDF
             </button>
             <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
-              <Mail className="w-4 h-4" />
+              <Icon name="mail" className="!text-base" />
               Send in Gmail
             </button>
           </div>
@@ -215,12 +205,12 @@ Best regards,
               className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:shadow-lg transition"
             >
               Start Free Trial
-              <ArrowRight className="w-4 h-4" />
+              <Icon name="arrow_forward" className="!text-lg" />
             </Link>
           </div>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-indigo-200 text-sm">
             <span className="flex items-center gap-1">
-              <Award className="w-4 h-4" />
+              <Icon name="verified" className="!text-base" />
               14-Day Money-Back Guarantee
             </span>
             <span className="w-px h-4 bg-indigo-400/30" />
