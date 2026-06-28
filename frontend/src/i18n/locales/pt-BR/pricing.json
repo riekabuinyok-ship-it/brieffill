@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Preços",
+    "title": "Preços que crescem com você",
+    "subtitle": "BriefFill transforma briefings bagunçados em especificações estruturadas e prontas para o cliente. Escolha o plano que se adapta à sua equipe — mude ou cancele quando quiser.",
+    "monthly": "Mensal",
+    "annual": "Anual",
+    "annualSave": "(economize 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "Grátis",
+      "description": "Experimente o BriefFill no seu próximo projeto.",
+      "perks": [
+        "5 briefings / mês",
+        "1 usuário",
+        "Análise de 12 campos",
+        "Geração de e-mail de esclarecimento"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Para freelancers e criativos solo.",
+      "popular": "Mais popular",
+      "perks": [
+        "Briefings ilimitados",
+        "Brief Builder (reescrita com IA)",
+        "Exportação PDF e área de transferência",
+        "Análise de 12 campos",
+        "Acompanhamento de resultados"
+      ]
+    },
+    "team": {
+      "name": "Equipe",
+      "description": "Para pequenas agências. 5 usuários.",
+      "perks": [
+        "Briefings ilimitados",
+        "5 membros na equipe",
+        "Colaboração em equipe",
+        "Exportação para Notion e Google Docs",
+        "Todos os recursos Pro"
+      ]
+    },
+    "agency": {
+      "name": "Agência",
+      "description": "Para agências em grande escala. 15 usuários.",
+      "perks": [
+        "Briefings ilimitados",
+        "15 membros na equipe",
+        "Análise de concorrentes",
+        "Acesso à API (REST + webhooks)",
+        "Exportações com marca própria",
+        "Suporte prioritário"
+      ]
+    },
+    "current": "Plano atual",
+    "choose": "Escolher {name}",
+    "freeCta": "Começar"
+  },
+  "comparison": {
+    "title": "Comparação de recursos",
+    "row": {
+      "briefs": "Briefings / mês",
+      "users": "Usuários",
+      "fields": "Análise de 12 campos",
+      "email": "Geração de e-mail de esclarecimento",
+      "builder": "Brief Builder (reescrita com IA)",
+      "export": "Exportação PDF e área de transferência",
+      "notion": "Exportação Google Docs e Notion",
+      "clickup": "Exportação ClickUp e Airtable",
+      "team": "Colaboração em equipe",
+      "portal": "Portal do cliente",
+      "competitor": "Análise de concorrentes",
+      "api": "Acesso à API",
+      "whiteLabel": "Exportações com marca própria",
+      "priority": "Suporte prioritário"
+    },
+    "unlimited": "Ilimitado"
+  },
+  "billing": {
+    "month": "/mês",
+    "year": "/ano",
+    "perMonth": "{amount}/mês cobrados anualmente",
+    "save": "Economize 20%",
+    "free": "R$ 0"
+  },
+  "faq": {
+    "title": "Perguntas frequentes",
+    "q1": "O que acontece se eu exceder o limite do plano Grátis?",
+    "a1": "BriefFill bloqueará a análise e mostrará um prompt de upgrade. Você pode fazer upgrade para o Pro para briefings ilimitados, ou esperar até o dia 1 do próximo mês quando o contador é zerado.",
+    "q2": "Quando o contador de briefings é zerado?",
+    "a2": "No dia 1 de cada mês (UTC). Os planos Pro, Equipe e Agência têm briefings ilimitados — sem contador.",
+    "q3": "Posso alternar entre mensal e anual?",
+    "a3": "Sim. O Portal do Cliente do Stripe permite cancelar e re-assinar com qualquer ciclo de cobrança. Planos anuais ganham 20% de desconto.",
+    "q4": "Quais formas de pagamento vocês aceitam?",
+    "a4": "Todos os principais cartões de crédito via Stripe. ACH/transferência para o plano Agência (contate o suporte).",
+    "q5": "Existe um teste grátis?",
+    "a5": "O plano Grátis é o teste. Você tem 5 briefings por mês sem custo. Nenhum cartão de crédito é necessário para se cadastrar.",
+    "q6": "Posso cancelar a qualquer momento?",
+    "a6": "Sim. Cancele na página de Faturamento; você mantém o acesso até o final do período atual e depois volta para o plano Grátis."
+  },
+  "cta": {
+    "title": "Experimente o BriefFill grátis",
+    "subtitle": "5 briefings por mês, sem cartão de crédito. Faça upgrade apenas quando precisar.",
+    "primary": "Começar",
+    "dashboard": "Ir para o painel",
+    "guide": "Ler o guia"
+  },
+  "toast": {
+    "failedLoad": "Falha ao carregar planos",
+    "failedUpgrade": "Falha no upgrade",
+    "welcome": "Agora você está no {plan}. Bem-vindo ao {planName}."
+  }
+}

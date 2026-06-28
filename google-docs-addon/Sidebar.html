@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #fafafa;
+      color: #111c2d;
+      font-size: 14px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; color: #2563eb; }
+    .subtitle { color: #6b7280; margin: 0 0 16px; font-size: 12px; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 4px; }
+    input, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      background: white;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #2563eb; }
+    textarea { min-height: 120px; resize: vertical; }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    button.secondary { background: #f3f4f6; color: #111c2d; }
+    .row { display: flex; gap: 8px; }
+    .row > * { flex: 1; }
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid #e5e7eb;
+    }
+    .score { font-size: 32px; font-weight: 700; color: #2563eb; margin: 4px 0 12px; }
+    .score.low { color: #dc2626; }
+    .score.mid { color: #d97706; }
+    .field-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; justify-content: space-between; }
+    .pill { font-size: 10px; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; font-weight: 600; }
+    .pill.present { background: #dcfce7; color: #166534; }
+    .pill.partial { background: #fef3c7; color: #92400e; }
+    .pill.missing { background: #fee2e2; color: #991b1b; }
+    .error { background: #fee2e2; color: #991b1b; padding: 10px; border-radius: 6px; font-size: 13px; }
+    .section { margin-top: 12px; }
+    .section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin: 8px 0 4px; }
+    .section ul { margin: 0; padding-left: 20px; }
+    .section li { margin-bottom: 4px; font-size: 13px; }
+    .settings { background: #f3f4f6; padding: 10px; border-radius: 6px; margin-top: 12px; }
+    .settings summary { cursor: pointer; font-weight: 600; font-size: 12px; color: #2563eb; }
+    .settings[open] { padding-bottom: 12px; }
+    .small { font-size: 11px; color: #6b7280; margin-top: 4px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>BriefFill</h1>
+  <p class="subtitle">Analyze creative briefs in Google Docs.</p>
+
+  <details class="settings" id="settingsPanel">
+    <summary>Settings</summary>
+    <div class="field">
+      <label>API URL</label>
+      <input type="text" id="apiUrl" placeholder="https://api.brieffill.app">
+    </div>
+    <div class="field">
+      <label>API key</label>
+      <input type="password" id="apiKey" placeholder="bfk_…">
+      <p class="small">Generate one in BriefFill → Integrations → Google Docs add-on.</p>
+    </div>
+    <button class="secondary" id="saveSettings">Save settings</button>
+    <p class="small" id="settingsSaved"></p>
+  </details>
+
+  <div class="field" style="margin-top: 16px;">
+    <label>Brief text</label>
+    <textarea id="briefText" placeholder="Paste your brief here, or click 'Use selected text' to analyze the current selection."></textarea>
+  </div>
+  <div class="row">
+    <button class="secondary" id="useSelected">Use selected text</button>
+    <button class="secondary" id="useDoc">Use whole doc</button>
+  </div>
+  <button id="analyze" style="margin-top: 12px;">Analyze brief</button>
+
+  <div id="result" class="hidden"></div>
+
+  <script>
+    function call(name) {
+      var args = Array.prototype.slice.call(arguments, 1);
+      return new Promise(function (resolve, reject) {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)[name].apply(null, args);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+      });
+    }
+
+    function scoreClass(n) {
+      if (n >= 75) return "";
+      if (n >= 50) return "mid";
+      return "low";
+    }
+
+    function showError(msg) {
+      var r = document.getElementById("result");
+      r.classList.remove("hidden");
+      r.innerHTML = '<div class="error">' + escapeHtml(msg) + '</div>';
+    }
+
+    function renderResult(a) {
+      var r = document.getElementById("result");
+      r.classList.remove("hidden");
+      var score = a.completenessScore != null ? a.completenessScore : 0;
+      var fields = Array.isArray(a.fields) ? a.fields : [];
+      var questions = Array.isArray(a.clarificationQuestions) ? a.clarificationQuestions : [];
+
+      var html = '<div class="result">';
+      html += '<h2 style="margin:0;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">Completeness</h2>';
+      html += '<div class="score ' + scoreClass(score) + '">' + score + '%</div>';
+
+      if (fields.length) {
+        var missing = fields.filter(function (f) { return f.status !== "present"; });
+        html += '<div class="section"><h3>Field status</h3>';
+        fields.forEach(function (f) {
+          html += '<div class="field-row"><span>' + escapeHtml(f.name) + '</span><span class="pill ' + f.status + '">' + f.status + '</span></div>';
+        });
+        html += '</div>';
+        if (missing.length) {
+          html += '<div class="section"><h3>Need attention</h3><ul>';
+          missing.slice(0, 6).forEach(function (f) {
+            html += '<li>' + escapeHtml(f.name) + (f.status === "partial" ? " — partial" : "") + '</li>';
+          });
+          html += '</ul></div>';
+        }
+      }
+      if (questions.length) {
+        html += '<div class="section"><h3>Suggested questions</h3><ul>';
+        questions.slice(0, 5).forEach(function (q) { html += '<li>' + escapeHtml(q) + '</li>'; });
+        html += '</ul></div>';
+      }
+      html += '<button class="secondary" id="insertReport" style="margin-top:12px;">Insert report into doc</button>';
+      html += '</div>';
+      r.innerHTML = html;
+      document.getElementById("insertReport").onclick = function () {
+        call("insertAnalysisReport", a).catch(function (e) { showError(e.message || String(e)); });
+      };
+    }
+
+    (function init() {
+      // Load saved config
+      call("getConfig").then(function (cfg) {
+        if (cfg && cfg.apiKey) document.getElementById("apiKey").value = cfg.apiKey;
+        if (cfg && cfg.apiUrl) document.getElementById("apiUrl").value = cfg.apiUrl;
+      }).catch(function () {});
+
+      document.getElementById("saveSettings").onclick = function () {
+        var apiKey = document.getElementById("apiKey").value.trim();
+        var apiUrl = document.getElementById("apiUrl").value.trim();
+        call("saveConfig", { apiKey: apiKey, apiUrl: apiUrl }).then(function () {
+          document.getElementById("settingsSaved").innerText = "Saved.";
+        });
+      };
+
+      document.getElementById("useSelected").onclick = function () {
+        call("getSelectedText").then(function (t) {
+          if (!t || t.length < 20) {
+            showError("Select at least 20 characters of text in the document first.");
+            return;
+          }
+          document.getElementById("briefText").value = t;
+        });
+      };
+
+      document.getElementById("useDoc").onclick = function () {
+        call("getFullDocumentText").then(function (t) {
+          if (!t || t.length < 20) {
+            showError("This document doesn't have any text yet.");
+            return;
+          }
+          document.getElementById("briefText").value = t;
+        });
+      };
+
+      document.getElementById("analyze").onclick = function () {
+        var btn = document.getElementById("analyze");
+        var text = document.getElementById("briefText").value.trim();
+        if (!text || text.length < 20) {
+          showError("Please paste at least 20 characters of brief text.");
+          return;
+        }
+        btn.disabled = true;
+        btn.innerText = "Analyzing…";
+        call("analyzeText", text)
+          .then(function (a) {
+            renderResult(a);
+          })
+          .catch(function (e) {
+            showError(e.message || String(e));
+          })
+          .then(function () {
+            btn.disabled = false;
+            btn.innerText = "Analyze brief";
+          });
+      };
+    })();
+  </script>
+</body>
+</html>

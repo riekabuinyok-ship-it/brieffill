@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Tarieven",
+    "title": "Tarieven die met je meegroeien",
+    "subtitle": "BriefFill verandert rommelige klantbriefings in gestructureerde, klant-klare specificaties. Kies het plan dat bij je team past — wissel of stop wanneer je wilt.",
+    "monthly": "Maandelijks",
+    "annual": "Jaarlijks",
+    "annualSave": "(bespaar 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "Gratis",
+      "description": "Probeer BriefFill bij je volgende project.",
+      "perks": [
+        "5 briefings / maand",
+        "1 gebruiker",
+        "12-velden-analyse",
+        "E-mailconcept generatie"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Voor freelancers en solo-creatievelingen.",
+      "popular": "Meest gekozen",
+      "perks": [
+        "Onbeperkte briefings",
+        "Brief Builder (AI-herschrijving)",
+        "PDF- en klembordexport",
+        "12-velden-analyse",
+        "Resultaat-tracking"
+      ]
+    },
+    "team": {
+      "name": "Team",
+      "description": "Voor kleine bureaus. 5 gebruikers.",
+      "perks": [
+        "Onbeperkte briefings",
+        "5 teamleden",
+        "Teamsamenwerking",
+        "Notion- en Google Docs-export",
+        "Alle Pro-functies"
+      ]
+    },
+    "agency": {
+      "name": "Bureau",
+      "description": "Voor bureaus op schaal. 15 gebruikers.",
+      "perks": [
+        "Onbeperkte briefings",
+        "15 teamleden",
+        "Concurrentanalyse",
+        "API-toegang (REST + webhooks)",
+        "White-label exports",
+        "Priority support"
+      ]
+    },
+    "current": "Huidig plan",
+    "choose": "Kies {name}",
+    "freeCta": "Aan de slag"
+  },
+  "comparison": {
+    "title": "Functievergelijking",
+    "row": {
+      "briefs": "Briefings / maand",
+      "users": "Gebruikers",
+      "fields": "12-velden-analyse",
+      "email": "E-mailconcept generatie",
+      "builder": "Brief Builder (AI-herschrijving)",
+      "export": "PDF- en klembordexport",
+      "notion": "Google Docs- en Notion-export",
+      "clickup": "ClickUp- en Airtable-export",
+      "team": "Teamsamenwerking",
+      "portal": "Klantenportaal",
+      "competitor": "Concurrentanalyse",
+      "api": "API-toegang",
+      "whiteLabel": "White-label exports",
+      "priority": "Priority support"
+    },
+    "unlimited": "Onbeperkt"
+  },
+  "billing": {
+    "month": "/maand",
+    "year": "/jaar",
+    "perMonth": "{amount}/mnd jaarlijks gefactureerd",
+    "save": "Bespaar 20%",
+    "free": "€ 0"
+  },
+  "faq": {
+    "title": "Veelgestelde vragen",
+    "q1": "Wat gebeurt er als ik de Gratis-limiet overschrijd?",
+    "a1": "BriefFill blokkeert de analyse en toont een upgrade-prompt. Je kunt upgraden naar Pro voor onbeperkte briefings, of wachten tot de 1e van de volgende maand wanneer de teller reset.",
+    "q2": "Wanneer reset de briefingteller?",
+    "a2": "Op de 1e van elke maand (UTC). Pro-, Team- en Bureau-plannen hebben onbeperkte briefings — geen teller.",
+    "q3": "Kan ik wisselen tussen maandelijks en jaarlijks?",
+    "a3": "Ja. Via het Stripe-klantenportaal kun je opzeggen en opnieuw abonneren met elke facturatiecyclus. Jaarplannen krijgen 20% korting.",
+    "q4": "Welke betaalmethoden accepteren jullie?",
+    "a4": "Alle grote creditcards via Stripe. ACH/overschrijving voor Bureau-plan (neem contact op met support).",
+    "q5": "Is er een gratis proefperiode?",
+    "a5": "Het Gratis-plan is de proef. Je krijgt 5 briefings per maand gratis. Geen creditcard nodig om je aan te melden.",
+    "q6": "Kan ik op elk moment opzeggen?",
+    "a6": "Ja. Zeg op vanaf de factureringspagina; je behoudt toegang tot het einde van de huidige periode en valt dan terug op het Gratis-plan."
+  },
+  "cta": {
+    "title": "Probeer BriefFill gratis",
+    "subtitle": "5 briefings per maand, geen creditcard vereist. Upgrade alleen wanneer je meer nodig hebt.",
+    "primary": "Aan de slag",
+    "dashboard": "Naar dashboard",
+    "guide": "Lees de handleiding"
+  },
+  "toast": {
+    "failedLoad": "Kon abonnementen niet laden",
+    "failedUpgrade": "Upgrade mislukt",
+    "welcome": "Je zit nu op {plan}. Welkom bij {planName}."
+  }
+}

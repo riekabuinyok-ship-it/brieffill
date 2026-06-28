@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "Du hast dein Monatslimit erreicht",
+    "limitBody": "Du hast {used} von {limit} Briefings in diesem Monat verwendet. {plan} bietet dir unbegrenzte Briefings, den KI-Brief Builder und PDF-Export. Dein Zähler wird am 1. des nächsten Monats zurückgesetzt.",
+    "defaultTitle": "Diese Funktion erfordert ein Upgrade",
+    "defaultBody": "Die Funktion, die du gerade ausprobiert hast, ist in deinem aktuellen Tarif nicht verfügbar. Vergleiche Tarife, um zu sehen, was enthalten ist.",
+    "current": "Aktuell: {plan}",
+    "requires": "Erfordert: {plan}",
+    "compare": "Tarife vergleichen",
+    "manage": "Abonnement verwalten",
+    "notNow": "Nicht jetzt",
+    "contactSales": "Brauchst du einen individuellen Tarif?",
+    "contactSalesCta": "Vertrieb kontaktieren →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "Wettbewerbsanalyse",
+      "body": "Vergleiche bis zu 3 Wettbewerber-Briefings nebeneinander und finde eine klare Differenzierungsmöglichkeit für dein eigenes Briefing. Verfügbar im Agentur-Tarif."
+    },
+    "apiAccess": {
+      "title": "API-Zugang",
+      "body": "Analysiere Briefings programmatisch mit REST-Endpunkten, persönlichen API-Schlüsseln und ausgehenden Webhooks. Verfügbar im Agentur-Tarif."
+    },
+    "briefBuilder": {
+      "title": "KI-Brief Builder",
+      "body": "Erhalte ein KI-umgeschriebenes Briefing, das Lücken füllt, den Ton schärft und die Klarheit verbessert. Verfügbar ab Pro."
+    },
+    "teamFeatures": {
+      "title": "Team-Zusammenarbeit",
+      "body": "Teile Briefings mit deinem Team, weise Rollen zu und arbeitet in einem gemeinsamen Workspace. Verfügbar ab Team."
+    },
+    "whiteLabel": {
+      "title": "White-Label-Exporte",
+      "body": "Exportiere Briefings mit dem Branding deiner Agentur statt dem von BriefFill. Verfügbar im Agentur-Tarif."
+    },
+    "prioritySupport": {
+      "title": "Vorrangiger Support",
+      "body": "E-Mail-Support am selben Tag und ein dedizierter Slack-Kanal für dein Team. Verfügbar im Agentur-Tarif."
+    },
+    "exports:pdf": {
+      "title": "PDF-Export",
+      "body": "Exportiere analysierte Briefings als gebrandete PDFs. Verfügbar ab Pro."
+    },
+    "exports:clipboard": {
+      "title": "Zwischenablage-Export",
+      "body": "Kopiere das strukturierte Briefing mit einem Klick in die Zwischenablage. Verfügbar ab Pro."
+    },
+    "exports:google-docs": {
+      "title": "Google-Docs-Export",
+      "body": "Sende Briefings direkt in ein Google Doc in deinem Drive. Verfügbar ab Team."
+    },
+    "exports:notion": {
+      "title": "Notion-Export",
+      "body": "Speichere Briefings in der Notion-Datenbank deiner Wahl. Verfügbar ab Team."
+    },
+    "exports:clickup": {
+      "title": "ClickUp-Export",
+      "body": "Sende Briefings als neue Aufgaben an eine ClickUp-Liste. Verfügbar im Agentur-Tarif."
+    },
+    "exports:airtable": {
+      "title": "Airtable-Export",
+      "body": "Füge Briefings als neue Zeilen zu einer Airtable-Basis hinzu. Verfügbar im Agentur-Tarif."
+    }
+  },
+  "plan": {
+    "free": "Gratis",
+    "pro": "Pro",
+    "team": "Team",
+    "agency": "Agentur"
+  },
+  "builder": {
+    "title": "KI-Brief Builder",
+    "building": "Verbessertes Briefing wird erstellt…",
+    "saving": "Verbessertes Briefing wird gespeichert…",
+    "saved": "Verbessertes Briefing in deinem Projekt gespeichert.",
+    "failed": "Verbessertes Briefing konnte nicht erstellt werden. Bitte erneut versuchen.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "improved": "KI-verbessert",
+    "original": "Original",
+    "close": "Schließen"
+  },
+  "assistant": {
+    "title": "Brief-Assistent",
+    "subtitle": "Wofür brauchst du ein Briefing?",
+    "placeholder": "z. B. eine Landingpage für ein Fintech-Startup, die sich an kleine Unternehmen richtet…",
+    "generate": "Entwurf generieren",
+    "generating": "Wird erstellt…",
+    "draft": "Briefing-Entwurf",
+    "generated": "Briefing erstellt ({score} %)",
+    "failed": "Erstellung fehlgeschlagen",
+    "refine": "Mit Feedback verfeinern",
+    "refining": "Wird verfeinert…",
+    "refined": "Briefing verfeinert",
+    "saveToFill": "In BriefFill speichern",
+    "save": "Speichern",
+    "saved": "In BriefFill gespeichert (id {id})",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "describe": "Beschreibe, wofür du ein Briefing brauchst (mindestens 5 Zeichen)",
+    "needsClient": "Füge einen Kunden- und Projektnamen hinzu",
+    "nameClient": "Kundenname",
+    "nameProject": "Projektname",
+    "cancel": "Abbrechen",
+    "export": "Exportieren"
+  }
+}

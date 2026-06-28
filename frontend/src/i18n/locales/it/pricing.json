@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Prezzi",
+    "title": "Prezzi che crescono con te",
+    "subtitle": "BriefFill trasforma brief grezzi in specifiche strutturate, pronte per il cliente. Scegli il piano adatto al tuo team: cambia o disdici quando vuoi.",
+    "monthly": "Mensile",
+    "annual": "Annuale",
+    "annualSave": "(risparmia 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "Gratis",
+      "description": "Prova BriefFill nel tuo prossimo progetto.",
+      "perks": [
+        "5 brief / mese",
+        "1 utente",
+        "Analisi a 12 campi",
+        "Generazione email di chiarimento"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Per freelancer e creativi indipendenti.",
+      "popular": "Più popolare",
+      "perks": [
+        "Brief illimitati",
+        "Brief Builder (riscrittura con IA)",
+        "Esportazione PDF e appunti",
+        "Analisi a 12 campi",
+        "Tracciamento esiti"
+      ]
+    },
+    "team": {
+      "name": "Team",
+      "description": "Per piccole agenzie. 5 utenti.",
+      "perks": [
+        "Brief illimitati",
+        "5 membri del team",
+        "Collaborazione in team",
+        "Esportazione su Notion e Google Docs",
+        "Tutte le funzionalità Pro"
+      ]
+    },
+    "agency": {
+      "name": "Agenzia",
+      "description": "Per agenzie su larga scala. 15 utenti.",
+      "perks": [
+        "Brief illimitati",
+        "15 membri del team",
+        "Analisi dei concorrenti",
+        "Accesso API (REST + webhook)",
+        "Esportazioni white-label",
+        "Supporto prioritario"
+      ]
+    },
+    "current": "Piano attuale",
+    "choose": "Scegli {name}",
+    "freeCta": "Inizia"
+  },
+  "comparison": {
+    "title": "Confronto funzionalità",
+    "row": {
+      "briefs": "Brief / mese",
+      "users": "Utenti",
+      "fields": "Analisi a 12 campi",
+      "email": "Generazione email di chiarimento",
+      "builder": "Brief Builder (riscrittura con IA)",
+      "export": "Esportazione PDF e appunti",
+      "notion": "Esportazione Google Docs e Notion",
+      "clickup": "Esportazione ClickUp e Airtable",
+      "team": "Collaborazione in team",
+      "portal": "Portale cliente",
+      "competitor": "Analisi dei concorrenti",
+      "api": "Accesso API",
+      "whiteLabel": "Esportazioni white-label",
+      "priority": "Supporto prioritario"
+    },
+    "unlimited": "Illimitato"
+  },
+  "billing": {
+    "month": "/mese",
+    "year": "/anno",
+    "perMonth": "{amount}/mese fatturato annualmente",
+    "save": "Risparmia 20%",
+    "free": "0 €"
+  },
+  "faq": {
+    "title": "Domande frequenti",
+    "q1": "Cosa succede se supero il limite del piano Gratis?",
+    "a1": "BriefFill bloccherà l'analisi e mostrerà un prompt di upgrade. Puoi passare a Pro per brief illimitati, o aspettare il 1° del mese successivo quando il contatore si azzera.",
+    "q2": "Quando si azzera il contatore dei brief?",
+    "a2": "Il 1° di ogni mese (UTC). I piani Pro, Team e Agenzia hanno brief illimitati — nessun contatore.",
+    "q3": "Posso passare da mensile ad annuale?",
+    "a3": "Sì. Il Portale Clienti Stripe ti permette di disdire e ri-abbonarti con qualsiasi ciclo di fatturazione. I piani annuali hanno il 20% di sconto.",
+    "q4": "Quali metodi di pagamento accettate?",
+    "a4": "Tutte le principali carte di credito tramite Stripe. Bonifico/ACH per il piano Agenzia (contatta il supporto).",
+    "q5": "C'è una prova gratuita?",
+    "a5": "Il piano Gratis è la prova. Hai 5 brief al mese gratis. Nessuna carta di credito richiesta per registrarsi.",
+    "q6": "Posso disdire quando voglio?",
+    "a6": "Sì. Disdici dalla pagina Fatturazione; mantieni l'accesso fino alla fine del periodo corrente, poi torni al piano Gratis."
+  },
+  "cta": {
+    "title": "Prova BriefFill gratis",
+    "subtitle": "5 brief al mese, senza carta di credito. Fai upgrade solo quando serve.",
+    "primary": "Inizia",
+    "dashboard": "Vai al cruscotto",
+    "guide": "Leggi la guida"
+  },
+  "toast": {
+    "failedLoad": "Impossibile caricare i piani",
+    "failedUpgrade": "Upgrade fallito",
+    "welcome": "Ora sei sul piano {plan}. Benvenuto in {planName}."
+  }
+}

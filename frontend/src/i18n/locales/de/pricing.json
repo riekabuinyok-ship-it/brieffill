@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Preise",
+    "title": "Preise, die mit dir wachsen",
+    "subtitle": "BriefFill verwandelt grobe Kunden-Briefings in strukturierte, kundenfertige Spezifikationen. Wähle den Tarif, der zu deinem Team passt — jederzeit wechseln oder kündigen.",
+    "monthly": "Monatlich",
+    "annual": "Jährlich",
+    "annualSave": "(20 % sparen)"
+  },
+  "plan": {
+    "free": {
+      "name": "Gratis",
+      "description": "Probiere BriefFill bei deinem nächsten Projekt.",
+      "perks": [
+        "5 Briefings / Monat",
+        "1 Benutzer",
+        "12-Felder-Analyse",
+        "E-Mail-Entwurf"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Für Freelancer und Solo-Kreative.",
+      "popular": "Am beliebtesten",
+      "perks": [
+        "Unbegrenzte Briefings",
+        "Brief Builder (KI-Umschreibung)",
+        "PDF- und Zwischenablage-Export",
+        "12-Felder-Analyse",
+        "Ergebnis-Tracking"
+      ]
+    },
+    "team": {
+      "name": "Team",
+      "description": "Für kleine Agenturen. 5 Benutzer.",
+      "perks": [
+        "Unbegrenzte Briefings",
+        "5 Teammitglieder",
+        "Team-Zusammenarbeit",
+        "Notion- und Google-Docs-Export",
+        "Alle Pro-Funktionen"
+      ]
+    },
+    "agency": {
+      "name": "Agentur",
+      "description": "Für Agenturen im großen Stil. 15 Benutzer.",
+      "perks": [
+        "Unbegrenzte Briefings",
+        "15 Teammitglieder",
+        "Wettbewerbsanalyse",
+        "API-Zugang (REST + Webhooks)",
+        "White-Label-Exporte",
+        "Vorrangiger Support"
+      ]
+    },
+    "current": "Aktueller Tarif",
+    "choose": "{name} wählen",
+    "freeCta": "Loslegen"
+  },
+  "comparison": {
+    "title": "Funktionsvergleich",
+    "row": {
+      "briefs": "Briefings / Monat",
+      "users": "Benutzer",
+      "fields": "12-Felder-Analyse",
+      "email": "E-Mail-Entwurf",
+      "builder": "Brief Builder (KI-Umschreibung)",
+      "export": "PDF- und Zwischenablage-Export",
+      "notion": "Google-Docs- und Notion-Export",
+      "clickup": "ClickUp- und Airtable-Export",
+      "team": "Team-Zusammenarbeit",
+      "portal": "Kundenportal",
+      "competitor": "Wettbewerbsanalyse",
+      "api": "API-Zugang",
+      "whiteLabel": "White-Label-Exporte",
+      "priority": "Vorrangiger Support"
+    },
+    "unlimited": "Unbegrenzt"
+  },
+  "billing": {
+    "month": "/Monat",
+    "year": "/Jahr",
+    "perMonth": "{amount}/Mo. jährlich abgerechnet",
+    "save": "20 % sparen",
+    "free": "0 $"
+  },
+  "faq": {
+    "title": "Häufige Fragen",
+    "q1": "Was passiert, wenn ich das Gratis-Limit überschreite?",
+    "a1": "BriefFill blockiert die Analyse und zeigt ein Upgrade-Prompt. Du kannst auf Pro upgraden oder bis zum 1. des nächsten Monats warten, wenn der Zähler zurückgesetzt wird.",
+    "q2": "Wann wird der Briefing-Zähler zurückgesetzt?",
+    "a2": "Am 1. jedes Monats (UTC). Pro, Team und Agentur haben unbegrenzte Briefings — kein Zähler.",
+    "q3": "Kann ich zwischen monatlich und jährlich wechseln?",
+    "a3": "Ja. Über das Stripe-Kundenportal kannst du jederzeit kündigen und mit beliebigem Abrechnungszyklus neu abonnieren. Jährliche Tarife erhalten 20 % Rabatt.",
+    "q4": "Welche Zahlungsmethoden akzeptiert ihr?",
+    "a4": "Alle gängigen Kreditkarten über Stripe. ACH/Überweisung für Agentur-Tarif (Support kontaktieren).",
+    "q5": "Gibt es eine kostenlose Testphase?",
+    "a5": "Der Gratis-Tarif ist die Testphase. Du erhältst 5 Briefings pro Monat kostenlos. Keine Kreditkarte zur Anmeldung erforderlich.",
+    "q6": "Kann ich jederzeit kündigen?",
+    "a6": "Ja. Kündige auf der Abrechnungsseite; du behältst den Zugang bis zum Ende der aktuellen Periode und fällst dann auf den Gratis-Tarif zurück."
+  },
+  "cta": {
+    "title": "BriefFill gratis testen",
+    "subtitle": "5 Briefings pro Monat, keine Kreditkarte erforderlich. Upgrade nur, wenn du mehr brauchst.",
+    "primary": "Loslegen",
+    "dashboard": "Zur Übersicht",
+    "guide": "Anleitung lesen"
+  },
+  "toast": {
+    "failedLoad": "Tarife konnten nicht geladen werden",
+    "failedUpgrade": "Upgrade fehlgeschlagen",
+    "welcome": "Du bist jetzt auf {plan}. Willkommen bei {planName}."
+  }
+}

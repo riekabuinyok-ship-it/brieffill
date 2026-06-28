@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "Starten Sie nie wieder blind ein Projekt."
+  },
+  "nav": {
+    "home": "Start",
+    "dashboard": "Übersicht",
+    "newBrief": "Neues Briefing",
+    "teams": "Teams",
+    "integrations": "Integrationen",
+    "billing": "Abrechnung",
+    "settings": "Einstellungen",
+    "referrals": "Refer & Earn",
+    "guide": "Benutzerhandbuch",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "register": "Loslegen",
+    "logout": "Abmelden",
+    "howItWorks": "So funktioniert's",
+    "analysis": "Analyse"
+  },
+  "actions": {
+    "analyze": "Analysieren",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "cancel": "Abbrechen",
+    "dismiss": "Verwerfen",
+    "close": "Schließen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "view": "Ansehen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Senden",
+    "retry": "Wiederholen",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "share": "Teilen",
+    "export": "Exportieren",
+    "compare": "Tarife vergleichen",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "learnMore": "Mehr erfahren",
+    "getStarted": "Loslegen",
+    "notNow": "Nicht jetzt",
+    "tryAgain": "Erneut versuchen",
+    "send": "Senden",
+    "regenerate": "Neu erstellen",
+    "viewSample": "Beispielbericht ansehen",
+    "seeAll": "Alle anzeigen",
+    "browse": "Durchsuchen",
+    "continue": "Weiter",
+    "reset": "Zurücksetzen",
+    "clear": "Löschen",
+    "apply": "Anwenden",
+    "remove": "Entfernen",
+    "update": "Aktualisieren",
+    "invite": "Einladen",
+    "accept": "Akzeptieren",
+    "decline": "Ablehnen"
+  },
+  "search": {
+    "placeholder": "Suchen…",
+    "noResults": "Keine Ergebnisse",
+    "hint": "Drücke Strg+K zum Suchen"
+  },
+  "common": {
+    "loading": "Wird geladen…",
+    "error": "Etwas ist schief gelaufen",
+    "optional": "optional",
+    "required": "erforderlich",
+    "comingSoon": "Demnächst verfügbar",
+    "minutes": "{count, plural, one {# Minute} other {# Minuten}}",
+    "hours": "{count, plural, one {# Stunde} other {# Stunden}}",
+    "days": "{count, plural, one {# Tag} other {# Tage}}",
+    "yes": "Ja",
+    "no": "Nein",
+    "all": "Alle",
+    "none": "Keine",
+    "more": "Mehr",
+    "less": "Weniger",
+    "of": "von"
+  },
+  "shortcuts": {
+    "analyze": "Strg+Eingabe zum Analysieren"
+  },
+  "language": {
+    "label": "Sprache",
+    "switchTo": "Wechseln zu {name}",
+    "current": "Aktuelle Sprache"
+  }
+}

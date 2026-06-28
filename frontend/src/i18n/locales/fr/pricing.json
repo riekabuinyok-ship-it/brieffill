@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Tarifs",
+    "title": "Des tarifs qui grandissent avec vous",
+    "subtitle": "BriefFill transforme des briefs brouillons en spécifications structurées prêtes pour le client. Choisissez le forfait qui convient à votre équipe : changez ou annulez à tout moment.",
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "annualSave": "(économisez 20 %)"
+  },
+  "plan": {
+    "free": {
+      "name": "Gratuit",
+      "description": "Essayez BriefFill sur votre prochain projet.",
+      "perks": [
+        "5 briefs / mois",
+        "1 utilisateur",
+        "Analyse sur 12 champs",
+        "Génération d'e-mail de clarification"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Pour les freelances et créatifs indépendants.",
+      "popular": "Le plus populaire",
+      "perks": [
+        "Briefs illimités",
+        "Brief Builder (réécriture par IA)",
+        "Export PDF et presse-papiers",
+        "Analyse sur 12 champs",
+        "Suivi des résultats"
+      ]
+    },
+    "team": {
+      "name": "Équipe",
+      "description": "Pour les petites agences. 5 utilisateurs.",
+      "perks": [
+        "Briefs illimités",
+        "5 membres dans l'équipe",
+        "Collaboration en équipe",
+        "Export Notion et Google Docs",
+        "Toutes les fonctions Pro"
+      ]
+    },
+    "agency": {
+      "name": "Agence",
+      "description": "Pour les agences à grande échelle. 15 utilisateurs.",
+      "perks": [
+        "Briefs illimités",
+        "15 membres dans l'équipe",
+        "Analyse concurrentielle",
+        "Accès à l'API (REST + webhooks)",
+        "Exports en marque blanche",
+        "Support prioritaire"
+      ]
+    },
+    "current": "Forfait actuel",
+    "choose": "Choisir {name}",
+    "freeCta": "Commencer"
+  },
+  "comparison": {
+    "title": "Comparaison des fonctionnalités",
+    "row": {
+      "briefs": "Briefs / mois",
+      "users": "Utilisateurs",
+      "fields": "Analyse sur 12 champs",
+      "email": "Génération d'e-mail de clarification",
+      "builder": "Brief Builder (réécriture par IA)",
+      "export": "Export PDF et presse-papiers",
+      "notion": "Export Google Docs et Notion",
+      "clickup": "Export ClickUp et Airtable",
+      "team": "Collaboration en équipe",
+      "portal": "Portail client",
+      "competitor": "Analyse concurrentielle",
+      "api": "Accès à l'API",
+      "whiteLabel": "Exports en marque blanche",
+      "priority": "Support prioritaire"
+    },
+    "unlimited": "Illimité"
+  },
+  "billing": {
+    "month": "/mois",
+    "year": "/an",
+    "perMonth": "{amount}/mois facturés annuellement",
+    "save": "Économisez 20 %",
+    "free": "0 $"
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "q1": "Que se passe-t-il si je dépasse la limite du forfait Gratuit ?",
+    "a1": "BriefFill bloquera l'analyse et affichera un message d'upgrade. Vous pouvez passer en Pro pour des briefs illimités, ou attendre le 1er du mois suivant.",
+    "q2": "Quand le compteur de briefs se réinitialise-t-il ?",
+    "a2": "Le 1er de chaque mois (UTC). Les forfaits Pro, Équipe et Agence ont des briefs illimités — pas de compteur.",
+    "q3": "Puis-je passer de mensuel à annuel ?",
+    "a3": "Oui. Le portail client Stripe vous permet d'annuler et de vous réabonner avec n'importe quel cycle de facturation. Les forfaits annuels bénéficient de 20 % de remise.",
+    "q4": "Quels moyens de paiement acceptez-vous ?",
+    "a4": "Toutes les principales cartes de crédit via Stripe. Virement/ACH pour le forfait Agence (contacter le support).",
+    "q5": "Y a-t-il un essai gratuit ?",
+    "a5": "Le forfait Gratuit est l'essai. Vous bénéficiez de 5 briefs par mois gratuitement. Aucune carte de crédit requise pour s'inscrire.",
+    "q6": "Puis-je annuler à tout moment ?",
+    "a6": "Oui. Annulez depuis la page Facturation ; vous gardez l'accès jusqu'à la fin de la période en cours, puis repassez au forfait Gratuit."
+  },
+  "cta": {
+    "title": "Essayez BriefFill gratuitement",
+    "subtitle": "5 briefs par mois, sans carte de crédit. Évoluez uniquement quand vous en avez besoin.",
+    "primary": "Commencer",
+    "dashboard": "Aller au tableau de bord",
+    "guide": "Lire le guide"
+  },
+  "toast": {
+    "failedLoad": "Impossible de charger les forfaits",
+    "failedUpgrade": "Échec de la mise à niveau",
+    "welcome": "Vous êtes maintenant en {plan}. Bienvenue chez {planName}."
+  }
+}

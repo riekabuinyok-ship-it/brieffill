@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "此字段为必填项",
+    "email": "请输入有效的电子邮件",
+    "passwordMin": "密码至少需要 8 个字符",
+    "passwordMatch": "密码不匹配",
+    "minLength": "至少需要 {min} 个字符",
+    "maxLength": "不能超过 {max} 个字符"
+  },
+  "auth": {
+    "loginFailed": "登录失败 ({status})",
+    "registerFailed": "注册失败",
+    "loggedOut": "您已退出登录。",
+    "sessionExpired": "您的会话已过期。请重新登录。"
+  },
+  "network": {
+    "offline": "您似乎已离线。请检查连接后重试。",
+    "serverDown": "无法连接服务器。后端是否在 5000 端口运行?",
+    "timeout": "请求超时。请重试。"
+  },
+  "billing": {
+    "stripeNotConfigured": "此环境未配置 Stripe。",
+    "checkoutFailed": "无法启动结账。请重试。",
+    "verifyFailed": "无法验证您的购买。",
+    "portalFailed": "无法打开账单门户。",
+    "cancelFailed": "无法取消您的订阅。"
+  },
+  "export": {
+    "gdocsUrl": "无法生成 Google Docs URL",
+    "notionFailed": "保存到 Notion 失败",
+    "clickupFailed": "发送到 ClickUp 失败",
+    "airtableFailed": "发送到 Airtable 失败",
+    "popupBlocked": "弹窗被阻止 — 请允许此站点的弹窗。"
+  },
+  "teams": {
+    "loadFailed": "加载团队失败",
+    "inviteFailed": "邀请失败",
+    "roleFailed": "更新角色失败",
+    "removeFailed": "移除失败",
+    "notMember": "您不是此团队的成员。",
+    "onlyAdmin": "只有管理员可以执行此操作。"
+  },
+  "brief": {
+    "loadFailed": "加载简报失败",
+    "notFound": "未找到简报",
+    "deleteFailed": "删除简报失败",
+    "shareFailed": "分享简报失败",
+    "shareSuccess": "简报已分享给团队"
+  },
+  "integrations": {
+    "loadFailed": "加载集成失败",
+    "saveFailed": "保存集成失败",
+    "testFailed": "测试失败"
+  },
+  "preferences": {
+    "loadFailed": "加载偏好失败",
+    "saveFailed": "保存偏好失败"
+  },
+  "generic": {
+    "tryAgain": "出错了。请重试。",
+    "forbidden": "您没有权限执行此操作。"
+  }
+}

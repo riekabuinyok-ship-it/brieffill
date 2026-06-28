@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "Never start a project blind again."
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "newBrief": "New Brief",
+    "teams": "Teams",
+    "integrations": "Integrations",
+    "billing": "Billing",
+    "settings": "Settings",
+    "referrals": "Refer & Earn",
+    "guide": "User Guide",
+    "pricing": "Pricing",
+    "login": "Log In",
+    "register": "Get Started",
+    "logout": "Log out",
+    "howItWorks": "How it works",
+    "analysis": "Analysis"
+  },
+  "actions": {
+    "analyze": "Analyze",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "dismiss": "Dismiss",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "retry": "Retry",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "share": "Share",
+    "export": "Export",
+    "compare": "Compare plans",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "learnMore": "Learn more",
+    "getStarted": "Get started",
+    "notNow": "Not now",
+    "tryAgain": "Try again",
+    "send": "Send",
+    "regenerate": "Regenerate",
+    "viewSample": "View Sample Report",
+    "seeAll": "See all",
+    "browse": "Browse",
+    "continue": "Continue",
+    "reset": "Reset",
+    "clear": "Clear",
+    "apply": "Apply",
+    "remove": "Remove",
+    "update": "Update",
+    "invite": "Invite",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "search": {
+    "placeholder": "Search…",
+    "noResults": "No results",
+    "hint": "Press Ctrl+K to search"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "optional": "optional",
+    "required": "required",
+    "comingSoon": "Coming soon",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "more": "More",
+    "less": "Less",
+    "of": "of"
+  },
+  "shortcuts": {
+    "analyze": "Ctrl+Enter to analyze"
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "Switch to {name}",
+    "current": "Current language"
+  }
+}

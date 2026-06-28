@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "この項目は必須です",
+    "email": "有効なメールアドレスを入力してください",
+    "passwordMin": "パスワードは8文字以上必要です",
+    "passwordMatch": "パスワードが一致しません",
+    "minLength": "{min}文字以上で入力してください",
+    "maxLength": "{max}文字以下で入力してください"
+  },
+  "auth": {
+    "loginFailed": "ログインに失敗 ({status})",
+    "registerFailed": "登録に失敗",
+    "loggedOut": "ログアウトしました。",
+    "sessionExpired": "セッションの有効期限が切れました。再度ログインしてください。"
+  },
+  "network": {
+    "offline": "オフラインのようです。接続を確認してもう一度お試しください。",
+    "serverDown": "サーバーに接続できません。バックエンドはポート5000で動作していますか?",
+    "timeout": "リクエストがタイムアウトしました。もう一度お試しください。"
+  },
+  "billing": {
+    "stripeNotConfigured": "この環境ではStripeが設定されていません。",
+    "checkoutFailed": "チェックアウトを開始できませんでした。もう一度お試しください。",
+    "verifyFailed": "購入を確認できませんでした。",
+    "portalFailed": "請求ポータルを開けませんでした。",
+    "cancelFailed": "サブスクリプションを解約できませんでした。"
+  },
+  "export": {
+    "gdocsUrl": "Google DocsのURLを生成できませんでした",
+    "notionFailed": "Notionへの保存に失敗",
+    "clickupFailed": "ClickUpへの送信に失敗",
+    "airtableFailed": "Airtableへの送信に失敗",
+    "popupBlocked": "ポップアップがブロックされました — このサイトのポップアップを許可してください。"
+  },
+  "teams": {
+    "loadFailed": "チームの読み込みに失敗",
+    "inviteFailed": "招待に失敗",
+    "roleFailed": "ロールの更新に失敗",
+    "removeFailed": "削除に失敗",
+    "notMember": "このチームのメンバーではありません。",
+    "onlyAdmin": "この操作は管理者のみ実行できます。"
+  },
+  "brief": {
+    "loadFailed": "ブリーフの読み込みに失敗",
+    "notFound": "ブリーフが見つかりません",
+    "deleteFailed": "ブリーフの削除に失敗",
+    "shareFailed": "ブリーフの共有に失敗",
+    "shareSuccess": "ブリーフをチームと共有しました"
+  },
+  "integrations": {
+    "loadFailed": "連携の読み込みに失敗",
+    "saveFailed": "連携の保存に失敗",
+    "testFailed": "テストに失敗"
+  },
+  "preferences": {
+    "loadFailed": "設定の読み込みに失敗",
+    "saveFailed": "設定の保存に失敗"
+  },
+  "generic": {
+    "tryAgain": "エラーが発生しました。もう一度お試しください。",
+    "forbidden": "その操作の権限がありません。"
+  }
+}

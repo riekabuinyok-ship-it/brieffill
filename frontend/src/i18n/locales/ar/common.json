@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "لا تبدأ مشروعاً أعمى مرة أخرى."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "dashboard": "لوحة التحكم",
+    "newBrief": "ملخص جديد",
+    "teams": "الفرق",
+    "integrations": "التكاملات",
+    "billing": "الفوترة",
+    "settings": "الإعدادات",
+    "referrals": "Refer & Earn",
+    "guide": "دليل المستخدم",
+    "pricing": "الأسعار",
+    "login": "تسجيل الدخول",
+    "register": "ابدأ الآن",
+    "logout": "تسجيل الخروج",
+    "howItWorks": "كيف يعمل",
+    "analysis": "التحليل"
+  },
+  "actions": {
+    "analyze": "تحليل",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ…",
+    "cancel": "إلغاء",
+    "dismiss": "إغلاق",
+    "close": "إغلاق",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "view": "عرض",
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال",
+    "retry": "إعادة المحاولة",
+    "copy": "نسخ",
+    "copied": "تم النسخ!",
+    "share": "مشاركة",
+    "export": "تصدير",
+    "compare": "مقارنة الخطط",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "learnMore": "اعرف المزيد",
+    "getStarted": "ابدأ الآن",
+    "notNow": "ليس الآن",
+    "tryAgain": "حاول مرة أخرى",
+    "send": "إرسال",
+    "regenerate": "إعادة التوليد",
+    "viewSample": "عرض تقرير نموذجي",
+    "seeAll": "عرض الكل",
+    "browse": "تصفح",
+    "continue": "متابعة",
+    "reset": "إعادة تعيين",
+    "clear": "مسح",
+    "apply": "تطبيق",
+    "remove": "إزالة",
+    "update": "تحديث",
+    "invite": "دعوة",
+    "accept": "قبول",
+    "decline": "رفض"
+  },
+  "search": {
+    "placeholder": "بحث…",
+    "noResults": "لا توجد نتائج",
+    "hint": "اضغط Ctrl+K للبحث"
+  },
+  "common": {
+    "loading": "جارٍ التحميل…",
+    "error": "حدث خطأ ما",
+    "optional": "اختياري",
+    "required": "مطلوب",
+    "comingSoon": "قريباً",
+    "minutes": "{count} دقيقة",
+    "hours": "{count} ساعة",
+    "days": "{count} يوم",
+    "yes": "نعم",
+    "no": "لا",
+    "all": "الكل",
+    "none": "لا شيء",
+    "more": "المزيد",
+    "less": "أقل",
+    "of": "من"
+  },
+  "shortcuts": {
+    "analyze": "Ctrl+Enter للتحليل"
+  },
+  "language": {
+    "label": "اللغة",
+    "switchTo": "التبديل إلى {name}",
+    "current": "اللغة الحالية"
+  }
+}

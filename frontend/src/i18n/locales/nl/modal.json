@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "Je hebt je maandelijkse limiet bereikt",
+    "limitBody": "Je hebt deze maand {used} van {limit} briefings gebruikt. {plan} geeft je onbeperkte briefings, de AI Brief Builder en PDF-export. Je teller reset op de 1e van de volgende maand.",
+    "defaultTitle": "Deze functie vereist een upgrade",
+    "defaultBody": "De functie die je net probeerde is niet beschikbaar in je huidige plan. Vergelijk abonnementen om te zien wat inbegrepen is.",
+    "current": "Huidig: {plan}",
+    "requires": "Vereist: {plan}",
+    "compare": "Vergelijk abonnementen",
+    "manage": "Abonnement beheren",
+    "notNow": "Niet nu",
+    "contactSales": "Een aangepast plan nodig?",
+    "contactSalesCta": "Neem contact op met sales →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "Concurrentanalyse",
+      "body": "Vergelijk tot 3 concurrentbriefings naast elkaar en ontdek een concrete differentiatiekans voor je eigen briefing. Beschikbaar in het Bureau-plan."
+    },
+    "apiAccess": {
+      "title": "API-toegang",
+      "body": "Analyseer briefings programmatisch met REST-endpoints, persoonlijke API-sleutels en uitgaande webhooks. Beschikbaar in het Bureau-plan."
+    },
+    "briefBuilder": {
+      "title": "AI Brief Builder",
+      "body": "Krijg een door AI herschreven briefing die hiaten vult, de toon aanscherpt en de duidelijkheid verbetert. Beschikbaar vanaf Pro."
+    },
+    "teamFeatures": {
+      "title": "Teamsamenwerking",
+      "body": "Deel briefings met je team, wijs rollen toe en werk samen in één werkruimte. Beschikbaar vanaf Team."
+    },
+    "whiteLabel": {
+      "title": "White-label exports",
+      "body": "Exporteer briefings met het merk van je bureau in plaats van dat van BriefFill. Beschikbaar in het Bureau-plan."
+    },
+    "prioritySupport": {
+      "title": "Priority support",
+      "body": "E-mailondersteuning op dezelfde dag en een toegewijd Slack-kanaal voor je team. Beschikbaar in het Bureau-plan."
+    },
+    "exports:pdf": {
+      "title": "PDF-export",
+      "body": "Exporteer geanalyseerde briefings als PDF's met je eigen merk. Beschikbaar vanaf Pro."
+    },
+    "exports:clipboard": {
+      "title": "Klembordexport",
+      "body": "Kopieer de gestructureerde briefing met één klik naar het klembord. Beschikbaar vanaf Pro."
+    },
+    "exports:google-docs": {
+      "title": "Google Docs-export",
+      "body": "Stuur briefings direct naar een Google Doc in je Drive. Beschikbaar vanaf Team."
+    },
+    "exports:notion": {
+      "title": "Notion-export",
+      "body": "Sla briefings op in de Notion-database van je keuze. Beschikbaar vanaf Team."
+    },
+    "exports:clickup": {
+      "title": "ClickUp-export",
+      "body": "Stuur briefings als nieuwe taken naar een ClickUp-lijst. Beschikbaar in het Bureau-plan."
+    },
+    "exports:airtable": {
+      "title": "Airtable-export",
+      "body": "Voeg briefings als nieuwe rijen toe aan een Airtable-base. Beschikbaar in het Bureau-plan."
+    }
+  },
+  "plan": {
+    "free": "Gratis",
+    "pro": "Pro",
+    "team": "Team",
+    "agency": "Bureau"
+  },
+  "builder": {
+    "title": "AI Brief Builder",
+    "building": "Verbeterde briefing wordt gemaakt…",
+    "saving": "Verbeterde briefing wordt opgeslagen…",
+    "saved": "Verbeterde briefing opgeslagen in je project.",
+    "failed": "Verbeterde briefing genereren mislukt. Probeer het opnieuw.",
+    "saveFailed": "Opslaan mislukt. Probeer het opnieuw.",
+    "improved": "AI-verbeterd",
+    "original": "Origineel",
+    "close": "Sluiten"
+  },
+  "assistant": {
+    "title": "Briefing-assistent",
+    "subtitle": "Waar heb je een briefing voor nodig?",
+    "placeholder": "bijv. een landingspagina voor een fintech-startup gericht op kleine ondernemers…",
+    "generate": "Concept genereren",
+    "generating": "Genereren…",
+    "draft": "Briefingconcept",
+    "generated": "Briefing gegenereerd ({score}%)",
+    "failed": "Genereren mislukt",
+    "refine": "Verfijnen met feedback",
+    "refining": "Verfijnen…",
+    "refined": "Briefing verfijnd",
+    "saveToFill": "Opslaan in BriefFill",
+    "save": "Opslaan",
+    "saved": "Opgeslagen in BriefFill (id {id})",
+    "saveFailed": "Opslaan mislukt",
+    "describe": "Beschrijf waar je de briefing voor nodig hebt (minimaal 5 tekens)",
+    "needsClient": "Voeg een klantnaam en projectnaam toe",
+    "nameClient": "Klantnaam",
+    "nameProject": "Projectnaam",
+    "cancel": "Annuleren",
+    "export": "Exporteren"
+  }
+}

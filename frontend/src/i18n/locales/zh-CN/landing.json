@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "AI 智能分析引擎",
+    "title": "再也不要<br/><i>盲目</i>开始项目。",
+    "subtitle": "停止猜测客户的期望。BriefFill 立即分析您的项目简报,在您发送报价之前就标出缺口、风险和缺失的数据。",
+    "primaryCta": "分析您的第一份简报",
+    "secondaryCta": "查看示例报告",
+    "stats": {
+      "accuracy": "缺口检测准确率",
+      "time": "平均分析时间",
+      "speedup": "更快的项目启动"
+    },
+    "trust": "全球 1,000+ 代理机构的信赖之选"
+  },
+  "howItWorks": {
+    "title": "从混乱到清晰",
+    "subtitle": "坚实项目基础的三个步骤。",
+    "steps": {
+      "step1": {
+        "label": "步骤 01",
+        "title": "粘贴您的简报",
+        "desc": "将客户杂乱的邮件、PDF 或文档链接放入我们安全的分析器。支持任何文本格式。"
+      },
+      "step2": {
+        "label": "步骤 02",
+        "title": "AI 分析缺口",
+        "desc": "我们的引擎扫描缺失的预算、模糊的时间表、技术约束和隐藏风险。"
+      },
+      "step3": {
+        "label": "步骤 03",
+        "title": "生成问题",
+        "desc": "获得一份精选的澄清问题清单发回给客户。专业、精准、高效。"
+      }
+    }
+  },
+  "comparison": {
+    "title": "功能比较",
+    "subtitle": "一个典型的项目简报只包含开始工作所需信息的 65%。我们在它们花您钱之前找到剩下的 35%。",
+    "problems": {
+      "scope": "范围不明导致蔓延",
+      "timeline": "模糊的时间表造成瓶颈"
+    },
+    "solution": "清晰的项目里程碑",
+    "before": "之前",
+    "after": "之后",
+    "beforeExample": "「嗨团队,我们下个月的新品发布需要一个简单的网站。预算约 5 万美元。要干净现代。周一聊。」",
+    "beforeWarn": "您对技术要求或成功指标完全看不见。",
+    "afterCritical": "关键缺失数据",
+    "afterCriticalDesc": "客户未指定托管环境。这会影响技术栈决策。",
+    "afterQuestion": "生成的问题",
+    "afterQuestionDesc": "「能否澄清一下是否必须使用现有的 AWS 基础设施,还是我们可以提出无头架构?」",
+    "afterInsight": "战略洞察",
+    "afterInsightDesc": "提到的 5 万美元预算比类似范围的项目低 20%。"
+  },
+  "pricing": {
+    "title": "简单公平的定价",
+    "subtitle": "无隐藏费用。免费开始,按需升级。年付 20% 折扣。",
+    "compareAll": "在价格页面比较所有功能 →"
+  },
+  "footer": {
+    "tagline": "帮助每位专业人士以绝对的清晰度开启每个项目。永远不再在黑暗中工作。",
+    "copyright": "© {year} BriefFill Inc. 保留所有权利。",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "product": "产品",
+    "resources": "资源",
+    "features": "功能",
+    "blog": "博客",
+    "community": "社区",
+    "api": "API",
+    "stayUpdated": "保持更新",
+    "emailPlaceholder": "电子邮件地址"
+  }
+}

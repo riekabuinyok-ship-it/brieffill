@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Pricing",
+    "title": "Pricing that grows with you",
+    "subtitle": "BriefFill turns rough client briefs into structured, client-ready specs. Pick the plan that fits your team — switch or cancel anytime.",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "annualSave": "(save 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "Free",
+      "description": "Try BriefFill on your next project.",
+      "perks": [
+        "5 briefs / month",
+        "1 user",
+        "12-field analysis",
+        "Email draft generation"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "For freelancers and solo creatives.",
+      "popular": "Most popular",
+      "perks": [
+        "Unlimited briefs",
+        "Brief Builder (AI rewrite)",
+        "PDF + clipboard export",
+        "12-field analysis",
+        "Outcome tracking"
+      ]
+    },
+    "team": {
+      "name": "Team",
+      "description": "For small agencies. 5 seats.",
+      "perks": [
+        "Unlimited briefs",
+        "5 team members",
+        "Team collaboration",
+        "Notion + Google Docs export",
+        "All Pro features"
+      ]
+    },
+    "agency": {
+      "name": "Agency",
+      "description": "For agencies at scale. 15 seats.",
+      "perks": [
+        "Unlimited briefs",
+        "15 team members",
+        "Competitor analysis",
+        "API access (REST + webhooks)",
+        "White-label exports",
+        "Priority support"
+      ]
+    },
+    "current": "Current plan",
+    "choose": "Choose {name}",
+    "freeCta": "Get started"
+  },
+  "comparison": {
+    "title": "Feature comparison",
+    "row": {
+      "briefs": "Briefs / month",
+      "users": "Users",
+      "fields": "12-field analysis",
+      "email": "Email draft generation",
+      "builder": "Brief Builder (AI rewrite)",
+      "export": "PDF + clipboard export",
+      "notion": "Google Docs + Notion export",
+      "clickup": "ClickUp + Airtable export",
+      "team": "Team collaboration",
+      "portal": "Client portal",
+      "competitor": "Competitor analysis",
+      "api": "API access",
+      "whiteLabel": "White-label exports",
+      "priority": "Priority support"
+    },
+    "unlimited": "Unlimited"
+  },
+  "billing": {
+    "month": "/month",
+    "year": "/year",
+    "perMonth": "{amount}/mo billed annually",
+    "save": "$0",
+    "free": "$0"
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "q1": "What happens if I exceed the Free plan limit?",
+    "a1": "BriefFill will block the analysis and show an upgrade prompt. You can upgrade to Pro for unlimited briefs, or wait until the 1st of next month when the counter resets.",
+    "q2": "When does the brief count reset?",
+    "a2": "On the 1st of each month (UTC). Pro, Team, and Agency plans have unlimited briefs — no counter.",
+    "q3": "Can I switch between monthly and annual?",
+    "a3": "Yes. The Stripe Customer Portal lets you cancel and resubscribe with any billing cycle. Annual plans get 20% off.",
+    "q4": "What payment methods do you accept?",
+    "a4": "All major credit cards via Stripe. ACH/wire for Agency plan (contact support).",
+    "q5": "Is there a free trial?",
+    "a5": "The Free plan is the trial. You get 5 briefs per month at no cost. No credit card required to sign up.",
+    "q6": "Can I cancel anytime?",
+    "a6": "Yes. Cancel from the Billing page; you keep access until the end of the current period, then drop to the Free plan."
+  },
+  "cta": {
+    "title": "Try BriefFill free",
+    "subtitle": "5 briefs per month, no credit card required. Upgrade only when you need more.",
+    "primary": "Get started",
+    "dashboard": "Go to dashboard",
+    "guide": "Read the guide"
+  },
+  "toast": {
+    "failedLoad": "Failed to load plans",
+    "failedUpgrade": "Failed to upgrade",
+    "welcome": "You're now on {plan}. Welcome to {planName}."
+  }
+}

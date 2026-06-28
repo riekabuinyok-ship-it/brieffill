@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.env
+.env.txt
+test_brieffill.py.txt
+*.log
+logs/
+database/*.db
+.DS_Store
+backups/
+.vscode/
+.idea/

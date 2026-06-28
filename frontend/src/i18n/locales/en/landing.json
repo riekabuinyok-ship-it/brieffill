@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "AI-POWERED ANALYSIS ENGINE",
+    "title": "Never start a project <br/> <i>blind</i> again.",
+    "subtitle": "Stop guessing client expectations. BriefFill analyzes your project briefs instantly, highlighting gaps, risks, and missing data before you even send a quote.",
+    "primaryCta": "Start Analyzing Your First Brief",
+    "secondaryCta": "View Sample Report",
+    "stats": {
+      "accuracy": "Gap detection accuracy",
+      "time": "Average analysis time",
+      "speedup": "Faster project onboarding"
+    },
+    "trust": "Trusted by 1,000+ agencies worldwide"
+  },
+  "howItWorks": {
+    "title": "From Chaos to Clarity",
+    "subtitle": "Three steps to a bulletproof project foundation.",
+    "steps": {
+      "step1": {
+        "label": "STEP 01",
+        "title": "Paste your brief",
+        "desc": "Drop your client's messy email, PDF, or document link into our secure analyzer. We support any text format."
+      },
+      "step2": {
+        "label": "STEP 02",
+        "title": "AI analyzes for gaps",
+        "desc": "Our engine scans for missing budget details, timeline ambiguities, technical constraints, and hidden risks."
+      },
+      "step3": {
+        "label": "STEP 03",
+        "title": "Generate questions",
+        "desc": "Receive a curated list of clarification questions to send back to the client. Professional, surgical, and effective."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Feature comparison",
+    "subtitle": "A typical project brief contains only 65% of the information needed to actually start work. We find the remaining 35% before it costs you money.",
+    "problems": {
+      "scope": "Undefined scope leading to creep",
+      "timeline": "Vague timelines causing bottlenecks"
+    },
+    "solution": "Crystal clear project milestones",
+    "before": "BEFORE",
+    "after": "AFTER",
+    "beforeExample": "\"Hey team, we need a simple website for our new product launch next month. Budget is around $50k. Needs to be clean and modern. Let's chat Monday.\"",
+    "beforeWarn": "You have 0% visibility into technical requirements or success metrics.",
+    "afterCritical": "Critical Missing Data",
+    "afterCriticalDesc": "The client hasn't specified the hosting environment. This impacts tech stack decisions.",
+    "afterQuestion": "Generated Question",
+    "afterQuestionDesc": "\"Could you clarify if the existing AWS infrastructure must be used, or are we free to propose a headless architecture?\"",
+    "afterInsight": "Strategic Insight",
+    "afterInsightDesc": "Budget mention of $50k is 20% lower than previous similar projects for this scope."
+  },
+  "pricing": {
+    "title": "Simple, Fair Pricing",
+    "subtitle": "No hidden fees. Start for free and upgrade as you grow. 20% off annual.",
+    "compareAll": "Compare all features on the full Pricing page →"
+  },
+  "footer": {
+    "tagline": "Empowering professionals to start every project with absolute clarity. Never work in the dark again.",
+    "copyright": "© {year} BriefFill Inc. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "product": "Product",
+    "resources": "Resources",
+    "features": "Features",
+    "blog": "Blog",
+    "community": "Community",
+    "api": "API",
+    "stayUpdated": "Stay Updated",
+    "emailPlaceholder": "Email address"
+  }
+}

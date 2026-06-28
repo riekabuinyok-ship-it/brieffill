@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "Ne commencez plus jamais un projet à l'aveugle."
+  },
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "newBrief": "Nouveau brief",
+    "teams": "Équipes",
+    "integrations": "Intégrations",
+    "billing": "Facturation",
+    "settings": "Paramètres",
+    "referrals": "Refer & Earn",
+    "guide": "Guide d'utilisation",
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "register": "Commencer",
+    "logout": "Déconnexion",
+    "howItWorks": "Comment ça marche",
+    "analysis": "Analyse"
+  },
+  "actions": {
+    "analyze": "Analyser",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler",
+    "dismiss": "Ignorer",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Envoyer",
+    "retry": "Réessayer",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "share": "Partager",
+    "export": "Exporter",
+    "compare": "Comparer les forfaits",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "notNow": "Pas maintenant",
+    "tryAgain": "Réessayer",
+    "send": "Envoyer",
+    "regenerate": "Régénérer",
+    "viewSample": "Voir un rapport exemple",
+    "seeAll": "Tout voir",
+    "browse": "Parcourir",
+    "continue": "Continuer",
+    "reset": "Réinitialiser",
+    "clear": "Effacer",
+    "apply": "Appliquer",
+    "remove": "Retirer",
+    "update": "Mettre à jour",
+    "invite": "Inviter",
+    "accept": "Accepter",
+    "decline": "Refuser"
+  },
+  "search": {
+    "placeholder": "Rechercher…",
+    "noResults": "Aucun résultat",
+    "hint": "Appuyez sur Ctrl+K pour rechercher"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "optional": "facultatif",
+    "required": "obligatoire",
+    "comingSoon": "Bientôt disponible",
+    "minutes": "{count, plural, one {# minute} other {# minutes}}",
+    "hours": "{count, plural, one {# heure} other {# heures}}",
+    "days": "{count, plural, one {# jour} other {# jours}}",
+    "yes": "Oui",
+    "no": "Non",
+    "all": "Tout",
+    "none": "Aucun",
+    "more": "Plus",
+    "less": "Moins",
+    "of": "de"
+  },
+  "shortcuts": {
+    "analyze": "Ctrl+Entrée pour analyser"
+  },
+  "language": {
+    "label": "Langue",
+    "switchTo": "Passer en {name}",
+    "current": "Langue actuelle"
+  }
+}

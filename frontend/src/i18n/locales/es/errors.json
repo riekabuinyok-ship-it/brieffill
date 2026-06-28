@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "Este campo es obligatorio",
+    "email": "Introduce un correo electrónico válido",
+    "passwordMin": "La contraseña debe tener al menos 8 caracteres",
+    "passwordMatch": "Las contraseñas no coinciden",
+    "minLength": "Debe tener al menos {min} caracteres",
+    "maxLength": "Debe tener {max} caracteres o menos"
+  },
+  "auth": {
+    "loginFailed": "Error de inicio de sesión ({status})",
+    "registerFailed": "Error de registro",
+    "loggedOut": "Has cerrado la sesión.",
+    "sessionExpired": "Tu sesión ha caducado. Inicia sesión de nuevo."
+  },
+  "network": {
+    "offline": "Parece que estás sin conexión. Comprueba tu conexión e inténtalo de nuevo.",
+    "serverDown": "No se puede conectar con el servidor. ¿Está el backend en ejecución en el puerto 5000?",
+    "timeout": "La petición ha tardado demasiado. Inténtalo de nuevo."
+  },
+  "billing": {
+    "stripeNotConfigured": "Stripe no está configurado en este entorno.",
+    "checkoutFailed": "No se pudo iniciar el proceso de pago. Inténtalo de nuevo.",
+    "verifyFailed": "No se pudo verificar tu compra.",
+    "portalFailed": "No se pudo abrir el portal de facturación.",
+    "cancelFailed": "No se pudo cancelar tu suscripción."
+  },
+  "export": {
+    "gdocsUrl": "No se pudo generar la URL de Google Docs",
+    "notionFailed": "No se pudo guardar en Notion",
+    "clickupFailed": "No se pudo enviar a ClickUp",
+    "airtableFailed": "No se pudo enviar a Airtable",
+    "popupBlocked": "Ventana emergente bloqueada: permite ventanas emergentes para este sitio."
+  },
+  "teams": {
+    "loadFailed": "No se pudo cargar el equipo",
+    "inviteFailed": "No se pudo invitar",
+    "roleFailed": "No se pudo actualizar el rol",
+    "removeFailed": "No se pudo eliminar",
+    "notMember": "No eres miembro de este equipo.",
+    "onlyAdmin": "Solo los administradores pueden realizar esta acción."
+  },
+  "brief": {
+    "loadFailed": "No se pudo cargar el brief",
+    "notFound": "Brief no encontrado",
+    "deleteFailed": "No se pudo eliminar el brief",
+    "shareFailed": "No se pudo compartir el brief",
+    "shareSuccess": "Brief compartido con el equipo"
+  },
+  "integrations": {
+    "loadFailed": "No se pudieron cargar las integraciones",
+    "saveFailed": "No se pudo guardar la integración",
+    "testFailed": "La prueba falló"
+  },
+  "preferences": {
+    "loadFailed": "No se pudieron cargar las preferencias",
+    "saveFailed": "No se pudieron guardar las preferencias"
+  },
+  "generic": {
+    "tryAgain": "Algo salió mal. Inténtalo de nuevo.",
+    "forbidden": "No tienes permiso para hacer eso."
+  }
+}

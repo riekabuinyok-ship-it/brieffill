@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "email": "Inserisci un'email valida",
+    "passwordMin": "La password deve contenere almeno 8 caratteri",
+    "passwordMatch": "Le password non corrispondono",
+    "minLength": "Deve contenere almeno {min} caratteri",
+    "maxLength": "Deve contenere al massimo {max} caratteri"
+  },
+  "auth": {
+    "loginFailed": "Accesso fallito ({status})",
+    "registerFailed": "Registrazione fallita",
+    "loggedOut": "Sei stato disconnesso.",
+    "sessionExpired": "La tua sessione è scaduta. Accedi di nuovo."
+  },
+  "network": {
+    "offline": "Sembra che tu sia offline. Controlla la connessione e riprova.",
+    "serverDown": "Impossibile raggiungere il server. Il backend è in esecuzione sulla porta 5000?",
+    "timeout": "La richiesta ha impiegato troppo tempo. Riprova."
+  },
+  "billing": {
+    "stripeNotConfigured": "Stripe non è configurato in questo ambiente.",
+    "checkoutFailed": "Impossibile avviare il checkout. Riprova.",
+    "verifyFailed": "Impossibile verificare l'acquisto.",
+    "portalFailed": "Impossibile aprire il portale di fatturazione.",
+    "cancelFailed": "Impossibile disdire l'abbonamento."
+  },
+  "export": {
+    "gdocsUrl": "Impossibile generare l'URL di Google Docs",
+    "notionFailed": "Impossibile salvare su Notion",
+    "clickupFailed": "Impossibile inviare a ClickUp",
+    "airtableFailed": "Impossibile inviare a Airtable",
+    "popupBlocked": "Popup bloccato — consenti i popup per questo sito."
+  },
+  "teams": {
+    "loadFailed": "Impossibile caricare il team",
+    "inviteFailed": "Invito fallito",
+    "roleFailed": "Impossibile aggiornare il ruolo",
+    "removeFailed": "Rimozione fallita",
+    "notMember": "Non sei membro di questo team.",
+    "onlyAdmin": "Solo gli amministratori possono eseguire questa azione."
+  },
+  "brief": {
+    "loadFailed": "Impossibile caricare il brief",
+    "notFound": "Brief non trovato",
+    "deleteFailed": "Impossibile eliminare il brief",
+    "shareFailed": "Impossibile condividere il brief",
+    "shareSuccess": "Brief condiviso con il team"
+  },
+  "integrations": {
+    "loadFailed": "Impossibile caricare le integrazioni",
+    "saveFailed": "Impossibile salvare l'integrazione",
+    "testFailed": "Test fallito"
+  },
+  "preferences": {
+    "loadFailed": "Impossibile caricare le preferenze",
+    "saveFailed": "Impossibile salvare le preferenze"
+  },
+  "generic": {
+    "tryAgain": "Qualcosa è andato storto. Riprova.",
+    "forbidden": "Non hai il permesso di farlo."
+  }
+}

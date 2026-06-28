@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "MOTEUR D'ANALYSE PAR IA",
+    "title": "Ne commencez plus jamais un projet <br/> à <i>l'aveugle</i>.",
+    "subtitle": "Arrêtez de deviner les attentes de vos clients. BriefFill analyse vos briefs en un instant, repérant les lacunes, les risques et les données manquantes avant même d'envoyer un devis.",
+    "primaryCta": "Analysez votre premier brief",
+    "secondaryCta": "Voir un rapport exemple",
+    "stats": {
+      "accuracy": "Précision de détection des lacunes",
+      "time": "Temps moyen d'analyse",
+      "speedup": "Démarrage de projet plus rapide"
+    },
+    "trust": "Choisi par plus de 1 000 agences dans le monde"
+  },
+  "howItWorks": {
+    "title": "Du chaos à la clarté",
+    "subtitle": "Trois étapes pour des fondations de projet solides.",
+    "steps": {
+      "step1": {
+        "label": "ÉTAPE 01",
+        "title": "Collez votre brief",
+        "desc": "Déposez l'e-mail, le PDF ou le lien de document de votre client dans notre analyseur sécurisé. Tous les formats texte sont acceptés."
+      },
+      "step2": {
+        "label": "ÉTAPE 02",
+        "title": "L'IA détecte les lacunes",
+        "desc": "Notre moteur identifie les budgets manquants, les ambiguïtés de planning, les contraintes techniques et les risques cachés."
+      },
+      "step3": {
+        "label": "ÉTAPE 03",
+        "title": "Générez les questions",
+        "desc": "Recevez une liste ciblée de questions de clarification à renvoyer au client. Professionnelles, précises, efficaces."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Comparaison des fonctionnalités",
+    "subtitle": "Un brief de projet type ne contient que 65 % des informations nécessaires pour démarrer. Nous trouvons les 35 % restants avant qu'ils ne vous coûtent de l'argent.",
+    "problems": {
+      "scope": "Périmètre flou qui mène au dépassement",
+      "timeline": "Planning vague qui crée des goulets d'étranglement"
+    },
+    "solution": "Jalons de projet limpides",
+    "before": "AVANT",
+    "after": "APRÈS",
+    "beforeExample": "« Salut l'équipe, on a besoin d'un site web simple pour le lancement de notre nouveau produit le mois prochain. Budget environ 50 000 $. Propre et moderne. On en parle lundi. »",
+    "beforeWarn": "Vous avez 0 % de visibilité sur les exigences techniques et les indicateurs de succès.",
+    "afterCritical": "Donnée critique manquante",
+    "afterCriticalDesc": "Le client n'a pas précisé l'environnement d'hébergement. Cela impacte les choix de stack technique.",
+    "afterQuestion": "Question générée",
+    "afterQuestionDesc": "« Pourriez-vous préciser s'il faut utiliser l'infrastructure AWS existante, ou si nous sommes libres de proposer une architecture headless ? »",
+    "afterInsight": "Vision stratégique",
+    "afterInsightDesc": "Le budget mentionné de 50 000 $ est inférieur de 20 % à celui de projets similaires."
+  },
+  "pricing": {
+    "title": "Des tarifs simples et justes",
+    "subtitle": "Pas de frais cachés. Commencez gratuitement et évoluez à votre rythme. 20 % de remise sur l'annuel.",
+    "compareAll": "Comparez toutes les fonctionnalités sur la page Tarifs →"
+  },
+  "footer": {
+    "tagline": "Nous aidons les professionnels à démarrer chaque projet en toute clarté. Fini le travail à l'aveugle.",
+    "copyright": "© {year} BriefFill Inc. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "product": "Produit",
+    "resources": "Ressources",
+    "features": "Fonctionnalités",
+    "blog": "Blog",
+    "community": "Communauté",
+    "api": "API",
+    "stayUpdated": "Restez informé",
+    "emailPlaceholder": "Adresse e-mail"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "AI-AANGEDREVEN ANALYSE-ENGINE",
+    "title": "Begin nooit meer <br/> <i>blind</i> aan een project.",
+    "subtitle": "Stop met het raden naar de verwachtingen van klanten. BriefFill analyseert je projectbriefings direct en markeert hiaten, risico's en ontbrekende gegevens — nog vóórdat je een offerte stuurt.",
+    "primaryCta": "Analyseer je eerste briefing",
+    "secondaryCta": "Bekijk voorbeeldrapport",
+    "stats": {
+      "accuracy": "Nauwkeurigheid hiatendetectie",
+      "time": "Gemiddelde analysetijd",
+      "speedup": "Snellere projectstart"
+    },
+    "trust": "Vertrouwd door 1.000+ bureaus wereldwijd"
+  },
+  "howItWorks": {
+    "title": "Van chaos naar helderheid",
+    "subtitle": "Drie stappen naar een solide projectbasis.",
+    "steps": {
+      "step1": {
+        "label": "STAP 01",
+        "title": "Plak je briefing",
+        "desc": "Gooi de rommelige e-mail, PDF of documentlink van je klant in onze veilige analyzer. We ondersteunen elk tekstformaat."
+      },
+      "step2": {
+        "label": "STAP 02",
+        "title": "AI analyseert op hiaten",
+        "desc": "Onze engine scant op ontbrekende budgetten, onduidelijke planning, technische beperkingen en verborgen risico's."
+      },
+      "step3": {
+        "label": "STAP 03",
+        "title": "Genereer vragen",
+        "desc": "Ontvang een samengestelde lijst met verduidelijkingsvragen om naar de klant te sturen. Professioneel, scherp en effectief."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Functievergelijking",
+    "subtitle": "Een typische projectbriefing bevat slechts 65% van de informatie die nodig is om echt te starten. Wij vinden de overige 35% voordat het je geld kost.",
+    "problems": {
+      "scope": "Ongedefinieerde scope die tot uitloop leidt",
+      "timeline": "Vage planning die knelpunten veroorzaakt"
+    },
+    "solution": "Glasheldere projectmijlpalen",
+    "before": "VOOR",
+    "after": "NA",
+    "beforeExample": "\"Hé team, we hebben een simpele website nodig voor de lancering van ons nieuwe product volgende maand. Budget rond de €50.000. Moet schoon en modern zijn. Laten we maandag even bellen.\"",
+    "beforeWarn": "Je hebt 0% zicht op technische vereisten of successtatistieken.",
+    "afterCritical": "Kritieke ontbrekende gegevens",
+    "afterCriticalDesc": "De klant heeft de hostingomgeving niet gespecificeerd. Dit beïnvloedt de technische stack-beslissingen.",
+    "afterQuestion": "Gegenereerde vraag",
+    "afterQuestionDesc": "\"Kun je verduidelijken of de bestaande AWS-infrastructuur gebruikt moet worden, of dat we een headless-architectuur mogen voorstellen?\"",
+    "afterInsight": "Strategisch inzicht",
+    "afterInsightDesc": "Het genoemde budget van €50.000 ligt 20% lager dan bij vergelijkbare projecten van deze omvang."
+  },
+  "pricing": {
+    "title": "Eenvoudige, eerlijke prijzen",
+    "subtitle": "Geen verborgen kosten. Begin gratis en upgrade naarmate je groeit. 20% korting op jaarlijks.",
+    "compareAll": "Vergelijk alle functies op de tarievenpagina →"
+  },
+  "footer": {
+    "tagline": "We helpen professionals om elk project te starten met absolute helderheid. Nooit meer in het duister werken.",
+    "copyright": "© {year} BriefFill Inc. Alle rechten voorbehouden.",
+    "privacy": "Privacybeleid",
+    "terms": "Servicevoorwaarden",
+    "product": "Product",
+    "resources": "Bronnen",
+    "features": "Functies",
+    "blog": "Blog",
+    "community": "Community",
+    "api": "API",
+    "stayUpdated": "Blijf op de hoogte",
+    "emailPlaceholder": "E-mailadres"
+  }
+}

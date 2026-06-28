@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "월간 한도에 도달했습니다",
+    "limitBody": "이번 달 {used}/{limit}개의 브리프를 사용했습니다. {plan}은 무제한 브리프, AI Brief Builder, PDF 내보내기를 제공합니다. 카운터는 다음 달 1일에 재설정됩니다.",
+    "defaultTitle": "이 기능은 업그레이드가 필요합니다",
+    "defaultBody": "방금 시도한 기능은 현재 플랜에서 사용할 수 없습니다. 플랜을 비교하여 각 등급에 포함된 내용을 확인하세요.",
+    "current": "현재: {plan}",
+    "requires": "필요 플랜: {plan}",
+    "compare": "플랜 비교",
+    "manage": "구독 관리",
+    "notNow": "나중에",
+    "contactSales": "맞춤 플랜이 필요하신가요?",
+    "contactSalesCta": "영업팀 문의 →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "경쟁사 분석",
+      "body": "최대 3개의 경쟁사 브리프를 나란히 비교하고 자신의 브리프에 대한 차별화 기회를 발견하세요. 에이전시 플랜에서 사용 가능."
+    },
+    "apiAccess": {
+      "title": "API 액세스",
+      "body": "REST 엔드포인트, 개인 API 키, 송신 웹훅으로 브리프를 프로그래밍 방식으로 분석하세요. 에이전시 플랜에서 사용 가능."
+    },
+    "briefBuilder": {
+      "title": "AI Brief Builder",
+      "body": "갭을 채우고, 톤을 다듬고, 명확성을 높이는 AI 재작성 브리프를 받으세요. 프로 이상에서 사용 가능."
+    },
+    "teamFeatures": {
+      "title": "팀 협업",
+      "body": "팀과 브리프를 공유하고, 역할을 할당하고, 한 워크스페이스에서 협업하세요. 팀 이상에서 사용 가능."
+    },
+    "whiteLabel": {
+      "title": "화이트라벨 내보내기",
+      "body": "BriefFill이 아닌 에이전시 브랜드로 브리프를 내보내세요. 에이전시 플랜에서 사용 가능."
+    },
+    "prioritySupport": {
+      "title": "우선 지원",
+      "body": "당일 이메일 지원과 팀 전용 Slack 채널. 에이전시 플랜에서 사용 가능."
+    },
+    "exports:pdf": {
+      "title": "PDF 내보내기",
+      "body": "분석된 브리프를 브랜드가 들어간 PDF로 내보내세요. 프로 이상에서 사용 가능."
+    },
+    "exports:clipboard": {
+      "title": "클립보드 내보내기",
+      "body": "한 번의 클릭으로 구조화된 브리프를 클립보드에 복사하세요. 프로 이상에서 사용 가능."
+    },
+    "exports:google-docs": {
+      "title": "Google Docs 내보내기",
+      "body": "브리프를 Google Drive의 Google Doc으로 직접 보내세요. 팀 이상에서 사용 가능."
+    },
+    "exports:notion": {
+      "title": "Notion 내보내기",
+      "body": "브리프를 원하는 Notion 데이터베이스에 저장하세요. 팀 이상에서 사용 가능."
+    },
+    "exports:clickup": {
+      "title": "ClickUp 내보내기",
+      "body": "브리프를 ClickUp 리스트의 새 작업으로 보내세요. 에이전시 플랜에서 사용 가능."
+    },
+    "exports:airtable": {
+      "title": "Airtable 내보내기",
+      "body": "브리프를 Airtable 베이스의 새 행으로 추가하세요. 에이전시 플랜에서 사용 가능."
+    }
+  },
+  "plan": {
+    "free": "무료",
+    "pro": "프로",
+    "team": "팀",
+    "agency": "에이전시"
+  },
+  "builder": {
+    "title": "AI Brief Builder",
+    "building": "개선된 브리프 작성 중…",
+    "saving": "개선된 브리프 저장 중…",
+    "saved": "개선된 브리프가 프로젝트에 저장되었습니다.",
+    "failed": "개선된 브리프 생성 실패. 다시 시도해 주세요.",
+    "saveFailed": "저장 실패. 다시 시도해 주세요.",
+    "improved": "AI 개선",
+    "original": "원본",
+    "close": "닫기"
+  },
+  "assistant": {
+    "title": "브리프 어시스턴트",
+    "subtitle": "어떤 브리프가 필요하신가요?",
+    "placeholder": "예: 중소기업을 대상으로 한 핀테크 스타트업의 랜딩 페이지…",
+    "generate": "초안 생성",
+    "generating": "생성 중…",
+    "draft": "브리프 초안",
+    "generated": "브리프 생성됨 ({score}%)",
+    "failed": "생성 실패",
+    "refine": "피드백으로 개선",
+    "refining": "개선 중…",
+    "refined": "브리프 개선됨",
+    "saveToFill": "BriefFill에 저장",
+    "save": "저장",
+    "saved": "BriefFill에 저장됨 (id {id})",
+    "saveFailed": "저장 실패",
+    "describe": "필요한 브리프 내용을 설명해 주세요 (5자 이상)",
+    "needsClient": "클라이언트와 프로젝트 이름을 추가하세요",
+    "nameClient": "클라이언트 이름",
+    "nameProject": "프로젝트 이름",
+    "cancel": "취소",
+    "export": "내보내기"
+  }
+}

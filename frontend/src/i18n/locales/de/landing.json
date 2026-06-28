@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "KI-GESTÜTZTE ANALYSE-ENGINE",
+    "title": "Starte nie wieder ein Projekt <br/> <i>blind</i>.",
+    "subtitle": "Hör auf, die Erwartungen deiner Kunden zu erraten. BriefFill analysiert deine Projekt-Briefings sofort und zeigt Lücken, Risiken und fehlende Daten — noch bevor du ein Angebot schickst.",
+    "primaryCta": "Analysiere dein erstes Briefing",
+    "secondaryCta": "Beispielbericht ansehen",
+    "stats": {
+      "accuracy": "Genauigkeit der Lückenerkennung",
+      "time": "Durchschnittliche Analysezeit",
+      "speedup": "Schnellerer Projektstart"
+    },
+    "trust": "Vertrauen von 1.000+ Agenturen weltweit"
+  },
+  "howItWorks": {
+    "title": "Vom Chaos zur Klarheit",
+    "subtitle": "Drei Schritte zu einem soliden Projekterüst.",
+    "steps": {
+      "step1": {
+        "label": "SCHRITT 01",
+        "title": "Briefing einfügen",
+        "desc": "Wirf die chaotische E-Mail, das PDF oder den Dokument-Link deines Kunden in unseren sicheren Analyzer. Wir unterstützen jedes Textformat."
+      },
+      "step2": {
+        "label": "SCHRITT 02",
+        "title": "KI sucht Lücken",
+        "desc": "Unsere Engine sucht nach fehlenden Budgets, unklaren Zeitplänen, technischen Einschränkungen und versteckten Risiken."
+      },
+      "step3": {
+        "label": "SCHRITT 03",
+        "title": "Fragen generieren",
+        "desc": "Erhalte eine kuratierte Liste von Klärungsfragen für den Kunden. Professionell, präzise und wirksam."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Funktionsvergleich",
+    "subtitle": "Ein typisches Projekt-Briefing enthält nur 65 % der Informationen, die nötig sind, um wirklich zu starten. Wir finden die restlichen 35 %, bevor sie dich Geld kosten.",
+    "problems": {
+      "scope": "Undefinierter Umfang, der zu Creep führt",
+      "timeline": "Vage Zeitpläne, die Engpässe verursachen"
+    },
+    "solution": "Kristallklare Projektmeilensteine",
+    "before": "VORHER",
+    "after": "NACHHER",
+    "beforeExample": "„Hey Team, wir brauchen eine einfache Website für unseren neuen Produktlaunch nächsten Monat. Budget ca. 50.000 $. Soll sauber und modern sein. Lasst uns Montag sprechen.“",
+    "beforeWarn": "Du hast 0 % Sicht auf technische Anforderungen oder Erfolgsmetriken.",
+    "afterCritical": "Kritische fehlende Daten",
+    "afterCriticalDesc": "Der Kunde hat die Hosting-Umgebung nicht angegeben. Das beeinflusst die Tech-Stack-Entscheidungen.",
+    "afterQuestion": "Generierte Frage",
+    "afterQuestionDesc": "„Könntest du klären, ob die bestehende AWS-Infrastruktur genutzt werden muss oder ob wir eine Headless-Architektur vorschlagen können?“",
+    "afterInsight": "Strategische Erkenntnis",
+    "afterInsightDesc": "Die Budgetangabe von 50.000 $ liegt 20 % unter vergleichbaren Projekten dieses Umfangs."
+  },
+  "pricing": {
+    "title": "Einfache, faire Preise",
+    "subtitle": "Keine versteckten Gebühren. Starte kostenlos und upgrade nach Bedarf. 20 % Rabatt jährlich.",
+    "compareAll": "Alle Funktionen auf der Preisseite vergleichen →"
+  },
+  "footer": {
+    "tagline": "Wir helfen Profis, jedes Projekt mit absoluter Klarheit zu starten. Nie wieder im Dunkeln arbeiten.",
+    "copyright": "© {year} BriefFill Inc. Alle Rechte vorbehalten.",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "product": "Produkt",
+    "resources": "Ressourcen",
+    "features": "Funktionen",
+    "blog": "Blog",
+    "community": "Community",
+    "api": "API",
+    "stayUpdated": "Bleib informiert",
+    "emailPlaceholder": "E-Mail-Adresse"
+  }
+}

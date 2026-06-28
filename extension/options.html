@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BriefFill Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px; color: #1E293B; background: #F8FAFC;
+      padding: 40px 20px; max-width: 480px; margin: 0 auto;
+    }
+    .logo {
+      width: 48px; height: 48px; background: linear-gradient(135deg,#4F46E5,#7C3AED);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 24px; margin: 0 auto 16px;
+    }
+    h1 { text-align: center; font-size: 22px; margin-bottom: 4px; }
+    p.subtitle { text-align: center; color: #64748B; font-size: 13px; margin-bottom: 24px; }
+
+    .card {
+      background: white; border: 1px solid #E2E8F0; border-radius: 12px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .card h2 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+    input, select {
+      width: 100%; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 8px;
+      font-size: 13px; font-family: inherit; color: #1E293B; background: white;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus, select:focus { border-color: #4F46E5; box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
+    input.code { font-family: 'SF Mono', 'Courier New', monospace; font-size: 12px; }
+
+    .btn {
+      padding: 8px 20px; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-primary { background: #4F46E5; color: white; }
+    .btn-primary:hover { background: #4338CA; }
+    .btn-secondary { background: #E2E8F0; color: #475569; }
+    .btn-secondary:hover { background: #CBD5E1; }
+    .btn-success { background: #16A34A; color: white; }
+
+    .actions { display: flex; gap: 8px; margin-top: 12px; }
+    .status { font-size: 12px; margin-top: 8px; padding: 6px 10px; border-radius: 6px; }
+    .status-ok { background: #F0FDF4; color: #16A34A; }
+    .status-err { background: #FEF2F2; color: #DC2626; }
+
+    .steps { font-size: 13px; color: #475569; line-height: 1.6; }
+    .steps ol { padding-left: 20px; }
+    .steps code {
+      background: #F1F5F9; padding: 1px 6px; border-radius: 4px;
+      font-family: 'SF Mono', 'Courier New', monospace; font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">B</div>
+  <h1>BriefFill Settings</h1>
+  <p class="subtitle">Configure your browser extension</p>
+
+  <div class="card">
+    <h2>API Key</h2>
+    <div class="field">
+      <label for="apiKey">Your API Key</label>
+      <input id="apiKey" class="code" type="password" placeholder="bfk_..." />
+    </div>
+    <div class="field">
+      <label for="serverUrl">Server URL</label>
+      <select id="serverUrl">
+        <option value="https://brieffill.com">Production (brieffill.com)</option>
+        <option value="http://localhost:5000">Local (localhost:5000)</option>
+      </select>
+    </div>
+    <div id="testResult" class="status hidden"></div>
+    <div class="actions">
+      <button id="testBtn" class="btn btn-secondary">Test Connection</button>
+      <button id="saveBtn" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>How to get an API key</h2>
+    <div class="steps">
+      <ol>
+        <li>Log in to <strong><a href="https://brieffill.com" target="_blank" style="color:#4F46E5;">brieffill.com</a></strong></li>
+        <li>Go to <strong>Settings → API Keys</strong></li>
+        <li>Click <strong>"Generate"</strong> and give it a name (e.g. "Browser Extension")</li>
+        <li>Copy the key (starts with <code>bfk_</code>) and paste it above</li>
+        <li>Click <strong>"Test Connection"</strong> to verify</li>
+        <li>Click <strong>"Save"</strong></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Usage</h2>
+    <div class="steps">
+      <ul style="padding-left:20px;">
+        <li>Select any text on a webpage → right-click → <strong>"Analyze with BriefFill"</strong></li>
+        <li>Or click the extension icon and paste text manually</li>
+        <li>Use <kbd style="background:#F1F5F9;padding:1px 5px;border-radius:3px;border:1px solid #E2E8F0;">Ctrl+Shift+B</kbd> to open the popup quickly</li>
+        <li>Your 20 most recent analyses are saved in the History tab</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

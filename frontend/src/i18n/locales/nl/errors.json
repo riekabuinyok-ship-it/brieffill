@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "Dit veld is verplicht",
+    "email": "Voer een geldig e-mailadres in",
+    "passwordMin": "Wachtwoord moet minstens 8 tekens zijn",
+    "passwordMatch": "Wachtwoorden komen niet overeen",
+    "minLength": "Moet minstens {min} tekens zijn",
+    "maxLength": "Moet {max} tekens of minder zijn"
+  },
+  "auth": {
+    "loginFailed": "Inloggen mislukt ({status})",
+    "registerFailed": "Registratie mislukt",
+    "loggedOut": "Je bent uitgelogd.",
+    "sessionExpired": "Je sessie is verlopen. Log opnieuw in."
+  },
+  "network": {
+    "offline": "Het lijkt erop dat je offline bent. Controleer je verbinding en probeer het opnieuw.",
+    "serverDown": "Kan de server niet bereiken. Draait de backend op poort 5000?",
+    "timeout": "Het verzoek duurde te lang. Probeer het opnieuw."
+  },
+  "billing": {
+    "stripeNotConfigured": "Stripe is niet geconfigureerd in deze omgeving.",
+    "checkoutFailed": "Kan checkout niet starten. Probeer het opnieuw.",
+    "verifyFailed": "Kan je aankoop niet verifiëren.",
+    "portalFailed": "Kan het facturatieportaal niet openen.",
+    "cancelFailed": "Kan je abonnement niet opzeggen."
+  },
+  "export": {
+    "gdocsUrl": "Kan Google Docs-URL niet genereren",
+    "notionFailed": "Opslaan in Notion mislukt",
+    "clickupFailed": "Versturen naar ClickUp mislukt",
+    "airtableFailed": "Versturen naar Airtable mislukt",
+    "popupBlocked": "Popup geblokkeerd — sta popups toe voor deze site."
+  },
+  "teams": {
+    "loadFailed": "Team laden mislukt",
+    "inviteFailed": "Uitnodigen mislukt",
+    "roleFailed": "Rol bijwerken mislukt",
+    "removeFailed": "Verwijderen mislukt",
+    "notMember": "Je bent geen lid van dit team.",
+    "onlyAdmin": "Alleen beheerders kunnen deze actie uitvoeren."
+  },
+  "brief": {
+    "loadFailed": "Briefing laden mislukt",
+    "notFound": "Briefing niet gevonden",
+    "deleteFailed": "Briefing verwijderen mislukt",
+    "shareFailed": "Briefing delen mislukt",
+    "shareSuccess": "Briefing gedeeld met team"
+  },
+  "integrations": {
+    "loadFailed": "Integraties laden mislukt",
+    "saveFailed": "Integratie opslaan mislukt",
+    "testFailed": "Test mislukt"
+  },
+  "preferences": {
+    "loadFailed": "Voorkeuren laden mislukt",
+    "saveFailed": "Voorkeuren opslaan mislukt"
+  },
+  "generic": {
+    "tryAgain": "Er is iets misgegaan. Probeer het opnieuw.",
+    "forbidden": "Je hebt hier geen toestemming voor."
+  }
+}

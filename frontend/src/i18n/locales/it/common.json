@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "Non iniziare mai più un progetto alla cieca."
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Cruscotto",
+    "newBrief": "Nuovo brief",
+    "teams": "Team",
+    "integrations": "Integrazioni",
+    "billing": "Fatturazione",
+    "settings": "Impostazioni",
+    "referrals": "Refer & Earn",
+    "guide": "Guida utente",
+    "pricing": "Prezzi",
+    "login": "Accedi",
+    "register": "Inizia",
+    "logout": "Esci",
+    "howItWorks": "Come funziona",
+    "analysis": "Analisi"
+  },
+  "actions": {
+    "analyze": "Analizza",
+    "save": "Salva",
+    "saving": "Salvataggio…",
+    "cancel": "Annulla",
+    "dismiss": "Ignora",
+    "close": "Chiudi",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "view": "Visualizza",
+    "back": "Indietro",
+    "next": "Avanti",
+    "submit": "Invia",
+    "retry": "Riprova",
+    "copy": "Copia",
+    "copied": "Copiato!",
+    "share": "Condividi",
+    "export": "Esporta",
+    "compare": "Confronta i piani",
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "learnMore": "Scopri di più",
+    "getStarted": "Inizia",
+    "notNow": "Non ora",
+    "tryAgain": "Riprova",
+    "send": "Invia",
+    "regenerate": "Rigenera",
+    "viewSample": "Vedi report di esempio",
+    "seeAll": "Vedi tutto",
+    "browse": "Esplora",
+    "continue": "Continua",
+    "reset": "Reimposta",
+    "clear": "Pulisci",
+    "apply": "Applica",
+    "remove": "Rimuovi",
+    "update": "Aggiorna",
+    "invite": "Invita",
+    "accept": "Accetta",
+    "decline": "Rifiuta"
+  },
+  "search": {
+    "placeholder": "Cerca…",
+    "noResults": "Nessun risultato",
+    "hint": "Premi Ctrl+K per cercare"
+  },
+  "common": {
+    "loading": "Caricamento…",
+    "error": "Qualcosa è andato storto",
+    "optional": "facoltativo",
+    "required": "obbligatorio",
+    "comingSoon": "In arrivo",
+    "minutes": "{count, plural, one {# minuto} other {# minuti}}",
+    "hours": "{count, plural, one {# ora} other {# ore}}",
+    "days": "{count, plural, one {# giorno} other {# giorni}}",
+    "yes": "Sì",
+    "no": "No",
+    "all": "Tutto",
+    "none": "Nessuno",
+    "more": "Altro",
+    "less": "Meno",
+    "of": "di"
+  },
+  "shortcuts": {
+    "analyze": "Ctrl+Invio per analizzare"
+  },
+  "language": {
+    "label": "Lingua",
+    "switchTo": "Passa a {name}",
+    "current": "Lingua attuale"
+  }
+}

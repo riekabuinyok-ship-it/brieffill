@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BriefFill</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 420px; min-height: 200px; max-height: 600px; overflow-y: auto;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px; color: #1E293B; background: #F8FAFC;
+    }
+    .container { padding: 16px; }
+    .hidden { display: none !important; }
+
+    /* Header */
+    .header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .logo {
+      width: 32px; height: 32px; background: linear-gradient(135deg,#4F46E5,#7C3AED);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 18px;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; flex: 1; }
+    .header a { color: #64748B; text-decoration: none; font-size: 12px; cursor: pointer; }
+    .header a:hover { color: #4F46E5; }
+
+    /* Form */
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+    input, textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 8px;
+      font-size: 13px; font-family: inherit; color: #1E293B; background: white;
+      outline: none; transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus { border-color: #4F46E5; box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
+    textarea { resize: vertical; min-height: 80px; }
+    .row { display: flex; gap: 8px; }
+    .row .field { flex: 1; }
+
+    /* Button */
+    .btn {
+      width: 100%; padding: 10px; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-primary { background: #4F46E5; color: white; }
+    .btn-primary:hover { background: #4338CA; }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; }
+    .btn-secondary { background: #E2E8F0; color: #475569; }
+    .btn-secondary:hover { background: #CBD5E1; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; width: auto; }
+
+    /* Results */
+    .score-section { text-align: center; padding: 16px 0; }
+    .score-circle {
+      width: 72px; height: 72px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center; font-size: 24px; font-weight: 800;
+      border: 4px solid #4F46E5; color: #4F46E5; margin-bottom: 8px;
+    }
+    .score-section h2 { font-size: 16px; margin-bottom: 4px; }
+    .score-section p { font-size: 12px; color: #64748B; }
+
+    .fields-list { margin: 12px 0; }
+    .field-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px solid #F1F5F9; font-size: 12px;
+    }
+    .field-row .status { font-weight: 600; }
+    .status-present { color: #16A34A; }
+    .status-partial { color: #D97706; }
+    .status-missing { color: #DC2626; }
+
+    .questions { margin: 12px 0; }
+    .questions h3 { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .questions ol { padding-left: 18px; font-size: 12px; color: #475569; }
+    .questions li { margin-bottom: 4px; }
+
+    .actions { display: flex; gap: 8px; margin-top: 12px; }
+    .actions .btn { flex: 1; }
+
+    /* History */
+    .history-list { margin-top: 12px; }
+    .history-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px; border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 6px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .history-item:hover { background: #F1F5F9; }
+    .history-item .h-name { font-weight: 600; font-size: 12px; }
+    .history-item .h-meta { font-size: 11px; color: #94A3B8; }
+
+    /* Error */
+    .error { background: #FEF2F2; color: #DC2626; padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; }
+    .link { color: #4F46E5; cursor: pointer; text-decoration: underline; font-size: 12px; }
+
+    .tab-bar { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; }
+    .tab {
+      padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer;
+      border-bottom: 2px solid transparent; color: #94A3B8; transition: all 0.15s;
+    }
+    .tab.active { color: #4F46E5; border-bottom-color: #4F46E5; }
+    .tab:hover { color: #1E293B; }
+
+    .status-dot {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px;
+    }
+    .dot-present { background: #16A34A; }
+    .dot-partial { background: #D97706; }
+    .dot-missing { background: #DC2626; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">B</div>
+      <h1>BriefFill</h1>
+      <a id="settingsBtn">Settings</a>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <div class="tab active" data-tab="analyze">Analyze</div>
+      <div class="tab" data-tab="history">History</div>
+    </div>
+
+    <!-- Analyze Tab -->
+    <div id="analyzeTab">
+      <div id="errorMsg" class="error hidden"></div>
+
+      <!-- Form -->
+      <div id="formSection">
+        <div class="row">
+          <div class="field">
+            <label for="clientName">Client</label>
+            <input id="clientName" placeholder="e.g. Acme Corp" />
+          </div>
+          <div class="field">
+            <label for="projectName">Project</label>
+            <input id="projectName" placeholder="e.g. Q4 Refresh" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="briefText">Brief Text</label>
+          <textarea id="briefText" placeholder="Paste the brief text here..."></textarea>
+        </div>
+        <button id="analyzeBtn" class="btn btn-primary">
+          <span id="btnText">Analyze with AI</span>
+          <span id="btnSpinner" class="hidden" style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;"></span>
+        </button>
+        <div style="text-align:center;margin-top:4px;">
+          <span class="link" id="clearBtn">Clear</span>
+          <span style="color:#CBD5E1;margin:0 6px;">|</span>
+          <span class="link" id="pasteBtn">Paste from clipboard</span>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultSection" class="hidden">
+        <div class="score-section">
+          <div class="score-circle" id="scoreDisplay">0</div>
+          <h2 id="resultTitle">Brief Analysis</h2>
+          <p id="resultSubtitle" style="font-size:12px;color:#64748B;"></p>
+        </div>
+
+        <div id="toneDisplay" style="font-size:11px;color:#94A3B8;text-align:center;margin-bottom:8px;"></div>
+
+        <div class="fields-list" id="fieldsContainer"></div>
+
+        <div class="questions" id="questionsContainer">
+          <h3>Clarifying Questions</h3>
+          <ol id="questionsList"></ol>
+        </div>
+
+        <div class="actions">
+          <button id="copyBtn" class="btn btn-secondary btn-sm">Copy Questions</button>
+          <button id="dashboardBtn" class="btn btn-secondary btn-sm">Open in Dashboard</button>
+        </div>
+        <button id="newBtn" class="btn btn-secondary btn-sm" style="margin-top:4px;">Analyze Another</button>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div id="historyTab" class="hidden">
+      <div id="historyList"></div>
+      <p id="historyEmpty" style="text-align:center;color:#94A3B8;font-size:13px;padding:20px 0;">No analyses yet.</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

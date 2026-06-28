@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "Has alcanzado tu límite mensual",
+    "limitBody": "Has usado {used} de {limit} briefs este mes. {plan} te ofrece briefs ilimitados, el Brief Builder con IA y exportación a PDF. Tu contador se reinicia el día 1 del mes que viene.",
+    "defaultTitle": "Esta función requiere un plan superior",
+    "defaultBody": "La función que acabas de probar no está disponible en tu plan actual. Compara planes para ver qué incluye cada nivel.",
+    "current": "Actual: {plan}",
+    "requires": "Requiere: {plan}",
+    "compare": "Comparar planes",
+    "manage": "Gestionar suscripción",
+    "notNow": "Ahora no",
+    "contactSales": "¿Necesitas un plan personalizado?",
+    "contactSalesCta": "Contactar con ventas →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "Análisis de la competencia",
+      "body": "Compara hasta 3 briefs de competidores en paralelo y descubre una oportunidad de diferenciación clara para tu propio brief. Disponible en el plan Agencia."
+    },
+    "apiAccess": {
+      "title": "Acceso a la API",
+      "body": "Analiza briefs mediante programación con endpoints REST, claves de API personales y webhooks salientes. Disponible en el plan Agencia."
+    },
+    "briefBuilder": {
+      "title": "Brief Builder con IA",
+      "body": "Obtén un brief reescrito por IA que llena lagunas, afina el tono y mejora la claridad. Disponible en Pro y superiores."
+    },
+    "teamFeatures": {
+      "title": "Colaboración en equipo",
+      "body": "Comparte briefs con tu equipo, asigna roles y colaborad en un único espacio. Disponible en Equipo y superiores."
+    },
+    "whiteLabel": {
+      "title": "Exportaciones con marca propia",
+      "body": "Exporta briefs con la marca de tu agencia en lugar de la de BriefFill. Disponible en el plan Agencia."
+    },
+    "prioritySupport": {
+      "title": "Soporte prioritario",
+      "body": "Soporte por correo el mismo día y un canal de Slack dedicado para tu equipo. Disponible en el plan Agencia."
+    },
+    "exports:pdf": {
+      "title": "Exportación a PDF",
+      "body": "Exporta los briefs analizados como PDFs con tu marca. Disponible en Pro y superiores."
+    },
+    "exports:clipboard": {
+      "title": "Exportación al portapapeles",
+      "body": "Copia el brief estructurado al portapapeles con un solo clic. Disponible en Pro y superiores."
+    },
+    "exports:google-docs": {
+      "title": "Exportación a Google Docs",
+      "body": "Envía briefs directamente a un Google Doc en tu Drive. Disponible en Equipo y superiores."
+    },
+    "exports:notion": {
+      "title": "Exportación a Notion",
+      "body": "Guarda briefs en la base de datos de Notion que elijas. Disponible en Equipo y superiores."
+    },
+    "exports:clickup": {
+      "title": "Exportación a ClickUp",
+      "body": "Envía briefs a una lista de ClickUp como nuevas tareas. Disponible en el plan Agencia."
+    },
+    "exports:airtable": {
+      "title": "Exportación a Airtable",
+      "body": "Añade briefs a una base de Airtable como nuevas filas. Disponible en el plan Agencia."
+    }
+  },
+  "plan": {
+    "free": "Gratis",
+    "pro": "Pro",
+    "team": "Equipo",
+    "agency": "Agencia"
+  },
+  "builder": {
+    "title": "Brief Builder con IA",
+    "building": "Creando tu brief mejorado…",
+    "saving": "Guardando brief mejorado…",
+    "saved": "Brief mejorado guardado en tu proyecto.",
+    "failed": "No se pudo generar el brief mejorado. Inténtalo de nuevo.",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
+    "improved": "Mejorado con IA",
+    "original": "Original",
+    "close": "Cerrar"
+  },
+  "assistant": {
+    "title": "Asistente de brief",
+    "subtitle": "¿Para qué necesitas un brief?",
+    "placeholder": "p. ej., una landing page para una startup fintech dirigida a pequeños empresarios…",
+    "generate": "Generar borrador",
+    "generating": "Redactando…",
+    "draft": "Borrador de brief",
+    "generated": "Brief generado ({score}%)",
+    "failed": "La generación falló",
+    "refine": "Refinar con comentarios",
+    "refining": "Refinando…",
+    "refined": "Brief refinado",
+    "saveToFill": "Guardar en BriefFill",
+    "save": "Guardar",
+    "saved": "Guardado en BriefFill (id {id})",
+    "saveFailed": "Error al guardar",
+    "describe": "Describe para qué necesitas el brief (al menos 5 caracteres)",
+    "needsClient": "Añade un nombre de cliente y de proyecto",
+    "nameClient": "Nombre del cliente",
+    "nameProject": "Nombre del proyecto",
+    "cancel": "Cancelar",
+    "export": "Exportar"
+  }
+}

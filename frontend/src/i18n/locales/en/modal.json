@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "You've reached your monthly limit",
+    "limitBody": "You've used {used} of {limit} briefs this month. {plan} gets you unlimited briefs, the AI Brief Builder, and PDF export. Your counter resets on the 1st of next month.",
+    "defaultTitle": "This feature requires an upgrade",
+    "defaultBody": "The feature you just tried isn't available on your current plan. Compare plans to see what's included at each tier.",
+    "current": "Current: {plan}",
+    "requires": "Requires: {plan}",
+    "compare": "Compare plans",
+    "manage": "Manage subscription",
+    "notNow": "Not now",
+    "contactSales": "Need a custom plan?",
+    "contactSalesCta": "Contact sales →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "Competitor analysis",
+      "body": "Compare up to 3 competitor briefs side-by-side and surface a tight differentiation opportunity for your own brief. Available on the Agency plan."
+    },
+    "apiAccess": {
+      "title": "API access",
+      "body": "Analyze briefs programmatically with REST endpoints, personal API keys, and outbound webhooks. Available on the Agency plan."
+    },
+    "briefBuilder": {
+      "title": "AI Brief Builder",
+      "body": "Get an AI-rewritten brief that fills gaps, sharpens tone, and improves clarity. Available on Pro and up."
+    },
+    "teamFeatures": {
+      "title": "Team collaboration",
+      "body": "Share briefs with your team, assign roles, and collaborate in one workspace. Available on Team and up."
+    },
+    "whiteLabel": {
+      "title": "White-label exports",
+      "body": "Export briefs with your agency's branding instead of BriefFill's. Available on the Agency plan."
+    },
+    "prioritySupport": {
+      "title": "Priority support",
+      "body": "Same-day email support and a dedicated Slack channel for your team. Available on the Agency plan."
+    },
+    "exports:pdf": {
+      "title": "PDF export",
+      "body": "Export analyzed briefs as branded PDFs. Available on Pro and up."
+    },
+    "exports:clipboard": {
+      "title": "Clipboard export",
+      "body": "Copy the structured brief to your clipboard with one click. Available on Pro and up."
+    },
+    "exports:google-docs": {
+      "title": "Google Docs export",
+      "body": "Send briefs straight to a Google Doc in your Drive. Available on Team and up."
+    },
+    "exports:notion": {
+      "title": "Notion export",
+      "body": "Save briefs to a Notion database you choose. Available on Team and up."
+    },
+    "exports:clickup": {
+      "title": "ClickUp export",
+      "body": "Send briefs to a ClickUp list as new tasks. Available on the Agency plan."
+    },
+    "exports:airtable": {
+      "title": "Airtable export",
+      "body": "Add briefs to an Airtable base as new rows. Available on the Agency plan."
+    }
+  },
+  "plan": {
+    "free": "Free",
+    "pro": "Pro",
+    "team": "Team",
+    "agency": "Agency"
+  },
+  "builder": {
+    "title": "AI Brief Builder",
+    "building": "Building your improved brief…",
+    "saving": "Saving improved brief…",
+    "saved": "Improved brief saved to your project.",
+    "failed": "Failed to generate improved brief. Please try again.",
+    "saveFailed": "Failed to save. Please try again.",
+    "improved": "AI-Improved",
+    "original": "Original",
+    "close": "Close"
+  },
+  "assistant": {
+    "title": "Brief Assistant",
+    "subtitle": "What do you need a brief for?",
+    "placeholder": "e.g. A landing page for a fintech startup targeting small business owners…",
+    "generate": "Generate draft",
+    "generating": "Drafting…",
+    "draft": "Draft brief",
+    "generated": "Brief generated ({score}%)",
+    "failed": "Generation failed",
+    "refine": "Refine with feedback",
+    "refining": "Refining…",
+    "refined": "Brief refined",
+    "saveToFill": "Save to BriefFill",
+    "save": "Save",
+    "saved": "Saved to BriefFill (id {id})",
+    "saveFailed": "Save failed",
+    "describe": "Describe what you need a brief for (at least 5 characters)",
+    "needsClient": "Add a client name and project name",
+    "nameClient": "Client name",
+    "nameProject": "Project name",
+    "cancel": "Cancel",
+    "export": "Export"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "email": "يرجى إدخال بريد إلكتروني صالح",
+    "passwordMin": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+    "passwordMatch": "كلمات المرور غير متطابقة",
+    "minLength": "يجب أن يكون {min} حرفاً على الأقل",
+    "maxLength": "يجب ألا يتجاوز {max} حرفاً"
+  },
+  "auth": {
+    "loginFailed": "فشل تسجيل الدخول ({status})",
+    "registerFailed": "فشل التسجيل",
+    "loggedOut": "تم تسجيل خروجك.",
+    "sessionExpired": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى."
+  },
+  "network": {
+    "offline": "يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.",
+    "serverDown": "تعذر الوصول إلى الخادم. هل الواجهة الخلفية تعمل على المنفذ 5000؟",
+    "timeout": "استغرق الطلب وقتاً طويلاً. حاول مرة أخرى."
+  },
+  "billing": {
+    "stripeNotConfigured": "لم يتم تهيئة Stripe في هذه البيئة.",
+    "checkoutFailed": "تعذر بدء الدفع. حاول مرة أخرى.",
+    "verifyFailed": "تعذر التحقق من عملية الشراء.",
+    "portalFailed": "تعذر فتح بوابة الفوترة.",
+    "cancelFailed": "تعذر إلغاء اشتراكك."
+  },
+  "export": {
+    "gdocsUrl": "تعذر إنشاء عنوان URL لـ Google Docs",
+    "notionFailed": "فشل الحفظ في Notion",
+    "clickupFailed": "فشل الإرسال إلى ClickUp",
+    "airtableFailed": "فشل الإرسال إلى Airtable",
+    "popupBlocked": "تم حظر النافذة المنبثقة — يرجى السماح بالنوافذ لهذا الموقع."
+  },
+  "teams": {
+    "loadFailed": "فشل تحميل الفريق",
+    "inviteFailed": "فشل إرسال الدعوة",
+    "roleFailed": "فشل تحديث الدور",
+    "removeFailed": "فشل الإزالة",
+    "notMember": "لست عضواً في هذا الفريق.",
+    "onlyAdmin": "يمكن للمشرفين فقط تنفيذ هذا الإجراء."
+  },
+  "brief": {
+    "loadFailed": "فشل تحميل الملخص",
+    "notFound": "الملخص غير موجود",
+    "deleteFailed": "فشل حذف الملخص",
+    "shareFailed": "فشل مشاركة الملخص",
+    "shareSuccess": "تمت مشاركة الملخص مع الفريق"
+  },
+  "integrations": {
+    "loadFailed": "فشل تحميل التكاملات",
+    "saveFailed": "فشل حفظ التكامل",
+    "testFailed": "فشل الاختبار"
+  },
+  "preferences": {
+    "loadFailed": "فشل تحميل التفضيلات",
+    "saveFailed": "فشل حفظ التفضيلات"
+  },
+  "generic": {
+    "tryAgain": "حدث خطأ ما. حاول مرة أخرى.",
+    "forbidden": "ليس لديك إذن للقيام بذلك."
+  }
+}

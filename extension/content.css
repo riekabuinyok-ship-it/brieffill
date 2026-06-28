@@ -1,0 +1,44 @@
+/* BriefFill floating pill — namespaced under .brieffill-pill to avoid host collisions. */
+.brieffill-pill {
+  position: absolute;
+  z-index: 2147483647;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35), 0 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: transform 80ms ease, background 120ms ease;
+}
+.brieffill-pill:hover { background: #1d4ed8; transform: translateY(-1px); }
+.brieffill-pill:active { transform: translateY(0); }
+.brieffill-pill svg { width: 14px; height: 14px; fill: currentColor; }
+.brieffill-pill--error { background: #dc2626; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35); }
+.brieffill-pill--error:hover { background: #b91c1c; }
+
+.brieffill-context {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 2147483647;
+  max-width: 320px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #111c2d;
+  color: #f9fafb;
+  font: 500 12px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+}
+.brieffill-context.is-visible { opacity: 1; transform: translateY(0); }
+.brieffill-context strong { color: #93c5fd; font-weight: 600; }

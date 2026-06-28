@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "BriefFill",
+  "version": "1.0.0",
+  "description": "Analyze client briefs instantly with AI. Never start a project blind again.",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "clipboardWrite",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:5173/*",
+    "http://localhost:5000/*",
+    "https://brieffill.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BriefFill — Analyze this text",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+B",
+        "mac": "Command+Shift+B"
+      },
+      "description": "Open BriefFill popup"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "MOTOR DE ANÁLISE COM IA",
+    "title": "Nunca mais comece um projeto <br/> <i>no escuro</i>.",
+    "subtitle": "Pare de adivinhar as expectativas dos seus clientes. BriefFill analisa seus briefings de projeto instantaneamente, identificando lacunas, riscos e dados ausentes antes mesmo de você enviar uma proposta.",
+    "primaryCta": "Analise seu primeiro briefing",
+    "secondaryCta": "Ver relatório de exemplo",
+    "stats": {
+      "accuracy": "Precisão na detecção de lacunas",
+      "time": "Tempo médio de análise",
+      "speedup": "Início de projeto mais rápido"
+    },
+    "trust": "A escolha de mais de 1.000 agências no mundo"
+  },
+  "howItWorks": {
+    "title": "Do caos à clareza",
+    "subtitle": "Três passos para uma base de projeto sólida.",
+    "steps": {
+      "step1": {
+        "label": "PASSO 01",
+        "title": "Cole seu briefing",
+        "desc": "Coloque o e-mail, PDF ou link de documento bagunçado do seu cliente no nosso analisador seguro. Aceitamos qualquer formato de texto."
+      },
+      "step2": {
+        "label": "PASSO 02",
+        "title": "IA analisa as lacunas",
+        "desc": "Nosso motor procura por orçamentos ausentes, ambiguidades de prazo, restrições técnicas e riscos ocultos."
+      },
+      "step3": {
+        "label": "PASSO 03",
+        "title": "Gere perguntas",
+        "desc": "Receba uma lista selecionada de perguntas de esclarecimento para enviar de volta ao cliente. Profissional, cirúrgico e eficaz."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Comparação de recursos",
+    "subtitle": "Um briefing de projeto típico contém apenas 65% das informações necessárias para começar. Encontramos os 35% restantes antes que eles custem dinheiro.",
+    "problems": {
+      "scope": "Escopo indefinido que leva a estouros",
+      "timeline": "Prazos vagos que causam gargalos"
+    },
+    "solution": "Marcos de projeto cristalinos",
+    "before": "ANTES",
+    "after": "DEPOIS",
+    "beforeExample": "\"Equipe, precisamos de um site simples para o lançamento do nosso novo produto no próximo mês. Orçamento em torno de R$ 250 mil. Tem que ser limpo e moderno. Vamos conversar segunda.\"",
+    "beforeWarn": "Você tem 0% de visibilidade sobre requisitos técnicos ou métricas de sucesso.",
+    "afterCritical": "Dados críticos ausentes",
+    "afterCriticalDesc": "O cliente não especificou o ambiente de hospedagem. Isso impacta as decisões de stack tecnológico.",
+    "afterQuestion": "Pergunta gerada",
+    "afterQuestionDesc": "\"Você pode esclarecer se é necessário usar a infraestrutura AWS existente, ou se podemos propor uma arquitetura headless?\"",
+    "afterInsight": "Insight estratégico",
+    "afterInsightDesc": "O orçamento mencionado de R$ 250 mil é 20% menor do que projetos similares deste escopo."
+  },
+  "pricing": {
+    "title": "Preços simples e justos",
+    "subtitle": "Sem taxas ocultas. Comece grátis e faça upgrade conforme cresce. 20% de desconto no anual.",
+    "compareAll": "Compare todos os recursos na página de Preços →"
+  },
+  "footer": {
+    "tagline": "Ajudamos profissionais a começar cada projeto com clareza total. Nunca mais trabalhe no escuro.",
+    "copyright": "© {year} BriefFill Inc. Todos os direitos reservados.",
+    "privacy": "Política de privacidade",
+    "terms": "Termos de serviço",
+    "product": "Produto",
+    "resources": "Recursos",
+    "features": "Recursos",
+    "blog": "Blog",
+    "community": "Comunidade",
+    "api": "API",
+    "stayUpdated": "Fique atualizado",
+    "emailPlaceholder": "Endereço de e-mail"
+  }
+}

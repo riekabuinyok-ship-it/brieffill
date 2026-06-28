@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BriefFill</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="bf-header">
+    <div class="bf-logo">B</div>
+    <h1>BriefFill</h1>
+    <span class="bf-header-meta" id="signedPill"></span>
+  </header>
+
+  <main class="bf-content">
+    <div id="alerts"></div>
+    <div id="empty"></div>
+    <div id="form" class="bf-section" style="display:none">
+      <h2>Brief</h2>
+      <div class="bf-row">
+        <div>
+          <label for="clientName">Client</label>
+          <input id="clientName" type="text" placeholder="Acme Inc.">
+        </div>
+        <div>
+          <label for="projectName">Project</label>
+          <input id="projectName" type="text" placeholder="Q4 Brand Refresh">
+        </div>
+      </div>
+      <label for="briefText">Text</label>
+      <textarea id="briefText" placeholder="Paste a brief here, or highlight text on the page and click the floating pill."></textarea>
+      <div class="bf-action-row" style="margin-top: 10px;">
+        <button id="analyzeBtn" class="bf-btn bf-btn--block">
+          <span id="analyzeBtnLabel">Analyze</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="result" style="display:none"></div>
+  </main>
+
+  <footer class="bf-footer">
+    <a href="#" id="openBriefFill" target="_blank" rel="noreferrer">Open BriefFill</a>
+    <a href="#" id="openSettings">Settings</a>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "您已达到每月限制",
+    "limitBody": "本月您已使用 {used}/{limit} 份简报。{plan} 提供无限简报、AI Brief Builder 和 PDF 导出。您的计数器将在下个月 1 日重置。",
+    "defaultTitle": "此功能需要升级",
+    "defaultBody": "您刚才尝试的功能在当前套餐中不可用。比较套餐以查看每个等级包含什么。",
+    "current": "当前:{plan}",
+    "requires": "需要:{plan}",
+    "compare": "比较套餐",
+    "manage": "管理订阅",
+    "notNow": "稍后",
+    "contactSales": "需要定制方案?",
+    "contactSalesCta": "联系销售 →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "竞争对手分析",
+      "body": "并排比较最多 3 份竞争对手简报,并为您的简报找出差异化机会。机构版可用。"
+    },
+    "apiAccess": {
+      "title": "API 访问",
+      "body": "使用 REST 端点、个人 API 密钥和出站 Webhook 以编程方式分析简报。机构版可用。"
+    },
+    "briefBuilder": {
+      "title": "AI Brief Builder",
+      "body": "获得 AI 改写的简报,填补缺口,打磨语气,提高清晰度。专业版及以上可用。"
+    },
+    "teamFeatures": {
+      "title": "团队协作",
+      "body": "与团队共享简报,分配角色,在一个工作区中协作。团队版及以上可用。"
+    },
+    "whiteLabel": {
+      "title": "白标导出",
+      "body": "使用您机构的品牌而不是 BriefFill 品牌导出简报。机构版可用。"
+    },
+    "prioritySupport": {
+      "title": "优先支持",
+      "body": "当天邮件支持和为您团队提供的专用 Slack 频道。机构版可用。"
+    },
+    "exports:pdf": {
+      "title": "PDF 导出",
+      "body": "将分析的简报导出为带品牌的 PDF。专业版及以上可用。"
+    },
+    "exports:clipboard": {
+      "title": "剪贴板导出",
+      "body": "一键将结构化简报复制到剪贴板。专业版及以上可用。"
+    },
+    "exports:google-docs": {
+      "title": "Google Docs 导出",
+      "body": "直接将简报发送到您 Drive 中的 Google Doc。团队版及以上可用。"
+    },
+    "exports:notion": {
+      "title": "Notion 导出",
+      "body": "将简报保存到您选择的 Notion 数据库。团队版及以上可用。"
+    },
+    "exports:clickup": {
+      "title": "ClickUp 导出",
+      "body": "将简报作为新任务发送到 ClickUp 列表。机构版可用。"
+    },
+    "exports:airtable": {
+      "title": "Airtable 导出",
+      "body": "将简报作为新行添加到 Airtable 基础。机构版可用。"
+    }
+  },
+  "plan": {
+    "free": "免费",
+    "pro": "专业版",
+    "team": "团队",
+    "agency": "机构版"
+  },
+  "builder": {
+    "title": "AI Brief Builder",
+    "building": "正在创建改进版简报…",
+    "saving": "正在保存改进版简报…",
+    "saved": "改进版简报已保存到您的项目。",
+    "failed": "生成改进版简报失败。请重试。",
+    "saveFailed": "保存失败。请重试。",
+    "improved": "AI 改进",
+    "original": "原始",
+    "close": "关闭"
+  },
+  "assistant": {
+    "title": "简报助手",
+    "subtitle": "您需要什么简报?",
+    "placeholder": "如:针对小微企业主的新创金融科技公司的登录页…",
+    "generate": "生成草稿",
+    "generating": "生成中…",
+    "draft": "简报草稿",
+    "generated": "简报已生成 ({score}%)",
+    "failed": "生成失败",
+    "refine": "用反馈优化",
+    "refining": "优化中…",
+    "refined": "简报已优化",
+    "saveToFill": "保存到 BriefFill",
+    "save": "保存",
+    "saved": "已保存到 BriefFill(id {id})",
+    "saveFailed": "保存失败",
+    "describe": "描述您需要的简报(至少 5 个字符)",
+    "needsClient": "添加客户名称和项目名称",
+    "nameClient": "客户名称",
+    "nameProject": "项目名称",
+    "cancel": "取消",
+    "export": "导出"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "badge": "MOTORE DI ANALISI CON IA",
+    "title": "Non iniziare mai più un progetto <br/> <i>alla cieca</i>.",
+    "subtitle": "Smettila di indovinare le aspettative dei clienti. BriefFill analizza i tuoi brief all'istante, evidenziando lacune, rischi e dati mancanti prima ancora di inviare un preventivo.",
+    "primaryCta": "Analizza il tuo primo brief",
+    "secondaryCta": "Vedi report di esempio",
+    "stats": {
+      "accuracy": "Precisione nel rilevare lacune",
+      "time": "Tempo medio di analisi",
+      "speedup": "Avvio progetto più rapido"
+    },
+    "trust": "Scelto da oltre 1.000 agenzie nel mondo"
+  },
+  "howItWorks": {
+    "title": "Dal caos alla chiarezza",
+    "subtitle": "Tre passaggi per una base di progetto solida.",
+    "steps": {
+      "step1": {
+        "label": "PASSO 01",
+        "title": "Incolla il tuo brief",
+        "desc": "Carica l'email, il PDF o il link al documento del tuo cliente nel nostro analizzatore sicuro. Accettiamo qualsiasi formato di testo."
+      },
+      "step2": {
+        "label": "PASSO 02",
+        "title": "L'IA cerca le lacune",
+        "desc": "Il nostro motore cerca budget mancanti, ambiguità nei tempi, vincoli tecnici e rischi nascosti."
+      },
+      "step3": {
+        "label": "PASSO 03",
+        "title": "Genera le domande",
+        "desc": "Ricevi un elenco curato di domande di chiarimento da rimandare al cliente. Professionali, chirurgiche, efficaci."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Confronto funzionalità",
+    "subtitle": "Un brief di progetto tipico contiene solo il 65% delle informazioni necessarie per iniziare. Noi troviamo il restante 35% prima che ti costi denaro.",
+    "problems": {
+      "scope": "Scope indefinito che porta a sforamenti",
+      "timeline": "Tempistiche vaghe che causano colli di bottiglia"
+    },
+    "solution": "Milestone di progetto cristalline",
+    "before": "PRIMA",
+    "after": "DOPO",
+    "beforeExample": "\"Ehi team, ci serve un sito semplice per il lancio del nostro nuovo prodotto il mese prossimo. Budget intorno ai 50.000 €. Deve essere pulito e moderno. Ne parliamo lunedì.\"",
+    "beforeWarn": "Hai 0% di visibilità sui requisiti tecnici o sulle metriche di successo.",
+    "afterCritical": "Dato critico mancante",
+    "afterCriticalDesc": "Il cliente non ha specificato l'ambiente di hosting. Questo impatta le decisioni sullo stack tecnologico.",
+    "afterQuestion": "Domanda generata",
+    "afterQuestionDesc": "\"Potresti chiarire se è necessario utilizzare l'infrastruttura AWS esistente, o se possiamo proporre un'architettura headless?\"",
+    "afterInsight": "Insight strategico",
+    "afterInsightDesc": "Il budget menzionato di 50.000 € è inferiore del 20% rispetto a progetti simili di questo ambito."
+  },
+  "pricing": {
+    "title": "Prezzi semplici e giusti",
+    "subtitle": "Nessun costo nascosto. Inizia gratis e fai upgrade man mano che cresci. 20% di sconto sull'annuale.",
+    "compareAll": "Confronta tutte le funzionalità nella pagina Prezzi →"
+  },
+  "footer": {
+    "tagline": "Aiutiamo i professionisti a iniziare ogni progetto con chiarezza assoluta. Mai più lavorare al buio.",
+    "copyright": "© {year} BriefFill Inc. Tutti i diritti riservati.",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di servizio",
+    "product": "Prodotto",
+    "resources": "Risorse",
+    "features": "Funzionalità",
+    "blog": "Blog",
+    "community": "Community",
+    "api": "API",
+    "stayUpdated": "Resta aggiornato",
+    "emailPlaceholder": "Indirizzo email"
+  }
+}

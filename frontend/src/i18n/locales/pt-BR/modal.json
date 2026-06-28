@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "Você atingiu seu limite mensal",
+    "limitBody": "Você usou {used} de {limit} briefings este mês. {plan} oferece briefings ilimitados, o Brief Builder com IA e exportação em PDF. Seu contador será zerado no dia 1 do próximo mês.",
+    "defaultTitle": "Este recurso requer um upgrade",
+    "defaultBody": "O recurso que você tentou não está disponível no seu plano atual. Compare os planos para ver o que está incluído em cada nível.",
+    "current": "Atual: {plan}",
+    "requires": "Requer: {plan}",
+    "compare": "Comparar planos",
+    "manage": "Gerenciar assinatura",
+    "notNow": "Agora não",
+    "contactSales": "Precisa de um plano personalizado?",
+    "contactSalesCta": "Falar com vendas →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "Análise de concorrentes",
+      "body": "Compare até 3 briefings de concorrentes lado a lado e descubra uma oportunidade de diferenciação para o seu próprio briefing. Disponível no plano Agência."
+    },
+    "apiAccess": {
+      "title": "Acesso à API",
+      "body": "Analise briefings programaticamente com endpoints REST, chaves de API pessoais e webhooks de saída. Disponível no plano Agência."
+    },
+    "briefBuilder": {
+      "title": "Brief Builder com IA",
+      "body": "Receba um briefing reescrito por IA que preenche lacunas, ajusta o tom e melhora a clareza. Disponível no Pro e acima."
+    },
+    "teamFeatures": {
+      "title": "Colaboração em equipe",
+      "body": "Compartilhe briefings com sua equipe, atribua funções e colabore em um único espaço. Disponível no Equipe e acima."
+    },
+    "whiteLabel": {
+      "title": "Exportações com marca própria",
+      "body": "Exporte briefings com a marca da sua agência em vez da BriefFill. Disponível no plano Agência."
+    },
+    "prioritySupport": {
+      "title": "Suporte prioritário",
+      "body": "Suporte por e-mail no mesmo dia e um canal Slack dedicado para sua equipe. Disponível no plano Agência."
+    },
+    "exports:pdf": {
+      "title": "Exportação em PDF",
+      "body": "Exporte briefings analisados como PDFs com sua marca. Disponível no Pro e acima."
+    },
+    "exports:clipboard": {
+      "title": "Exportação para área de transferência",
+      "body": "Copie o briefing estruturado para a área de transferência com um clique. Disponível no Pro e acima."
+    },
+    "exports:google-docs": {
+      "title": "Exportação para Google Docs",
+      "body": "Envie briefings diretamente para um Google Doc no seu Drive. Disponível no Equipe e acima."
+    },
+    "exports:notion": {
+      "title": "Exportação para Notion",
+      "body": "Salve briefings na base de dados Notion que você escolher. Disponível no Equipe e acima."
+    },
+    "exports:clickup": {
+      "title": "Exportação para ClickUp",
+      "body": "Envie briefings para uma lista do ClickUp como novas tarefas. Disponível no plano Agência."
+    },
+    "exports:airtable": {
+      "title": "Exportação para Airtable",
+      "body": "Adicione briefings a uma base do Airtable como novas linhas. Disponível no plano Agência."
+    }
+  },
+  "plan": {
+    "free": "Grátis",
+    "pro": "Pro",
+    "team": "Equipe",
+    "agency": "Agência"
+  },
+  "builder": {
+    "title": "Brief Builder com IA",
+    "building": "Criando seu briefing melhorado…",
+    "saving": "Salvando briefing melhorado…",
+    "saved": "Briefing melhorado salvo no seu projeto.",
+    "failed": "Falha ao gerar o briefing melhorado. Tente novamente.",
+    "saveFailed": "Falha ao salvar. Tente novamente.",
+    "improved": "Melhorado com IA",
+    "original": "Original",
+    "close": "Fechar"
+  },
+  "assistant": {
+    "title": "Assistente de briefing",
+    "subtitle": "Para que você precisa de um briefing?",
+    "placeholder": "ex.: uma landing page para uma startup fintech voltada para pequenos empresários…",
+    "generate": "Gerar rascunho",
+    "generating": "Criando…",
+    "draft": "Rascunho de briefing",
+    "generated": "Briefing gerado ({score}%)",
+    "failed": "Falha na geração",
+    "refine": "Refinar com feedback",
+    "refining": "Refinando…",
+    "refined": "Briefing refinado",
+    "saveToFill": "Salvar no BriefFill",
+    "save": "Salvar",
+    "saved": "Salvo no BriefFill (id {id})",
+    "saveFailed": "Falha ao salvar",
+    "describe": "Descreva para que você precisa do briefing (pelo menos 5 caracteres)",
+    "needsClient": "Adicione um nome de cliente e de projeto",
+    "nameClient": "Nome do cliente",
+    "nameProject": "Nome do projeto",
+    "cancel": "Cancelar",
+    "export": "Exportar"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "价格",
+    "title": "与您一起成长的价格",
+    "subtitle": "BriefFill 将粗糙的客户简报转化为结构化的、可交付的规格说明。选择适合您团队的套餐 — 随时切换或取消。",
+    "monthly": "月付",
+    "annual": "年付",
+    "annualSave": "(省 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "免费",
+      "description": "在下一个项目上试用 BriefFill。",
+      "perks": [
+        "5 份简报 / 月",
+        "1 名用户",
+        "12 字段分析",
+        "邮件草稿生成"
+      ]
+    },
+    "pro": {
+      "name": "专业版",
+      "description": "为自由职业者和独立创意人设计。",
+      "popular": "最受欢迎",
+      "perks": [
+        "无限简报",
+        "Brief Builder(AI 改写)",
+        "PDF 和剪贴板导出",
+        "12 字段分析",
+        "结果追踪"
+      ]
+    },
+    "team": {
+      "name": "团队",
+      "description": "为小型机构设计。5 名用户。",
+      "perks": [
+        "无限简报",
+        "5 名团队成员",
+        "团队协作",
+        "Notion 和 Google Docs 导出",
+        "所有专业版功能"
+      ]
+    },
+    "agency": {
+      "name": "机构版",
+      "description": "为大型机构设计。15 名用户。",
+      "perks": [
+        "无限简报",
+        "15 名团队成员",
+        "竞争对手分析",
+        "API 访问(REST + Webhook)",
+        "白标导出",
+        "优先支持"
+      ]
+    },
+    "current": "当前套餐",
+    "choose": "选择 {name}",
+    "freeCta": "开始使用"
+  },
+  "comparison": {
+    "title": "功能比较",
+    "row": {
+      "briefs": "简报 / 月",
+      "users": "用户",
+      "fields": "12 字段分析",
+      "email": "邮件草稿生成",
+      "builder": "Brief Builder(AI 改写)",
+      "export": "PDF 和剪贴板导出",
+      "notion": "Google Docs 和 Notion 导出",
+      "clickup": "ClickUp 和 Airtable 导出",
+      "team": "团队协作",
+      "portal": "客户门户",
+      "competitor": "竞争对手分析",
+      "api": "API 访问",
+      "whiteLabel": "白标导出",
+      "priority": "优先支持"
+    },
+    "unlimited": "无限"
+  },
+  "billing": {
+    "month": "/月",
+    "year": "/年",
+    "perMonth": "每月 {amount}(按年付费)",
+    "save": "省 20%",
+    "free": "$0"
+  },
+  "faq": {
+    "title": "常见问题",
+    "q1": "如果超出免费版限制会怎样?",
+    "a1": "BriefFill 将阻止分析并显示升级提示。您可以升级到专业版获得无限简报,或等到下个月 1 日计数器重置。",
+    "q2": "简报计数器何时重置?",
+    "a2": "每月 1 日(UTC)。专业版、团队版和机构版提供无限简报 — 无计数器。",
+    "q3": "可以在月付和年付之间切换吗?",
+    "a3": "可以。Stripe 客户门户允许您取消并以任何计费周期重新订阅。年付方案享受 20% 折扣。",
+    "q4": "接受哪些付款方式?",
+    "a4": "通过 Stripe 接受所有主要信用卡。机构版支持 ACH/电汇(请联系支持)。",
+    "q5": "有免费试用吗?",
+    "a5": "免费版就是试用。每月免费获得 5 份简报。注册无需信用卡。",
+    "q6": "可以随时取消吗?",
+    "a6": "可以。从账单页面取消;您将保留访问权限直到当前周期结束,然后回到免费版。"
+  },
+  "cta": {
+    "title": "免费试用 BriefFill",
+    "subtitle": "每月 5 份简报,无需信用卡。只需在需要更多时升级。",
+    "primary": "开始使用",
+    "dashboard": "前往仪表盘",
+    "guide": "阅读指南"
+  },
+  "toast": {
+    "failedLoad": "无法加载套餐",
+    "failedUpgrade": "升级失败",
+    "welcome": "您现在是 {plan} 套餐。欢迎使用 {planName}。"
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "upgrade": {
+    "limitTitle": "月間上限に達しました",
+    "limitBody": "今月{used}/{limit}件のブリーフを使用しました。{plan}ではブリーフ無制限、AI Brief Builder、PDFエクスポートがご利用いただけます。カウンターは翌月1日にリセットされます。",
+    "defaultTitle": "この機能はアップグレードが必要です",
+    "defaultBody": "お試しいただいた機能は現在のプランではご利用いただけません。プランを比較して各プランの内容をご確認ください。",
+    "current": "現在: {plan}",
+    "requires": "必要プラン: {plan}",
+    "compare": "プランを比較",
+    "manage": "サブスクリプションを管理",
+    "notNow": "後で",
+    "contactSales": "カスタムプランが必要ですか?",
+    "contactSalesCta": "営業に問い合わせ →"
+  },
+  "capability": {
+    "competitorAnalysis": {
+      "title": "競合分析",
+      "body": "最大3件の競合ブリーフを並べて比較し、自社ブリーフの差別化機会を明らかにします。エージェンシープランで利用可能。"
+    },
+    "apiAccess": {
+      "title": "APIアクセス",
+      "body": "RESTエンドポイント、個人用APIキー、送信Webhookでブリーフをプログラム的に分析。エージェンシープランで利用可能。"
+    },
+    "briefBuilder": {
+      "title": "AI Brief Builder",
+      "body": "ギャップを埋め、トーンを整え、明瞭性を高めるAI書き換えブリーフを取得。プロ以上で利用可能。"
+    },
+    "teamFeatures": {
+      "title": "チームコラボレーション",
+      "body": "チームでブリーフを共有し、ロールを割り当て、1つのワークスペースで協力。チーム以上で利用可能。"
+    },
+    "whiteLabel": {
+      "title": "ホワイトラベル出力",
+      "body": "BriefFillではなく自社エージェンシーのブランドでブリーフを出力。エージェンシープランで利用可能。"
+    },
+    "prioritySupport": {
+      "title": "優先サポート",
+      "body": "当日中のメールサポートとチーム専用Slackチャンネル。エージェンシープランで利用可能。"
+    },
+    "exports:pdf": {
+      "title": "PDFエクスポート",
+      "body": "分析済みブリーフをブランド付きPDFでエクスポート。プロ以上で利用可能。"
+    },
+    "exports:clipboard": {
+      "title": "クリップボードエクスポート",
+      "body": "構造化されたブリーフをワンクリックでクリップボードにコピー。プロ以上で利用可能。"
+    },
+    "exports:google-docs": {
+      "title": "Google Docsエクスポート",
+      "body": "ブリーフをGoogle ドライブのGoogle Docに直接送信。チーム以上で利用可能。"
+    },
+    "exports:notion": {
+      "title": "Notionエクスポート",
+      "body": "ブリーフを任意のNotionデータベースに保存。チーム以上で利用可能。"
+    },
+    "exports:clickup": {
+      "title": "ClickUpエクスポート",
+      "body": "ブリーフをClickUpリストに新しいタスクとして送信。エージェンシープランで利用可能。"
+    },
+    "exports:airtable": {
+      "title": "Airtableエクスポート",
+      "body": "ブリーフをAirtableベースに新しい行として追加。エージェンシープランで利用可能。"
+    }
+  },
+  "plan": {
+    "free": "フリー",
+    "pro": "プロ",
+    "team": "チーム",
+    "agency": "エージェンシー"
+  },
+  "builder": {
+    "title": "AI Brief Builder",
+    "building": "改善ブリーフを作成中…",
+    "saving": "改善ブリーフを保存中…",
+    "saved": "改善ブリーフをプロジェクトに保存しました。",
+    "failed": "改善ブリーフの生成に失敗しました。もう一度お試しください。",
+    "saveFailed": "保存に失敗しました。もう一度お試しください。",
+    "improved": "AI改善",
+    "original": "オリジナル",
+    "close": "閉じる"
+  },
+  "assistant": {
+    "title": "ブリーフアシスタント",
+    "subtitle": "何のためのブリーフが必要ですか?",
+    "placeholder": "例: 中小企業をターゲットにしたフィンテックスタートアップのランディングページ…",
+    "generate": "下書きを生成",
+    "generating": "生成中…",
+    "draft": "ブリーフ下書き",
+    "generated": "ブリーフ生成完了 ({score}%)",
+    "failed": "生成に失敗",
+    "refine": "フィードバックで改善",
+    "refining": "改善中…",
+    "refined": "ブリーフを改善しました",
+    "saveToFill": "BriefFillに保存",
+    "save": "保存",
+    "saved": "BriefFillに保存しました(id {id})",
+    "saveFailed": "保存に失敗",
+    "describe": "必要なブリーフの内容を記述してください(5文字以上)",
+    "needsClient": "クライアント名とプロジェクト名を追加してください",
+    "nameClient": "クライアント名",
+    "nameProject": "プロジェクト名",
+    "cancel": "キャンセル",
+    "export": "エクスポート"
+  }
+}

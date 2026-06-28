@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "Este campo é obrigatório",
+    "email": "Por favor, insira um e-mail válido",
+    "passwordMin": "A senha deve ter pelo menos 8 caracteres",
+    "passwordMatch": "As senhas não coincidem",
+    "minLength": "Deve ter pelo menos {min} caracteres",
+    "maxLength": "Deve ter {max} caracteres ou menos"
+  },
+  "auth": {
+    "loginFailed": "Falha no login ({status})",
+    "registerFailed": "Falha no cadastro",
+    "loggedOut": "Você saiu.",
+    "sessionExpired": "Sua sessão expirou. Faça login novamente."
+  },
+  "network": {
+    "offline": "Você parece estar offline. Verifique sua conexão e tente novamente.",
+    "serverDown": "Não foi possível conectar ao servidor. O backend está rodando na porta 5000?",
+    "timeout": "A requisição demorou demais. Tente novamente."
+  },
+  "billing": {
+    "stripeNotConfigured": "Stripe não está configurado neste ambiente.",
+    "checkoutFailed": "Não foi possível iniciar o checkout. Tente novamente.",
+    "verifyFailed": "Não foi possível verificar sua compra.",
+    "portalFailed": "Não foi possível abrir o portal de faturamento.",
+    "cancelFailed": "Não foi possível cancelar sua assinatura."
+  },
+  "export": {
+    "gdocsUrl": "Não foi possível gerar URL do Google Docs",
+    "notionFailed": "Falha ao salvar no Notion",
+    "clickupFailed": "Falha ao enviar para ClickUp",
+    "airtableFailed": "Falha ao enviar para Airtable",
+    "popupBlocked": "Popup bloqueado — permita popups para este site."
+  },
+  "teams": {
+    "loadFailed": "Falha ao carregar equipe",
+    "inviteFailed": "Falha ao convidar",
+    "roleFailed": "Falha ao atualizar função",
+    "removeFailed": "Falha ao remover",
+    "notMember": "Você não é membro desta equipe.",
+    "onlyAdmin": "Apenas administradores podem executar esta ação."
+  },
+  "brief": {
+    "loadFailed": "Falha ao carregar briefing",
+    "notFound": "Briefing não encontrado",
+    "deleteFailed": "Falha ao excluir briefing",
+    "shareFailed": "Falha ao compartilhar briefing",
+    "shareSuccess": "Briefing compartilhado com a equipe"
+  },
+  "integrations": {
+    "loadFailed": "Falha ao carregar integrações",
+    "saveFailed": "Falha ao salvar integração",
+    "testFailed": "Teste falhou"
+  },
+  "preferences": {
+    "loadFailed": "Falha ao carregar preferências",
+    "saveFailed": "Falha ao salvar preferências"
+  },
+  "generic": {
+    "tryAgain": "Algo deu errado. Tente novamente.",
+    "forbidden": "Você não tem permissão para isso."
+  }
+}

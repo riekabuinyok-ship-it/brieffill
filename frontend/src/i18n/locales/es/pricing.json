@@ -1,0 +1,114 @@
+{
+  "header": {
+    "eyebrow": "Precios",
+    "title": "Precios que crecen contigo",
+    "subtitle": "BriefFill convierte briefs complicados en especificaciones estructuradas listas para el cliente. Elige el plan que se adapte a tu equipo: cambia o cancela cuando quieras.",
+    "monthly": "Mensual",
+    "annual": "Anual",
+    "annualSave": "(ahorra 20%)"
+  },
+  "plan": {
+    "free": {
+      "name": "Gratis",
+      "description": "Prueba BriefFill en tu próximo proyecto.",
+      "perks": [
+        "5 briefs / mes",
+        "1 usuario",
+        "Análisis de 12 campos",
+        "Generación de correo de aclaración"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "description": "Para freelancers y creativos independientes.",
+      "popular": "Más popular",
+      "perks": [
+        "Briefs ilimitados",
+        "Brief Builder (reescritura con IA)",
+        "Exportación a PDF y portapapeles",
+        "Análisis de 12 campos",
+        "Seguimiento de resultados"
+      ]
+    },
+    "team": {
+      "name": "Equipo",
+      "description": "Para pequeñas agencias. 5 usuarios.",
+      "perks": [
+        "Briefs ilimitados",
+        "5 miembros en el equipo",
+        "Colaboración en equipo",
+        "Exportación a Notion y Google Docs",
+        "Todas las funciones Pro"
+      ]
+    },
+    "agency": {
+      "name": "Agencia",
+      "description": "Para agencias a gran escala. 15 usuarios.",
+      "perks": [
+        "Briefs ilimitados",
+        "15 miembros en el equipo",
+        "Análisis de la competencia",
+        "Acceso a la API (REST + webhooks)",
+        "Exportaciones con marca propia",
+        "Soporte prioritario"
+      ]
+    },
+    "current": "Plan actual",
+    "choose": "Elegir {name}",
+    "freeCta": "Empezar"
+  },
+  "comparison": {
+    "title": "Comparación de funciones",
+    "row": {
+      "briefs": "Briefs / mes",
+      "users": "Usuarios",
+      "fields": "Análisis de 12 campos",
+      "email": "Generación de correo de aclaración",
+      "builder": "Brief Builder (reescritura con IA)",
+      "export": "Exportación a PDF y portapapeles",
+      "notion": "Exportación a Google Docs y Notion",
+      "clickup": "Exportación a ClickUp y Airtable",
+      "team": "Colaboración en equipo",
+      "portal": "Portal de cliente",
+      "competitor": "Análisis de la competencia",
+      "api": "Acceso a la API",
+      "whiteLabel": "Exportaciones con marca propia",
+      "priority": "Soporte prioritario"
+    },
+    "unlimited": "Ilimitado"
+  },
+  "billing": {
+    "month": "/mes",
+    "year": "/año",
+    "perMonth": "{amount}/mes facturado anualmente",
+    "save": "Ahorra 20%",
+    "free": "0 $"
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "q1": "¿Qué pasa si supero el límite del plan Gratis?",
+    "a1": "BriefFill bloqueará el análisis y mostrará un mensaje para actualizar el plan. Puedes pasarte a Pro para briefs ilimitados, o esperar al día 1 del mes siguiente cuando se reinicie el contador.",
+    "q2": "¿Cuándo se reinicia el contador de briefs?",
+    "a2": "El día 1 de cada mes (UTC). Los planes Pro, Equipo y Agencia tienen briefs ilimitados: sin contador.",
+    "q3": "¿Puedo cambiar entre mensual y anual?",
+    "a3": "Sí. El Portal de Cliente de Stripe te permite cancelar y volver a suscribirte con cualquier ciclo de facturación. Los planes anuales tienen un 20% de descuento.",
+    "q4": "¿Qué métodos de pago aceptan?",
+    "a4": "Todas las principales tarjetas de crédito a través de Stripe. Transferencia bancaria/ACH para el plan Agencia (contactar con soporte).",
+    "q5": "¿Hay prueba gratuita?",
+    "a5": "El plan Gratis es la prueba. Tienes 5 briefs al mes sin coste. No se requiere tarjeta de crédito para registrarse.",
+    "q6": "¿Puedo cancelar en cualquier momento?",
+    "a6": "Sí. Cancela desde la página de Facturación; mantienes el acceso hasta el final del periodo en curso y luego pasas al plan Gratis."
+  },
+  "cta": {
+    "title": "Prueba BriefFill gratis",
+    "subtitle": "5 briefs al mes, sin tarjeta de crédito. Mejora tu plan solo cuando lo necesites.",
+    "primary": "Empezar",
+    "dashboard": "Ir al panel",
+    "guide": "Leer la guía"
+  },
+  "toast": {
+    "failedLoad": "No se pudieron cargar los planes",
+    "failedUpgrade": "No se pudo actualizar el plan",
+    "welcome": "Ahora estás en {plan}. Bienvenido a {planName}."
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "BriefFill",
+    "tagline": "Begin nooit meer blind aan een project."
+  },
+  "nav": {
+    "home": "Start",
+    "dashboard": "Dashboard",
+    "newBrief": "Nieuwe briefing",
+    "teams": "Teams",
+    "integrations": "Integraties",
+    "billing": "Facturering",
+    "settings": "Instellingen",
+    "referrals": "Refer & Earn",
+    "guide": "Handleiding",
+    "pricing": "Tarieven",
+    "login": "Inloggen",
+    "register": "Aan de slag",
+    "logout": "Uitloggen",
+    "howItWorks": "Hoe het werkt",
+    "analysis": "Analyse"
+  },
+  "actions": {
+    "analyze": "Analyseren",
+    "save": "Opslaan",
+    "saving": "Opslaan…",
+    "cancel": "Annuleren",
+    "dismiss": "Sluiten",
+    "close": "Sluiten",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "view": "Bekijken",
+    "back": "Terug",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "retry": "Opnieuw",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd!",
+    "share": "Delen",
+    "export": "Exporteren",
+    "compare": "Vergelijk abonnementen",
+    "signIn": "Inloggen",
+    "signUp": "Registreren",
+    "learnMore": "Meer weten",
+    "getStarted": "Aan de slag",
+    "notNow": "Niet nu",
+    "tryAgain": "Opnieuw proberen",
+    "send": "Verzenden",
+    "regenerate": "Opnieuw genereren",
+    "viewSample": "Bekijk voorbeeldrapport",
+    "seeAll": "Alles zien",
+    "browse": "Bladeren",
+    "continue": "Doorgaan",
+    "reset": "Resetten",
+    "clear": "Wissen",
+    "apply": "Toepassen",
+    "remove": "Verwijderen",
+    "update": "Bijwerken",
+    "invite": "Uitnodigen",
+    "accept": "Accepteren",
+    "decline": "Weigeren"
+  },
+  "search": {
+    "placeholder": "Zoeken…",
+    "noResults": "Geen resultaten",
+    "hint": "Druk op Ctrl+K om te zoeken"
+  },
+  "common": {
+    "loading": "Laden…",
+    "error": "Er is iets misgegaan",
+    "optional": "optioneel",
+    "required": "verplicht",
+    "comingSoon": "Binnenkort beschikbaar",
+    "minutes": "{count, plural, one {# minuut} other {# minuten}}",
+    "hours": "{count, plural, one {# uur} other {# uur}}",
+    "days": "{count, plural, one {# dag} other {# dagen}}",
+    "yes": "Ja",
+    "no": "Nee",
+    "all": "Alle",
+    "none": "Geen",
+    "more": "Meer",
+    "less": "Minder",
+    "of": "van"
+  },
+  "shortcuts": {
+    "analyze": "Ctrl+Enter om te analyseren"
+  },
+  "language": {
+    "label": "Taal",
+    "switchTo": "Schakel naar {name}",
+    "current": "Huidige taal"
+  }
+}

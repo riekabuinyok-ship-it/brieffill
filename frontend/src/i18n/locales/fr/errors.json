@@ -1,0 +1,63 @@
+{
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "email": "Veuillez saisir un e-mail valide",
+    "passwordMin": "Le mot de passe doit comporter au moins 8 caractères",
+    "passwordMatch": "Les mots de passe ne correspondent pas",
+    "minLength": "Doit comporter au moins {min} caractères",
+    "maxLength": "Doit comporter {max} caractères ou moins"
+  },
+  "auth": {
+    "loginFailed": "Échec de la connexion ({status})",
+    "registerFailed": "Échec de l'inscription",
+    "loggedOut": "Vous avez été déconnecté.",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
+  },
+  "network": {
+    "offline": "Vous semblez hors ligne. Vérifiez votre connexion et réessayez.",
+    "serverDown": "Impossible de joindre le serveur. Le backend tourne-t-il sur le port 5000 ?",
+    "timeout": "La requête a pris trop de temps. Veuillez réessayer."
+  },
+  "billing": {
+    "stripeNotConfigured": "Stripe n'est pas configuré dans cet environnement.",
+    "checkoutFailed": "Impossible de démarrer le paiement. Veuillez réessayer.",
+    "verifyFailed": "Impossible de vérifier votre achat.",
+    "portalFailed": "Impossible d'ouvrir le portail de facturation.",
+    "cancelFailed": "Impossible d'annuler votre abonnement."
+  },
+  "export": {
+    "gdocsUrl": "Impossible de générer l'URL Google Docs",
+    "notionFailed": "Impossible d'enregistrer dans Notion",
+    "clickupFailed": "Impossible d'envoyer vers ClickUp",
+    "airtableFailed": "Impossible d'envoyer vers Airtable",
+    "popupBlocked": "Fenêtre pop-up bloquée — autorisez les pop-ups pour ce site."
+  },
+  "teams": {
+    "loadFailed": "Échec du chargement de l'équipe",
+    "inviteFailed": "Échec de l'invitation",
+    "roleFailed": "Échec de la mise à jour du rôle",
+    "removeFailed": "Échec de la suppression",
+    "notMember": "Vous n'êtes pas membre de cette équipe.",
+    "onlyAdmin": "Seuls les administrateurs peuvent effectuer cette action."
+  },
+  "brief": {
+    "loadFailed": "Échec du chargement du brief",
+    "notFound": "Brief introuvable",
+    "deleteFailed": "Échec de la suppression du brief",
+    "shareFailed": "Échec du partage du brief",
+    "shareSuccess": "Brief partagé avec l'équipe"
+  },
+  "integrations": {
+    "loadFailed": "Échec du chargement des intégrations",
+    "saveFailed": "Échec de l'enregistrement de l'intégration",
+    "testFailed": "Le test a échoué"
+  },
+  "preferences": {
+    "loadFailed": "Échec du chargement des préférences",
+    "saveFailed": "Échec de l'enregistrement des préférences"
+  },
+  "generic": {
+    "tryAgain": "Une erreur est survenue. Veuillez réessayer.",
+    "forbidden": "Vous n'avez pas la permission de faire cela."
+  }
+}
