@@ -64,9 +64,9 @@ Best regards,
       case 'present':
         return <Icon name="check_circle" className="text-green-500 !text-xl" />;
       case 'partial':
-        return <Icon name="warning" className="text-yellow-500 !text-xl" />;
+        return <Icon name="pending" className="text-yellow-500 !text-xl" />;
       case 'missing':
-        return <Icon name="cancel" className="text-red-500 !text-xl" />;
+        return <Icon name="block" className="text-red-500 !text-xl" />;
       default:
         return null;
     }
@@ -91,7 +91,7 @@ Best regards,
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <Icon name="auto_awesome" className="text-white !text-3xl" />
+              <Icon name="summarize" className="text-white !text-3xl" />
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">

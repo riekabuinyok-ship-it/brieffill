@@ -41,6 +41,7 @@ import Careers from "./pages/Careers";
 import CareersApplication from "./pages/CareersApplication";
 import PressKit from "./pages/PressKit";
 import SampleReport from "./pages/SampleReport";
+import Features from "./pages/Features";
 
 function AppRoutes() {
   const { loading } = useAuth();
@@ -75,6 +76,7 @@ function AppRoutes() {
       <Route path="/careers/:id" element={<MainLayout><CareersApplication /></MainLayout>} />
       <Route path="/press" element={<MainLayout><PressKit /></MainLayout>} />
       <Route path="/sample-report" element={<MainLayout><SampleReport /></MainLayout>} />
+      <Route path="/features" element={<MainLayout><Features /></MainLayout>} />
 
       {/* Protected routes with sidebar (Dashboard only) */}
       <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />

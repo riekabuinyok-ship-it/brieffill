@@ -5,7 +5,7 @@ import Icon from "./Icon";
 import { LogoIcon } from "./Logo";
 
 const productLinks = [
-  { name: "Features", href: "/docs" },
+  { name: "Features", href: "/features" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Pricing", href: "/pricing" },
   { name: "Templates", href: "/templates" },
