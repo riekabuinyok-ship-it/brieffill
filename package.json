@@ -1,0 +1,10 @@
+{
+  "name": "brieffill",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "main": "api/index.js",
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "start": "node backend/server.js"
+  }
+}
