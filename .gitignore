@@ -11,3 +11,5 @@ database/*.db
 backups/
 .vscode/
 .idea/
+
+.vercel
