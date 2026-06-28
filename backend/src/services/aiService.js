@@ -1,6 +1,5 @@
-// backend/src/services/aiService.js
-import Groq from 'groq-sdk';
-import dotenv from 'dotenv';
+const Groq = require('groq-sdk');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -41,7 +40,7 @@ function normalizeResponse(raw) {
   };
 }
 
-export async function analyzeBrief(briefText) {
+async function analyzeBrief(briefText) {
   const systemPrompt = `You are BriefFill, an AI assistant that analyzes client creative briefs.
 
 Your task is to read the client's brief and evaluate it against these 12 fields:
@@ -131,3 +130,5 @@ Return ONLY the JSON object with your analysis.`;
     };
   }
 }
+
+module.exports = { analyzeBrief };
