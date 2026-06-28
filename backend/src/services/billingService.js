@@ -166,6 +166,7 @@ async function getUserBilling(userId) {
     .select('plan, subscription_status, stripe_customer_id, stripe_subscription_id, brief_count_this_month, brief_count_month, current_period_end, cancel_at_period_end, trial_end_date')
     .eq('id', userId)
     .maybeSingle();
+  if (error) throw error;
   if (!data) return null;
 
   const plan = data.plan || "free";

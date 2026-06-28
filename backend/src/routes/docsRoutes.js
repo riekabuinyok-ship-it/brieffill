@@ -10,8 +10,8 @@ const ACCESS_PLANS = {
 };
 
 // GET /api/docs/plan-access — check what the user's plan can access
-router.get("/plan-access", auth, (req, res) => {
-  const billing = getUserBilling(req.user.id);
+router.get("/plan-access", auth, async (req, res) => {
+  const billing = await getUserBilling(req.user.id);
   const plan = billing?.plan || "free";
   res.json({
     plan,
@@ -21,8 +21,8 @@ router.get("/plan-access", auth, (req, res) => {
 });
 
 // GET /api/docs/api-keys — list user's API keys
-router.get("/api-keys", auth, (req, res) => {
-  const billing = getUserBilling(req.user.id);
+router.get("/api-keys", auth, async (req, res) => {
+  const billing = await getUserBilling(req.user.id);
   if (!ACCESS_PLANS.api.includes(billing?.plan)) {
     return res.status(403).json({ error: "API access requires Team or Agency plan" });
   }
@@ -30,8 +30,8 @@ router.get("/api-keys", auth, (req, res) => {
 });
 
 // POST /api/docs/api-keys — generate new API key
-router.post("/api-keys", auth, (req, res) => {
-  const billing = getUserBilling(req.user.id);
+router.post("/api-keys", auth, async (req, res) => {
+  const billing = await getUserBilling(req.user.id);
   if (!ACCESS_PLANS.api.includes(billing?.plan)) {
     return res.status(403).json({ error: "API access requires Team or Agency plan" });
   }
@@ -42,8 +42,8 @@ router.post("/api-keys", auth, (req, res) => {
 });
 
 // DELETE /api/docs/api-keys/:id — revoke API key
-router.delete("/api-keys/:id", auth, (req, res) => {
-  const billing = getUserBilling(req.user.id);
+router.delete("/api-keys/:id", auth, async (req, res) => {
+  const billing = await getUserBilling(req.user.id);
   if (!ACCESS_PLANS.api.includes(billing?.plan)) {
     return res.status(403).json({ error: "API access requires Team or Agency plan" });
   }

@@ -18,9 +18,9 @@ function apiKeyAuth(req, res, next) {
   next();
 }
 
-function requireApiAccess(req, res, next) {
+async function requireApiAccess(req, res, next) {
   const { getUserBilling } = require("../services/billingService");
-  const billing = getUserBilling(req.user.id);
+  const billing = await getUserBilling(req.user.id);
   if (!billing || !planRequires(billing.plan, "apiAccess")) {
     return res.status(403).json({
       error: "API access is not available on your current plan.",

@@ -1,11 +1,11 @@
 const { getUserBilling, planRequires } = require("../services/billingService");
 
 function requireCapability(capability, options = {}) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Not authenticated" });
     }
-    const billing = getUserBilling(req.user.id);
+    const billing = await getUserBilling(req.user.id);
     if (!billing) {
       return res.status(401).json({ error: "User not found" });
     }
@@ -22,11 +22,11 @@ function requireCapability(capability, options = {}) {
 }
 
 function requireExport(exportName, options = {}) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ error: "Not authenticated" });
     }
-    const billing = getUserBilling(req.user.id);
+    const billing = await getUserBilling(req.user.id);
     if (!billing) {
       return res.status(401).json({ error: "User not found" });
     }
