@@ -47,7 +47,7 @@ exports.analyzeBrief = async (req, res) => {
         project_name: projectName,
         original_text: briefText,
         analyzed_text: analysis,
-        completeness_score: analysis.completenessScore,
+        completeness_score: Math.round(analysis.completenessScore),
         missing_fields: analysis.fields.filter((f) => f.status !== "present"),
         status: "analyzed",
         industry: industry || null,

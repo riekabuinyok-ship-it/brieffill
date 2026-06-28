@@ -75,17 +75,18 @@ if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
 app.use(notFound);
 app.use(errorHandler);
 
-if (!process.env.VERCEL) {
-  init()
-    .then(() => {
+init()
+  .then(() => {
+    logInfo('Database initialized');
+    if (!process.env.VERCEL) {
       app.listen(PORT, () => {
         logInfo(`BriefFill API running on http://localhost:${PORT}`);
       });
-    })
-    .catch((err) => {
-      logError(err, { context: "database initialization" });
-      process.exit(1);
-    });
-}
+    }
+  })
+  .catch((err) => {
+    logError(err, { context: "database initialization" });
+    if (!process.env.VERCEL) process.exit(1);
+  });
 
 module.exports = app;

@@ -39,6 +39,7 @@ export default function Billing() {
 
   useEffect(() => {
     refresh();
+    refreshUser?.();
   }, []);
 
   useEffect(() => {

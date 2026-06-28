@@ -206,6 +206,9 @@ async function getUserBilling(userId) {
 
 async function enforceBriefLimit(userId) {
   const billing = await getUserBilling(userId);
+  if (!billing) {
+    return { allowed: true, used: 0, limit: -1, plan: 'free' };
+  }
   if (billing.briefLimit === -1) {
     return { allowed: true, used: billing.briefsUsed, limit: -1, plan: billing.plan };
   }
@@ -227,6 +230,7 @@ async function enforceBriefLimit(userId) {
 
 async function recordBriefCreated(userId) {
   const billing = await getUserBilling(userId);
+  if (!billing) return { allowed: true, used: 0, limit: -1, plan: 'free' };
   if (billing.briefLimit === -1) return billing;
   const db = getDb();
   const thisMonth = currentMonthKey();

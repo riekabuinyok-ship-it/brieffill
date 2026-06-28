@@ -42,6 +42,15 @@ import CareersApplication from "./pages/CareersApplication";
 import PressKit from "./pages/PressKit";
 import SampleReport from "./pages/SampleReport";
 import Features from "./pages/Features";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminRoute from "./pages/admin/AdminRoute";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminBriefs from "./pages/admin/AdminBriefs";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 function AppRoutes() {
   const { loading } = useAuth();
@@ -80,6 +89,15 @@ function AppRoutes() {
 
       {/* Protected routes with sidebar (Dashboard only) */}
       <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
+
+      {/* Admin routes (standalone, outside main auth) */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminRoute><AdminLayout><AdminDashboard /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/briefs" element={<AdminRoute><AdminLayout><AdminBriefs /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/subscriptions" element={<AdminRoute><AdminLayout><AdminSubscriptions /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/analytics" element={<AdminRoute><AdminLayout><AdminAnalytics /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/settings" element={<AdminRoute><AdminLayout><AdminSettings /></AdminLayout></AdminRoute>} />
 
       {/* Protected routes with sidebar (all authenticated pages) */}
       <Route path="/new" element={<ProtectedRoute><DashboardLayout><NewBrief /></DashboardLayout></ProtectedRoute>} />

@@ -7,7 +7,7 @@ const { findUserByApiKey } = require("../services/apiKeyService");
  * Accepts the API key in the Authorization header as a Bearer token:
  *   Authorization: Bearer bfk_xxxxxxxxxxxx
  */
-function apiKeyAuth(req, res, next) {
+async function apiKeyAuth(req, res, next) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -23,7 +23,7 @@ function apiKeyAuth(req, res, next) {
   }
 
   try {
-    const userId = findUserByApiKey(token);
+    const userId = await findUserByApiKey(token);
     if (!userId) {
       return res.status(401).json({ error: "Invalid API key" });
     }

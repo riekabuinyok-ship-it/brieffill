@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import api from "../utils/api";
 
 const AuthContext = createContext(null);
@@ -6,14 +6,16 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const fetchIdRef = useRef(0);
 
   useEffect(() => {
     const token = localStorage.getItem("brieffill_token");
     if (token) {
+      const id = ++fetchIdRef.current;
       api.get("/auth/me")
-        .then((res) => setUser(res.data.user))
-        .catch(() => logout())
-        .finally(() => setLoading(false));
+        .then((res) => { if (fetchIdRef.current === id) setUser(res.data.user); })
+        .catch(() => { if (fetchIdRef.current === id) logout(); })
+        .finally(() => { if (fetchIdRef.current === id) setLoading(false); });
     } else {
       setLoading(false);
     }
@@ -42,9 +44,10 @@ export function AuthProvider({ children }) {
   const refreshUser = async () => {
     const token = localStorage.getItem("brieffill_token");
     if (!token) return;
+    const id = ++fetchIdRef.current;
     try {
       const res = await api.get("/auth/me");
-      setUser(res.data.user);
+      if (fetchIdRef.current === id) setUser(res.data.user);
     } catch {
       // ignored — keep current user
     }

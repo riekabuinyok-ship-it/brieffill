@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       // Test API key by making an authenticated request
-      const authRes = await fetch(`${url}/api/briefs/fields`, {
+      const authRes = await fetch(`${url}/api/briefs`, {
         headers: { Authorization: `Bearer ${key}` },
       });
       if (authRes.ok) {

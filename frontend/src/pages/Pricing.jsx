@@ -97,7 +97,7 @@ function planHighlight(planId) {
 
 export default function Pricing() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [plans, setPlans] = useState([]);
   const [cycle, setCycle] = useState("monthly");
   const [busy, setBusy] = useState(null);
@@ -125,6 +125,7 @@ export default function Pricing() {
         if (err.response?.status !== 503) throw err;
       }
       await api.post("/billing/bypass", { plan: planId, billingCycle: cycle });
+      await refreshUser();
       setToast({ message: "You're now on " + planId + ".", type: "success" });
       setTimeout(() => navigate("/dashboard/billing"), 800);
     } catch (err) {

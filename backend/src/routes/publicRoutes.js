@@ -5,12 +5,12 @@ const { planRequires } = require("../services/billingService");
 const { analyzeBrief: runAnalysis } = require("../services/aiService");
 const { sanitizeAiResponse } = require("../utils/validation");
 
-function apiKeyAuth(req, res, next) {
+async function apiKeyAuth(req, res, next) {
   const header = req.headers["x-brieffill-api-key"] || req.headers.authorization?.replace(/^Bearer\s+/i, "");
   if (!header) {
     return res.status(401).json({ error: "Missing API key. Set X-BriefFill-Api-Key header." });
   }
-  const userId = findUserByApiKey(header.trim());
+  const userId = await findUserByApiKey(header.trim());
   if (!userId) {
     return res.status(401).json({ error: "Invalid or revoked API key" });
   }
