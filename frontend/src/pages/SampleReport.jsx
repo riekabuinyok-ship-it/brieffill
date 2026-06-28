@@ -2,224 +2,240 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
 
+const fields = [
+  { name: 'Project Overview', status: 'present' },
+  { name: 'Target Audience', status: 'present' },
+  { name: 'Core Problem', status: 'partial' },
+  { name: 'Solution/Offer', status: 'partial' },
+  { name: 'Key Benefits', status: 'partial' },
+  { name: 'Tone of Voice', status: 'present' },
+  { name: 'Timeline', status: 'present' },
+  { name: 'Call to Action', status: 'missing' },
+];
+
+const questions = [
+  { number: '01', text: 'Could you specify the core problem from the customer\'s perspective? Is it operational cost, speed, or reliability that current solutions lack?', color: 'primary' },
+  { number: '02', text: 'Regarding the \'Solution\'—could you provide more technical specifics on the AI-driven learning algorithms to strengthen the differentiator slide?', color: 'primary' },
+  { number: '03', text: 'What are the top 3 key benefits for the end-user? We have the market size, but specific user outcomes would improve the pitch narrative.', color: 'primary' },
+  { number: '04', text: 'What is the desired \'Call to Action\' for the investors at the end of the presentation? (e.g., Book a demo, request deep-dive data room access, etc.)', color: 'secondary' },
+];
+
 export default function SampleReport() {
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(emailContent);
     setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const sampleBrief = `Creating a pitch deck for "Quantum Robotics" — Series A funding round ($5M). Target audience: venture capital firms and angel investors. Need 15-18 slides covering: problem, solution, market size ($50B), traction (300 customers, 200% YoY growth), team (ex-MIT, ex-Google), competitive landscape, financial projections ($10M ARR in Year 3), and use of funds. Brand guidelines attached. Tone: confident, data-driven, innovative. Competitors: Boston Dynamics, inVia Robotics. Differentiator: AI-driven learning algorithms, 40% cheaper. Deadline: 3 weeks. Budget: $7,000. Need both presentation and PDF formats.`;
+  const fieldIcon = (status) => {
+    switch (status) {
+      case 'present': return <Icon name="check_circle" className="!text-xl text-green-600" />;
+      case 'partial': return <Icon name="pending" className="!text-xl text-amber-500" />;
+      case 'missing': return <Icon name="block" className="!text-xl text-error" />;
+      default: return null;
+    }
+  };
 
-  const fields = [
-    { name: 'Project Overview', status: 'present' },
-    { name: 'Target Audience', status: 'present' },
-    { name: 'Core Problem', status: 'partial' },
-    { name: 'Solution/Offer', status: 'partial' },
-    { name: 'Key Benefits', status: 'partial' },
-    { name: 'Tone of Voice', status: 'present' },
-    { name: 'Brand Guidelines', status: 'present' },
-    { name: 'Deliverables', status: 'present' },
-    { name: 'Timeline', status: 'present' },
-    { name: 'Budget', status: 'present' },
-    { name: 'Competitors', status: 'present' },
-    { name: 'Call to Action', status: 'missing' }
-  ];
+  const fieldLabel = (status) => {
+    switch (status) {
+      case 'present': return <span className="font-label-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">Present</span>;
+      case 'partial': return <span className="font-label-sm text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Partial</span>;
+      case 'missing': return <span className="font-label-sm text-error bg-error-container/20 px-2 py-0.5 rounded">Missing</span>;
+      default: return null;
+    }
+  };
 
-  const questions = [
-    'What specific pain points or challenges do your robotics solutions address for your customers, and how do these align with the needs of the venture capital firms and angel investors you\'re targeting?',
-    'Can you elaborate on how your AI-driven learning algorithms work and what specific benefits they provide to customers?',
-    'How do your solutions\' 40% cost savings and AI-driven learning algorithms translate into key benefits for your target audience, such as increased efficiency or productivity?',
-    'What specific action or investment do you want the venture capital firms and angel investors to take after reviewing your pitch deck?'
-  ];
+  const emailContent = `Hi Thomas,
 
-  const emailContent = `Subject: A Few Clarifying Questions Regarding Quantum Robotics Pitch Deck
+I've reviewed the brief for the Quantum Robotics Series A Pitch Deck. The traction and team info is excellent. To ensure we deliver the highest quality slides, I just need a quick expansion on 4 points:
 
-Hi Thomas,
+1. What specific customer pain point are we solving better than Boston Dynamics?
+2. Can you provide a bit more detail on the AI learning algorithms?
+3. What are the top 3 outcome-based benefits for the users?
+4. What is the single most important action you want investors to take after viewing the deck?
 
-Thank you for sending over the brief for the Quantum Robotics Pitch Deck. I'm excited to get started!
-
-After reviewing the brief, I have a few clarifying questions to ensure I fully understand your vision:
-
-1. What specific pain points or challenges do your robotics solutions address for your customers, and how do these align with the needs of the venture capital firms and angel investors you're targeting?
-
-2. Can you elaborate on how your AI-driven learning algorithms work and what specific benefits they provide to customers?
-
-3. How do your solutions' 40% cost savings and AI-driven learning algorithms translate into key benefits for your target audience, such as increased efficiency or productivity?
-
-4. What specific action or investment do you want the venture capital firms and angel investors to take after reviewing your pitch deck?
-
-Once I have these details, I'll be able to provide you with a more accurate timeline and scope for the project.
-
-Looking forward to working with you!
+Let me know whenever you have a moment.
 
 Best regards,
-[Your Name]
-[Your Title/Company]`;
-
-  const StatusIcon = ({ status }) => {
-    switch (status) {
-      case 'present':
-        return <Icon name="check_circle" className="text-green-500 !text-xl" />;
-      case 'partial':
-        return <Icon name="pending" className="text-yellow-500 !text-xl" />;
-      case 'missing':
-        return <Icon name="block" className="text-red-500 !text-xl" />;
-      default:
-        return null;
-    }
-  };
-
-  const StatusText = ({ status }) => {
-    switch (status) {
-      case 'present':
-        return <span className="text-green-600">Present</span>;
-      case 'partial':
-        return <span className="text-yellow-600">Partial</span>;
-      case 'missing':
-        return <span className="text-red-600">Missing</span>;
-      default:
-        return null;
-    }
-  };
+[Your Name]`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-gradient-to-br from-indigo-600 to-purple-700 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <Icon name="summarize" className="text-white !text-3xl" />
-            </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            📊 Sample Brief Analysis
+    <div className="min-h-screen bg-background">
+      <main className="max-w-container-max mx-auto px-4 md:px-gutter py-stack-lg">
+        <section className="mb-stack-lg text-center md:text-left">
+          <h1 className="font-display text-display text-primary mb-2">
+            Sample Brief Analysis
           </h1>
-          <p className="text-xl text-indigo-100 max-w-2xl mx-auto mb-8">
+          <p className="font-body-lg text-body-lg text-on-surface-variant">
             See exactly what BriefFill does — no sign-up required.
           </p>
-          <Link 
-            to="/register"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:shadow-lg transition"
-          >
-            Try It Yourself
-            <Icon name="arrow_forward" className="!text-lg" />
-          </Link>
-        </div>
-      </div>
+        </section>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <div>
-              <p className="text-sm text-gray-500">📋 Client</p>
-              <p className="font-semibold text-gray-900">Thomas Mueller</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="glass-card p-6 rounded-xl shadow-sm flex items-center justify-between"
+              style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)' }}>
+              <div>
+                <p className="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase">Client</p>
+                <p className="font-headline-md text-headline-md text-on-surface">Thomas Mueller</p>
+              </div>
+              <div className="text-right">
+                <p className="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase">Project</p>
+                <p className="font-body-md text-body-md font-semibold text-primary">Quantum Robotics — Pitch Deck</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">📝 Project</p>
-              <p className="font-semibold text-gray-900">Quantum Robotics — Pitch Deck</p>
+
+            <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant">
+              <div className="flex items-center gap-2 mb-4 text-primary">
+                <Icon name="description" className="!text-2xl" />
+                <h2 className="font-headline-md text-headline-md text-on-surface">Original Brief</h2>
+              </div>
+              <div className="font-body-md text-body-md leading-relaxed text-on-surface-variant bg-surface-container-low p-6 rounded-lg" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                Creating a pitch deck for "Quantum Robotics" — Series A funding round ($5M). Target audience: venture capital firms and angel investors. Need 15-18 slides covering: problem, solution, market size ($50B), traction (300 customers, 200% YoY growth), team (ex-MIT, ex-Google), competitive landscape, financial projections ($10M ARR in Year 3), and use of funds. Brand guidelines attached. Tone: confident, data-driven, innovative. Competitors: Boston Dynamics, inVia Robotics. Differentiator: AI-driven learning algorithms, 40% cheaper. Deadline: 3 weeks. Budget: $7,000. Need both presentation and PDF formats.
+              </div>
+            </div>
+
+            <div className="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-outline-variant">
+              <div className="flex items-center gap-2 mb-6 text-primary">
+                <Icon name="quiz" className="!text-2xl" />
+                <h2 className="font-headline-md text-headline-md text-on-surface">AI Clarification Questions</h2>
+              </div>
+              <div className="space-y-4">
+                {questions.map((q) => (
+                  <div
+                    key={q.number}
+                    className="flex gap-4 p-4 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors"
+                    style={{ borderLeft: `4px solid ${q.color === 'primary' ? 'var(--color-primary, #004ac6)' : 'var(--color-secondary, #712ae2)'}` }}
+                  >
+                    <span className={`font-label-sm text-lg shrink-0 ${q.color === 'primary' ? 'text-primary' : 'text-secondary'}`}>
+                      {q.number}
+                    </span>
+                    <p className="font-body-md text-on-surface-variant">{q.text}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-            <p className="text-sm font-medium text-gray-700 mb-2">Original Brief</p>
-            <p className="text-sm text-gray-600 leading-relaxed">{sampleBrief}</p>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-gray-500">AI READY</span>
-              <Icon name="check_circle" className="text-green-600 !text-2xl" />
-              <span className="text-2xl font-bold text-gray-900">91.7%</span>
-              <span className="px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                Complete
-              </span>
-            </div>
-            <span className="px-4 py-1.5 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-              🟢 Excellent
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">📊 Field-by-Field Breakdown</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {fields.map((field, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <StatusIcon status={field.status} />
-                  <span className="text-sm font-medium text-gray-700">{field.name}</span>
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-primary text-on-primary p-8 rounded-xl shadow-lg relative overflow-hidden">
+              <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+              <div className="relative z-10 text-center">
+                <p className="font-label-sm uppercase tracking-widest opacity-80 mb-4">Brief Readiness Score</p>
+                <div className="flex flex-col items-center justify-center py-4">
+                  <div className="relative w-40 h-40 flex items-center justify-center">
+                    <svg className="w-full h-full" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
+                      <circle className="opacity-20" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeWidth="8" />
+                      <circle className="text-white drop-shadow-md" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" strokeDasharray="440" strokeDashoffset="36" strokeLinecap="round" strokeWidth="12" />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="font-display text-4xl font-extrabold" style={{ fontSize: '2.25rem', lineHeight: 1 }}>91.7%</span>
+                      <span className="font-label-sm uppercase text-xs mt-1">AI READY</span>
+                    </div>
+                  </div>
                 </div>
-                <StatusText status={field.status} />
+                <div className="mt-4 bg-white/20 px-4 py-1 rounded-full inline-block">
+                  <span className="font-body-md font-semibold">Status: Excellent</span>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">❓ AI Clarification Questions</h2>
-          <div className="space-y-3">
-            {questions.map((question, index) => (
-              <div key={index} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm font-medium text-indigo-600 flex-shrink-0">Q{index + 1}:</span>
-                <p className="text-sm text-gray-600">{question}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">📧 Generated Clarification Email</h2>
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-            <div className="whitespace-pre-wrap text-sm text-gray-600 font-mono leading-relaxed">
-              {emailContent}
+            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+              <h3 className="font-headline-md text-headline-md mb-4 text-on-surface">Field Breakdown</h3>
+              <ul className="space-y-1">
+                {fields.map((f) => (
+                  <li key={f.name} className="flex items-center justify-between p-3 hover:bg-surface-container-low rounded transition-colors group">
+                    <div className="flex items-center gap-3">
+                      {fieldIcon(f.status)}
+                      <span className={`font-body-md ${f.status === 'missing' ? 'text-error' : 'text-on-surface-variant'}`}>
+                        {f.name}
+                      </span>
+                    </div>
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      {fieldLabel(f.status)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <button 
-              onClick={handleCopyEmail}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition"
-            >
-              {copied ? '✅ Copied!' : <><Icon name="content_copy" className="!text-base" /> Copy Email</>}
-            </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
-              <Icon name="download" className="!text-base" />
-              Download PDF
-            </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
-              <Icon name="mail" className="!text-base" />
-              Send in Gmail
-            </button>
-          </div>
         </div>
 
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">🚀 Ready to get started?</h2>
-          <p className="text-indigo-100 mb-6">Analyze your first brief for free — no credit card required.</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              to="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-xl hover:shadow-lg transition"
-            >
-              Start Free Trial
-              <Icon name="arrow_forward" className="!text-lg" />
-            </Link>
+        <section className="mt-stack-lg">
+          <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+            <div className="bg-surface-container-high px-6 py-4 flex items-center justify-between border-b border-outline-variant">
+              <div className="flex items-center gap-2">
+                <Icon name="drafts" className="!text-xl text-on-surface-variant" />
+                <h3 className="font-headline-md text-headline-md text-on-surface">Clarification Draft</h3>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-400" />
+                <div className="w-3 h-3 rounded-full bg-amber-400" />
+                <div className="w-3 h-3 rounded-full bg-green-400" />
+              </div>
+            </div>
+            <div className="p-8">
+              <div className="mb-6 space-y-2 pb-4 border-b border-outline-variant">
+                <p className="font-body-md text-on-surface-variant">
+                  <span className="font-semibold">Subject:</span> Clarification for Quantum Robotics Pitch Deck Project
+                </p>
+                <p className="font-body-md text-on-surface-variant">
+                  <span className="font-semibold">To:</span> Thomas Mueller
+                </p>
+              </div>
+              <div className="font-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">
+                {emailContent}
+              </div>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={handleCopyEmail}
+                  className="bg-primary text-on-primary px-6 py-2.5 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity font-semibold"
+                >
+                  <Icon name={copied ? 'check' : 'content_copy'} className="!text-lg" />
+                  {copied ? 'Copied!' : 'Copy Email'}
+                </button>
+                <button className="border border-primary text-primary px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-primary/5 transition-colors font-semibold">
+                  <Icon name="picture_as_pdf" className="!text-lg" />
+                  Download PDF
+                </button>
+                <button className="border border-primary text-primary px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-primary/5 transition-colors font-semibold">
+                  <Icon name="send" className="!text-lg" />
+                  Send in Gmail
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-indigo-200 text-sm">
-            <span className="flex items-center gap-1">
-              <Icon name="verified" className="!text-base" />
-              14-Day Money-Back Guarantee
+        </section>
+
+        <section className="mt-20 mb-12 text-center max-w-2xl mx-auto">
+          <h2 className="font-headline-lg text-headline-lg text-on-surface mb-4">Analyze your first brief for free</h2>
+          <p className="font-body-lg text-body-lg text-on-surface-variant mb-8">
+            Stop chasing clients for basic info. Let BriefFill find the gaps so you can start working immediately.
+          </p>
+          <Link
+            to="/register"
+            className="inline-block bg-primary-container text-on-primary-container text-xl px-12 py-4 rounded-full font-bold shadow-lg hover:scale-105 transition-transform active:scale-95 mb-8"
+          >
+            Start Free Trial
+          </Link>
+          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
+            <span className="flex items-center gap-2">
+              <Icon name="verified_user" className="!text-lg text-green-600" />
+              <span className="font-label-sm text-label-sm">14-Day Money-Back Guarantee</span>
             </span>
-            <span className="w-px h-4 bg-indigo-400/30" />
-            <span>No credit card required</span>
-            <span className="w-px h-4 bg-indigo-400/30" />
-            <span>Cancel anytime</span>
+            <span className="flex items-center gap-2">
+              <Icon name="lock" className="!text-lg text-green-600" />
+              <span className="font-label-sm text-label-sm">Secure Data Encryption</span>
+            </span>
+            <span className="flex items-center gap-2">
+              <Icon name="bolt" className="!text-lg text-green-600" />
+              <span className="font-label-sm text-label-sm">Instant AI Processing</span>
+            </span>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }
