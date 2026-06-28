@@ -76,7 +76,7 @@ export default function Landing() {
                 <Button as="a" to="/register" size="lg" iconRight="arrow_forward">
                   Start Analyzing Your First Brief
                 </Button>
-                <Button as="a" variant="outline" size="lg" to="#comparison">View Sample Report</Button>
+                <Button as="a" variant="outline" size="lg" to="/sample-report">View Sample Report</Button>
               </div>
             </div>
             <div className="relative">
