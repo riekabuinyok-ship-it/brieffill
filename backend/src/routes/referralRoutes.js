@@ -5,9 +5,9 @@ const { getReferralStats, resolveReferrerByCode, REFERRER_CREDIT_CENTS, FRIEND_R
 const { runReferralCron } = require("../services/referralCronService");
 
 // GET /api/referrals/stats — current user's referral state
-router.get("/stats", auth, (req, res) => {
+router.get("/stats", auth, async (req, res) => {
   try {
-    const stats = getReferralStats(req.user.id);
+    const stats = await getReferralStats(req.user.id);
     res.json({
       ...stats,
       referrerCreditCents: REFERRER_CREDIT_CENTS,
@@ -21,10 +21,10 @@ router.get("/stats", auth, (req, res) => {
 
 // GET /api/referrals/validate?code=ABC12345 — public, no auth
 // Lets the registration page show a "Referred by {name}" hint before submit.
-router.get("/validate", (req, res) => {
+router.get("/validate", async (req, res) => {
   const code = (req.query.code || "").toString();
   if (!code) return res.json({ valid: false });
-  const referrer = resolveReferrerByCode(code);
+  const referrer = await resolveReferrerByCode(code);
   if (!referrer) return res.json({ valid: false });
   res.json({ valid: true, referrerName: referrer.name });
 });
@@ -32,7 +32,7 @@ router.get("/validate", (req, res) => {
 // POST /api/referrals/cron/run — protected by CRON_SECRET header.
 // External scheduler (Vercel cron, GitHub Actions, Railway cron) hits this
 // daily to send onboarding + reactivation emails.
-router.post("/cron/run", (req, res) => {
+router.post("/cron/run", async (req, res) => {
   const expected = process.env.CRON_SECRET;
   const provided = req.headers["x-cron-secret"];
   if (!expected) {
@@ -42,7 +42,7 @@ router.post("/cron/run", (req, res) => {
     return res.status(401).json({ error: "Invalid cron secret" });
   }
   try {
-    const result = runReferralCron();
+    const result = await runReferralCron();
     res.json({ ok: true, ...result });
   } catch (err) {
     console.error("referral cron error:", err);

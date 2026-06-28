@@ -51,7 +51,7 @@ exports.register = async (req, res) => {
 
     const referralCode = (req.body?.ref || req.body?.referralCode || "").toString();
     const ipAddress = (req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "").toString().split(",")[0].trim();
-    const referralResult = attributeReferralOnSignup({
+    const referralResult = await attributeReferralOnSignup({
       referredUserId: id,
       referredEmail: email,
       referralCode,
