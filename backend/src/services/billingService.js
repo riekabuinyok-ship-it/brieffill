@@ -1,9 +1,4 @@
-// BriefFill — Billing service.
-// Single source of truth for plans, pricing, and feature flags.
-// Also handles brief-count metering, Stripe Checkout / portal / webhooks,
-// and the dev-only `bypass` flow for environments without Stripe creds.
-
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { qualifyReferralOnPlanChange } = require("./referralService");
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY || "";
@@ -15,16 +10,12 @@ let stripe = null;
 function getStripe() {
   if (!STRIPE_KEY) return null;
   if (!stripe) {
-    // Lazy-load so dev mode without STRIPE_SECRET_KEY doesn't blow up
     const Stripe = require("stripe");
     stripe = new Stripe(STRIPE_KEY, { apiVersion: "2024-06-20" });
   }
   return stripe;
 }
 
-// ============================================================
-// Plan catalog — single source of truth
-// ============================================================
 const PLANS = {
   free: {
     id: "free",
@@ -55,8 +46,8 @@ const PLANS = {
     id: "pro",
     name: "Pro",
     description: "For freelancers and solo creatives who need unlimited briefs.",
-    monthlyPrice: 1900,    // cents
-    annualPrice: 18200,    // cents ($182/yr)
+    monthlyPrice: 1900,
+    annualPrice: 18200,
     stripePriceId: {
       monthly: process.env.STRIPE_PRICE_PRO_MONTHLY || "",
       annual: process.env.STRIPE_PRICE_PRO_ANNUAL || "",
@@ -164,41 +155,33 @@ function planRequires(planId, capability) {
   return Boolean(v);
 }
 
-// ============================================================
-// User billing state
-// ============================================================
 function currentMonthKey() {
   const d = new Date();
   return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0");
 }
 
-function getUserBilling(userId) {
+async function getUserBilling(userId) {
   const db = getDb();
-  const row = db.exec(
-    `SELECT plan, subscription_status, stripe_customer_id, stripe_subscription_id,
-            brief_count_this_month, brief_count_month, current_period_end, cancel_at_period_end,
-            trial_end_date
-     FROM users WHERE id = ?`,
-    [userId]
-  )[0]?.values?.[0];
-  if (!row) return null;
+  const { data, error } = await db.from('users')
+    .select('plan, subscription_status, stripe_customer_id, stripe_subscription_id, brief_count_this_month, brief_count_month, current_period_end, cancel_at_period_end, trial_end_date')
+    .eq('id', userId)
+    .maybeSingle();
+  if (!data) return null;
 
-  const plan = row[0] || "free";
-  const status = row[1] || "active";
-  const stripeCustomerId = row[2];
-  const stripeSubscriptionId = row[3];
-  let briefsUsed = row[4] || 0;
-  const briefMonth = row[5];
-  const currentPeriodEnd = row[6];
-  const cancelAtPeriodEnd = row[7] === 1;
-  const trialEndDate = row[8];
+  const plan = data.plan || "free";
+  const status = data.subscription_status || "active";
+  const stripeCustomerId = data.stripe_customer_id;
+  const stripeSubscriptionId = data.stripe_subscription_id;
+  let briefsUsed = data.brief_count_this_month || 0;
+  const briefMonth = data.brief_count_month;
+  const currentPeriodEnd = data.current_period_end;
+  const cancelAtPeriodEnd = data.cancel_at_period_end === true;
+  const trialEndDate = data.trial_end_date;
 
-  // Reset counter if month changed
   const thisMonth = currentMonthKey();
   if (briefMonth !== thisMonth) {
     briefsUsed = 0;
-    db.run("UPDATE users SET brief_count_this_month = 0, brief_count_month = ? WHERE id = ?", [thisMonth, userId]);
-    save();
+    await db.from('users').update({ brief_count_this_month: 0, brief_count_month: thisMonth }).eq('id', userId);
   }
 
   const planDef = getPlan(plan);
@@ -220,12 +203,8 @@ function getUserBilling(userId) {
   };
 }
 
-// ============================================================
-// Brief-count enforcement
-// ============================================================
-function enforceBriefLimit(userId) {
-  const billing = getUserBilling(userId);
-  // Unlimited plans: -1
+async function enforceBriefLimit(userId) {
+  const billing = await getUserBilling(userId);
   if (billing.briefLimit === -1) {
     return { allowed: true, used: billing.briefsUsed, limit: -1, plan: billing.plan };
   }
@@ -245,24 +224,17 @@ function enforceBriefLimit(userId) {
   return { allowed: true, used: billing.briefsUsed, limit: billing.briefLimit, plan: billing.plan };
 }
 
-function recordBriefCreated(userId) {
-  const billing = getUserBilling(userId);
-  if (billing.briefLimit === -1) return billing; // No-op for unlimited plans
+async function recordBriefCreated(userId) {
+  const billing = await getUserBilling(userId);
+  if (billing.briefLimit === -1) return billing;
   const db = getDb();
   const thisMonth = currentMonthKey();
   const newCount = billing.briefsUsed + 1;
-  db.run(
-    "UPDATE users SET brief_count_this_month = ?, brief_count_month = ? WHERE id = ?",
-    [newCount, thisMonth, userId]
-  );
-  save();
+  await db.from('users').update({ brief_count_this_month: newCount, brief_count_month: thisMonth }).eq('id', userId);
   return { ...billing, briefsUsed: newCount };
 }
 
-// ============================================================
-// Plan changes (used by both Stripe webhook and dev bypass)
-// ============================================================
-function applyPlanChange(userId, { plan, status, stripeCustomerId, stripeSubscriptionId, currentPeriodEnd, cancelAtPeriodEnd }) {
+async function applyPlanChange(userId, { plan, status, stripeCustomerId, stripeSubscriptionId, currentPeriodEnd, cancelAtPeriodEnd }) {
   const db = getDb();
   const next = {
     plan: plan || "free",
@@ -270,20 +242,15 @@ function applyPlanChange(userId, { plan, status, stripeCustomerId, stripeSubscri
     stripe_customer_id: stripeCustomerId || null,
     stripe_subscription_id: stripeSubscriptionId || null,
     current_period_end: currentPeriodEnd || null,
-    cancel_at_period_end: cancelAtPeriodEnd ? 1 : 0,
+    cancel_at_period_end: cancelAtPeriodEnd === true,
     brief_count_this_month: 0,
     brief_count_month: currentMonthKey(),
   };
-  const sets = Object.keys(next).map((k) => `${k} = ?`).join(", ");
-  const vals = Object.values(next);
-  db.run(`UPDATE users SET ${sets} WHERE id = ?`, [...vals, userId]);
-  save();
+  await db.from('users').update(next).eq('id', userId);
 
-  // Referral qualification: if the user is becoming paid, this is the
-  // qualifying event. Idempotent — safe to call on every plan change.
   if (plan && plan !== "free") {
     try {
-      qualifyReferralOnPlanChange({ referredUserId: userId, newPlan: plan });
+      await qualifyReferralOnPlanChange({ referredUserId: userId, newPlan: plan });
     } catch (err) {
       console.error("qualifyReferralOnPlanChange error:", err.message);
     }
@@ -292,75 +259,66 @@ function applyPlanChange(userId, { plan, status, stripeCustomerId, stripeSubscri
   return getUserBilling(userId);
 }
 
-// ============================================================
-// Invoices
-// ============================================================
-function recordInvoice(userId, { stripeInvoiceId, amount, currency, status, invoicePdf, periodStart, periodEnd }) {
+async function recordInvoice(userId, { stripeInvoiceId, amount, currency, status, invoicePdf, periodStart, periodEnd }) {
   if (!stripeInvoiceId) return null;
   const db = getDb();
-  // Upsert by stripe_invoice_id
-  const existing = db.exec("SELECT id FROM invoices WHERE stripe_invoice_id = ?", [stripeInvoiceId])[0]?.values?.[0];
+  const { data: existing } = await db.from('invoices')
+    .select('id')
+    .eq('stripe_invoice_id', stripeInvoiceId)
+    .maybeSingle();
   if (existing) {
-    db.run(
-      `UPDATE invoices SET amount = ?, currency = ?, status = ?, invoice_pdf = ?, period_start = ?, period_end = ? WHERE id = ?`,
-      [amount, currency || "usd", status, invoicePdf, periodStart, periodEnd, existing[0]]
-    );
+    await db.from('invoices').update({
+      amount, currency: currency || "usd", status, invoice_pdf: invoicePdf, period_start: periodStart, period_end: periodEnd,
+    }).eq('id', existing.id);
   } else {
-    db.run(
-      `INSERT INTO invoices (user_id, stripe_invoice_id, amount, currency, status, invoice_pdf, period_start, period_end)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, stripeInvoiceId, amount, currency || "usd", status, invoicePdf, periodStart, periodEnd]
-    );
+    await db.from('invoices').insert({
+      user_id: userId, stripe_invoice_id: stripeInvoiceId, amount, currency: currency || "usd", status, invoice_pdf: invoicePdf, period_start: periodStart, period_end: periodEnd,
+    });
   }
-  save();
   return getInvoiceByStripeId(stripeInvoiceId);
 }
 
-function getInvoiceByStripeId(stripeInvoiceId) {
+async function getInvoiceByStripeId(stripeInvoiceId) {
   const db = getDb();
-  const row = db.exec(
-    `SELECT id, user_id, stripe_invoice_id, amount, currency, status, invoice_pdf, period_start, period_end, created_at
-     FROM invoices WHERE stripe_invoice_id = ?`,
-    [stripeInvoiceId]
-  )[0]?.values?.[0];
-  if (!row) return null;
+  const { data } = await db.from('invoices')
+    .select('id, user_id, stripe_invoice_id, amount, currency, status, invoice_pdf, period_start, period_end, created_at')
+    .eq('stripe_invoice_id', stripeInvoiceId)
+    .maybeSingle();
+  if (!data) return null;
   return {
-    id: row[0],
-    userId: row[1],
-    stripeInvoiceId: row[2],
-    amount: row[3],
-    currency: row[4],
-    status: row[5],
-    invoicePdf: row[6],
-    periodStart: row[7],
-    periodEnd: row[8],
-    createdAt: row[9],
+    id: data.id,
+    userId: data.user_id,
+    stripeInvoiceId: data.stripe_invoice_id,
+    amount: data.amount,
+    currency: data.currency,
+    status: data.status,
+    invoicePdf: data.invoice_pdf,
+    periodStart: data.period_start,
+    periodEnd: data.period_end,
+    createdAt: data.created_at,
   };
 }
 
-function listInvoices(userId, limit = 20) {
+async function listInvoices(userId, limit = 20) {
   const db = getDb();
-  const rows = db.exec(
-    `SELECT id, stripe_invoice_id, amount, currency, status, invoice_pdf, period_start, period_end, created_at
-     FROM invoices WHERE user_id = ? ORDER BY created_at DESC LIMIT ?`,
-    [userId, limit]
-  )[0]?.values || [];
-  return rows.map((r) => ({
-    id: r[0],
-    stripeInvoiceId: r[1],
-    amount: r[2],
-    currency: r[3],
-    status: r[4],
-    invoicePdf: r[5],
-    periodStart: r[6],
-    periodEnd: r[7],
-    createdAt: r[8],
+  const { data } = await db.from('invoices')
+    .select('id, stripe_invoice_id, amount, currency, status, invoice_pdf, period_start, period_end, created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  return (data || []).map((r) => ({
+    id: r.id,
+    stripeInvoiceId: r.stripe_invoice_id,
+    amount: r.amount,
+    currency: r.currency,
+    status: r.status,
+    invoicePdf: r.invoice_pdf,
+    periodStart: r.period_start,
+    periodEnd: r.period_end,
+    createdAt: r.created_at,
   }));
 }
 
-// ============================================================
-// Stripe Checkout + Portal
-// ============================================================
 async function createCheckoutSession({ userId, email, planId, billingCycle }) {
   const plan = getPlan(planId);
   if (plan.id === "free") {
@@ -380,16 +338,13 @@ async function createCheckoutSession({ userId, email, planId, billingCycle }) {
     err.status = 503;
     throw err;
   }
-  // Reuse existing customer if any
-  const billing = getUserBilling(userId);
+  const billing = await getUserBilling(userId);
   let customerId = billing.stripeCustomerId;
   if (!customerId) {
     const customer = await s.customers.create({ email, name: email.split("@")[0] });
     customerId = customer.id;
-    db_run(
-      "UPDATE users SET stripe_customer_id = ? WHERE id = ?",
-      [customerId, userId]
-    );
+    const db = getDb();
+    await db.from('users').update({ stripe_customer_id: customerId }).eq('id', userId);
   }
   const session = await s.checkout.sessions.create({
     mode: "subscription",
@@ -400,12 +355,6 @@ async function createCheckoutSession({ userId, email, planId, billingCycle }) {
     metadata: { userId: String(userId), planId, billingCycle },
   });
   return { checkoutUrl: session.url, sessionId: session.id };
-}
-
-function db_run(sql, params) {
-  const db = getDb();
-  db.run(sql, params);
-  save();
 }
 
 async function verifyCheckoutSession(userId, sessionId) {
@@ -444,7 +393,7 @@ function mapStripePriceToPlan(priceId, cycle) {
 async function createPortalSession(userId) {
   const s = getStripe();
   if (!s) throw httpErr(503, "Stripe is not configured");
-  const billing = getUserBilling(userId);
+  const billing = await getUserBilling(userId);
   if (!billing.stripeCustomerId) throw httpErr(400, "No Stripe customer for this user");
   const session = await s.billingPortal.sessions.create({
     customer: billing.stripeCustomerId,
@@ -453,9 +402,6 @@ async function createPortalSession(userId) {
   return { portalUrl: session.url };
 }
 
-// ============================================================
-// Stripe webhook
-// ============================================================
 function verifyWebhookSignature(rawBody, signatureHeader) {
   if (!STRIPE_WEBHOOK_SECRET) return null;
   const s = getStripe();
@@ -476,7 +422,7 @@ async function handleWebhookEvent(event) {
       const subId = typeof session.subscription === "string" ? session.subscription : session.subscription.id;
       const sub = await getStripe().subscriptions.retrieve(subId);
       const cycle = session.metadata?.billingCycle || "monthly";
-      applyPlanChange(userId, {
+      await applyPlanChange(userId, {
         plan: session.metadata?.planId || mapStripePriceToPlan(sub.items.data[0]?.price?.id, cycle),
         status: sub.status,
         stripeCustomerId: typeof sub.customer === "string" ? sub.customer : sub.customer?.id,
@@ -490,13 +436,13 @@ async function handleWebhookEvent(event) {
   if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
     const sub = event.data.object;
     const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer?.id;
-    const userId = findUserIdByStripeCustomer(customerId);
+    const userId = await findUserIdByStripeCustomer(customerId);
     if (!userId) return { ignored: true, reason: "no user for customer" };
     const planId = mapStripePriceToPlan(sub.items.data[0]?.price?.id, "monthly");
     if (event.type === "customer.subscription.deleted" || sub.status === "canceled" || sub.status === "incomplete_expired") {
-      applyPlanChange(userId, { plan: "free", status: "cancelled" });
+      await applyPlanChange(userId, { plan: "free", status: "cancelled" });
     } else {
-      applyPlanChange(userId, {
+      await applyPlanChange(userId, {
         plan: planId,
         status: sub.status,
         stripeCustomerId: customerId,
@@ -510,9 +456,9 @@ async function handleWebhookEvent(event) {
   if (event.type === "invoice.paid" || event.type === "invoice.payment_failed") {
     const inv = event.data.object;
     const customerId = typeof inv.customer === "string" ? inv.customer : inv.customer?.id;
-    const userId = findUserIdByStripeCustomer(customerId);
+    const userId = await findUserIdByStripeCustomer(customerId);
     if (!userId) return { ignored: true, reason: "no user for customer" };
-    recordInvoice(userId, {
+    await recordInvoice(userId, {
       stripeInvoiceId: inv.id,
       amount: inv.amount_paid || inv.amount_due || 0,
       currency: inv.currency || "usd",
@@ -526,11 +472,14 @@ async function handleWebhookEvent(event) {
   return { ignored: true, type: event.type };
 }
 
-function findUserIdByStripeCustomer(stripeCustomerId) {
+async function findUserIdByStripeCustomer(stripeCustomerId) {
   if (!stripeCustomerId) return null;
   const db = getDb();
-  const row = db.exec("SELECT id FROM users WHERE stripe_customer_id = ?", [stripeCustomerId])[0]?.values?.[0];
-  return row ? row[0] : null;
+  const { data } = await db.from('users')
+    .select('id')
+    .eq('stripe_customer_id', stripeCustomerId)
+    .maybeSingle();
+  return data ? data.id : null;
 }
 
 function httpErr(status, message) {
@@ -540,22 +489,16 @@ function httpErr(status, message) {
 }
 
 module.exports = {
-  // Plans
   PLANS,
   listPlans,
   getPlan,
   planRequires,
-  // User state
   getUserBilling,
-  // Enforcement
   enforceBriefLimit,
   recordBriefCreated,
-  // Plan changes
   applyPlanChange,
-  // Invoices
   recordInvoice,
   listInvoices,
-  // Stripe
   getStripe: () => getStripe(),
   createCheckoutSession,
   verifyCheckoutSession,

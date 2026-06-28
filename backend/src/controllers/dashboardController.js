@@ -1,25 +1,31 @@
 const { getDb } = require("../utils/db");
 
-exports.getStats = (req, res) => {
+exports.getStats = async (req, res) => {
   try {
     const uid = req.user.id;
     const db = getDb();
 
-    const scoreResult = db.exec("SELECT completeness_score FROM briefs WHERE user_id = ?", [uid]);
-    const briefs = scoreResult[0]?.values || [];
+    const { data: briefs } = await db
+      .from("briefs")
+      .select("completeness_score")
+      .eq("user_id", uid);
+
     const total = briefs.length;
-    const scores = briefs.map((r) => r[0]).filter((s) => s != null);
+    const scores = briefs.map((r) => r.completeness_score).filter((s) => s != null);
     const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
     const successCount = scores.filter((s) => s >= 80).length;
     const successRate = scores.length > 0 ? Math.round((successCount / scores.length) * 100) : 0;
     const timeSaved = total > 0 ? `${Math.round(total * 0.5)}h` : "0h";
 
     const half = Math.max(1, Math.floor(total / 2));
-    const recentResult = db.exec(
-      "SELECT id FROM briefs WHERE user_id = ? ORDER BY created_at DESC LIMIT ?",
-      [uid, half]
-    );
-    const recentCount = recentResult[0]?.values?.length || 0;
+    const { data: recent } = await db
+      .from("briefs")
+      .select("id")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false })
+      .limit(half);
+
+    const recentCount = recent?.length || 0;
     const change = total > 0 && recentCount > 0
       ? `+${Math.round(((total - recentCount) / recentCount) * 100)}%`
       : "+0%";
@@ -31,16 +37,19 @@ exports.getStats = (req, res) => {
   }
 };
 
-exports.getRecentBriefs = (req, res) => {
+exports.getRecentBriefs = async (req, res) => {
   try {
     const db = getDb();
-    const result = db.exec(
-      "SELECT id, project_name, client_name, completeness_score, status, created_at FROM briefs WHERE user_id = ? ORDER BY created_at DESC LIMIT 5",
-      [req.user.id]
-    );
-    const briefs = (result[0]?.values || []).map((r) => ({
-      id: r[0], projectName: r[1], clientName: r[2],
-      score: r[3], status: r[4], createdAt: r[5],
+    const { data: rows } = await db
+      .from("briefs")
+      .select("id, project_name, client_name, completeness_score, status, created_at")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    const briefs = (rows || []).map((r) => ({
+      id: r.id, projectName: r.project_name, clientName: r.client_name,
+      score: r.completeness_score, status: r.status, createdAt: r.created_at,
     }));
     res.json(briefs);
   } catch (err) {
@@ -49,16 +58,19 @@ exports.getRecentBriefs = (req, res) => {
   }
 };
 
-exports.getScoreTrend = (req, res) => {
+exports.getScoreTrend = async (req, res) => {
   try {
     const db = getDb();
-    const result = db.exec(
-      "SELECT project_name, completeness_score, created_at FROM briefs WHERE user_id = ? ORDER BY created_at DESC LIMIT 4",
-      [req.user.id]
-    );
-    const trend = (result[0]?.values || []).reverse().map((r) => ({
-      briefName: r[0], score: r[1],
-      date: r[2] ? r[2].slice(0, 10) : "",
+    const { data: rows } = await db
+      .from("briefs")
+      .select("project_name, completeness_score, created_at")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: false })
+      .limit(4);
+
+    const trend = (rows || []).reverse().map((r) => ({
+      briefName: r.project_name, score: r.completeness_score,
+      date: r.created_at ? r.created_at.slice(0, 10) : "",
     }));
     res.json(trend);
   } catch (err) {
@@ -67,26 +79,30 @@ exports.getScoreTrend = (req, res) => {
   }
 };
 
-exports.getIndustryBreakdown = (req, res) => {
+exports.getIndustryBreakdown = async (req, res) => {
   try {
     const uid = req.user.id;
     const db = getDb();
 
-    const overallResult = db.exec("SELECT completeness_score FROM briefs WHERE user_id = ?", [uid]);
-    const scores = (overallResult[0]?.values || []).map((r) => r[0]).filter((s) => s != null);
+    const { data: overall } = await db
+      .from("briefs")
+      .select("completeness_score")
+      .eq("user_id", uid);
+
+    const scores = (overall || []).map((r) => r.completeness_score).filter((s) => s != null);
     const overallAvg = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
 
-    const indResult = db.exec(
-      "SELECT industry, completeness_score FROM briefs WHERE user_id = ? AND industry IS NOT NULL",
-      [uid]
-    );
-    const rows = indResult[0]?.values || [];
+    const { data: rows } = await db
+      .from("briefs")
+      .select("industry, completeness_score")
+      .eq("user_id", uid)
+      .not("industry", "is", null);
 
     const map = {};
-    rows.forEach((r) => {
-      const ind = r[0] || "Other";
+    (rows || []).forEach((r) => {
+      const ind = r.industry || "Other";
       if (!map[ind]) map[ind] = { scores: [], count: 0 };
-      map[ind].scores.push(r[1]);
+      map[ind].scores.push(r.completeness_score);
       map[ind].count++;
     });
 

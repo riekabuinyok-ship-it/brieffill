@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 
 const PREFIX = "bfk_";
 
@@ -19,53 +19,62 @@ function verifyKey(plain, hash) {
   return crypto.timingSafeEqual(Buffer.from(computed), Buffer.from(hash));
 }
 
-function createApiKey(userId, name) {
+async function createApiKey(userId, name) {
   const plain = generateApiKey();
   const hash = hashKey(plain);
   const db = getDb();
-  db.run(
-    "INSERT INTO user_api_keys (user_id, name, key_hash) VALUES (?, ?, ?)",
-    [userId, name, hash]
-  );
-  const id = db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
-  save();
-  return { id, name, plain, prefix: plain.slice(0, 8) };
+  const { data, error } = await db
+    .from("user_api_keys")
+    .insert({ user_id: userId, name, key_hash: hash })
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return { id: data.id, name, plain, prefix: plain.slice(0, 8) };
 }
 
-function listApiKeys(userId) {
+async function listApiKeys(userId) {
   const db = getDb();
-  const rows = db.exec(
-    "SELECT id, name, last_used_at, created_at FROM user_api_keys WHERE user_id = ? ORDER BY id DESC",
-    [userId]
-  )[0]?.values || [];
-  return rows.map((r) => ({
-    id: r[0],
-    name: r[1],
-    lastUsedAt: r[2],
-    createdAt: r[3],
+  const { data, error } = await db
+    .from("user_api_keys")
+    .select("id, name, last_used_at, created_at")
+    .eq("user_id", userId)
+    .order("id", { ascending: false });
+  if (error) throw error;
+  return (data || []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    lastUsedAt: row.last_used_at,
+    createdAt: row.created_at,
   }));
 }
 
-function revokeApiKey(userId, id) {
+async function revokeApiKey(userId, id) {
   const db = getDb();
-  db.run("DELETE FROM user_api_keys WHERE id = ? AND user_id = ?", [id, userId]);
-  const changes = db.exec("SELECT changes() AS n")[0]?.values?.[0]?.[0] || 0;
-  save();
-  return changes > 0;
+  const { data, error } = await db
+    .from("user_api_keys")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select();
+  if (error) throw error;
+  return (data || []).length > 0;
 }
 
-function findUserByApiKey(plain) {
+async function findUserByApiKey(plain) {
   if (!plain || !plain.startsWith(PREFIX)) return null;
   const hash = hashKey(plain);
   const db = getDb();
-  const row = db.exec(
-    "SELECT user_id FROM user_api_keys WHERE key_hash = ?",
-    [hash]
-  )[0]?.values?.[0];
-  if (!row) return null;
-  const userId = row[0];
-  db.run("UPDATE user_api_keys SET last_used_at = datetime('now') WHERE key_hash = ?", [hash]);
-  return userId;
+  const { data, error } = await db
+    .from("user_api_keys")
+    .select("user_id")
+    .eq("key_hash", hash)
+    .maybeSingle();
+  if (error || !data) return null;
+  await db
+    .from("user_api_keys")
+    .update({ last_used_at: new Date().toISOString() })
+    .eq("key_hash", hash);
+  return data.user_id;
 }
 
 module.exports = {

@@ -1,5 +1,5 @@
 const { generateBrief, refineBrief } = require("../services/briefGeneratorService");
-const { enforceBriefLimit, recordBriefCreated } = require("../services/billingService");
+const { enforceBriefLimit } = require("../services/billingService");
 
 exports.generate = async (req, res) => {
   try {
@@ -18,8 +18,6 @@ exports.generate = async (req, res) => {
       clientName: typeof clientName === "string" ? clientName : "",
       projectName: typeof projectName === "string" ? projectName : "",
     });
-    // Generation itself doesn't save a brief — only saves count when the user
-    // explicitly saves the draft. We do NOT call recordBriefCreated here.
     res.json(result);
   } catch (err) {
     if (err.message && /must be|at least|exceed/i.test(err.message)) {

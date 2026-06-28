@@ -1,56 +1,62 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { emit } = require("../services/eventService");
 
 const VALID_STATUSES = ["success", "failure", "in_progress"];
 
-function verifyBriefOwnership(briefId, userId) {
+async function verifyBriefOwnership(briefId, userId) {
   const db = getDb();
-  const result = db.exec("SELECT user_id FROM briefs WHERE id = ?", [briefId]);
-  const row = result[0]?.values?.[0];
+  const { data: row, error } = await db
+    .from("briefs")
+    .select("user_id")
+    .eq("id", briefId)
+    .maybeSingle();
+
   if (!row) return { ok: false, status: 404, error: "Brief not found" };
-  if (row[0] !== userId) return { ok: false, status: 403, error: "Not authorized" };
+  if (row.user_id !== userId) return { ok: false, status: 403, error: "Not authorized" };
   return { ok: true };
 }
 
-function upsertOutcome({ briefId, userId, rating, status, notes }) {
+async function upsertOutcome({ briefId, userId, rating, status, notes }) {
   const now = new Date().toISOString();
   const db = getDb();
-  const existing = db.exec("SELECT brief_id FROM brief_outcomes WHERE brief_id = ?", [briefId]);
-  const exists = existing[0]?.values?.[0];
+  const { data: existing } = await db
+    .from("brief_outcomes")
+    .select("brief_id")
+    .eq("brief_id", briefId)
+    .maybeSingle();
 
-  if (exists) {
-    db.run(
-      "UPDATE brief_outcomes SET rating = ?, status = ?, notes = ?, updated_at = ? WHERE brief_id = ?",
-      [rating, status, notes || null, now, briefId]
-    );
+  if (existing) {
+    await db
+      .from("brief_outcomes")
+      .update({ rating, status, notes: notes || null, updated_at: now })
+      .eq("brief_id", briefId);
   } else {
-    db.run(
-      "INSERT INTO brief_outcomes (brief_id, user_id, rating, status, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [briefId, userId, rating, status, notes || null, now, now]
-    );
+    await db
+      .from("brief_outcomes")
+      .insert({ brief_id: briefId, user_id: userId, rating, status, notes: notes || null, created_at: now, updated_at: now });
   }
-  save();
 }
 
-function getOutcomeForBrief(briefId) {
+async function getOutcomeForBrief(briefId) {
   const db = getDb();
-  const result = db.exec(
-    "SELECT brief_id, rating, status, notes, created_at, updated_at FROM brief_outcomes WHERE brief_id = ?",
-    [briefId]
-  );
-  const row = result[0]?.values?.[0];
+  const { data: row, error } = await db
+    .from("brief_outcomes")
+    .select("brief_id, rating, status, notes, created_at, updated_at")
+    .eq("brief_id", briefId)
+    .maybeSingle();
+
   if (!row) return null;
   return {
-    briefId: row[0],
-    rating: row[1],
-    status: row[2],
-    notes: row[3],
-    createdAt: row[4],
-    updatedAt: row[5],
+    briefId: row.brief_id,
+    rating: row.rating,
+    status: row.status,
+    notes: row.notes,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
-exports.recordOutcome = (req, res) => {
+exports.recordOutcome = async (req, res) => {
   const { rating, status, notes } = req.body || {};
 
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
@@ -66,10 +72,10 @@ exports.recordOutcome = (req, res) => {
     return res.status(400).json({ error: "notes must be 1000 characters or fewer" });
   }
 
-  const ownership = verifyBriefOwnership(req.params.id, req.user.id);
+  const ownership = await verifyBriefOwnership(req.params.id, req.user.id);
   if (!ownership.ok) return res.status(ownership.status).json({ error: ownership.error });
 
-  upsertOutcome({
+  await upsertOutcome({
     briefId: req.params.id,
     userId: req.user.id,
     rating,
@@ -84,14 +90,14 @@ exports.recordOutcome = (req, res) => {
     rating,
   });
 
-  const outcome = getOutcomeForBrief(req.params.id);
+  const outcome = await getOutcomeForBrief(req.params.id);
   res.json({ success: true, outcome });
 };
 
-exports.getOutcome = (req, res) => {
-  const ownership = verifyBriefOwnership(req.params.id, req.user.id);
+exports.getOutcome = async (req, res) => {
+  const ownership = await verifyBriefOwnership(req.params.id, req.user.id);
   if (!ownership.ok) return res.status(ownership.status).json({ error: ownership.error });
 
-  const outcome = getOutcomeForBrief(req.params.id);
+  const outcome = await getOutcomeForBrief(req.params.id);
   res.json({ outcome });
 };

@@ -1,4 +1,4 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 
 const AI_URL = process.env.GEMINI_API_URL || "https://api.groq.com/openai/v1/chat/completions";
 const AI_KEY = process.env.GROQ_API_KEY || "";
@@ -134,16 +134,18 @@ function normalizeOpportunity(raw) {
 
 async function analyzeCompetitors({ userId, briefId, competitors }) {
   const db = getDb();
-  const userBriefRow = db.exec(
-    "SELECT id, client_name, project_name, original_text FROM briefs WHERE id = ? AND user_id = ?",
-    [briefId, userId]
-  )[0]?.values?.[0];
+  const { data: userBriefRow, error: fetchError } = await db
+    .from("briefs")
+    .select("id, client_name, project_name, original_text")
+    .eq("id", briefId)
+    .eq("user_id", userId)
+    .maybeSingle();
   const userBrief = userBriefRow
     ? {
-        id: userBriefRow[0],
-        clientName: userBriefRow[1],
-        projectName: userBriefRow[2],
-        originalText: userBriefRow[3],
+        id: userBriefRow.id,
+        clientName: userBriefRow.client_name,
+        projectName: userBriefRow.project_name,
+        originalText: userBriefRow.original_text,
       }
     : null;
 
@@ -169,22 +171,31 @@ async function analyzeCompetitors({ userId, briefId, competitors }) {
   const commonGaps = normalizeStringList(raw.commonGaps, []);
   const opportunity = normalizeOpportunity(raw.opportunity);
 
-  const competitorsJson = JSON.stringify(normalizedCompetitors);
-  const strengthsJson = JSON.stringify(commonStrengths);
-  const gapsJson = JSON.stringify(commonGaps);
+  const now = new Date().toISOString();
+  const { data: existing } = await db
+    .from("competitor_analyses")
+    .select("brief_id")
+    .eq("brief_id", briefId)
+    .maybeSingle();
 
-  db.run(
-    `INSERT INTO competitor_analyses (brief_id, user_id, competitors, common_strengths, common_gaps, opportunity, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-     ON CONFLICT(brief_id) DO UPDATE SET
-       competitors = excluded.competitors,
-       common_strengths = excluded.common_strengths,
-       common_gaps = excluded.common_gaps,
-       opportunity = excluded.opportunity,
-       updated_at = datetime('now')`,
-    [briefId, userId, competitorsJson, strengthsJson, gapsJson, opportunity]
-  );
-  save();
+  const payload = {
+    competitors: normalizedCompetitors,
+    common_strengths: commonStrengths,
+    common_gaps: commonGaps,
+    opportunity,
+    updated_at: now,
+  };
+
+  if (existing) {
+    await db
+      .from("competitor_analyses")
+      .update(payload)
+      .eq("brief_id", briefId);
+  } else {
+    await db
+      .from("competitor_analyses")
+      .insert({ ...payload, brief_id: briefId, user_id: userId, created_at: now });
+  }
 
   return {
     competitors: normalizedCompetitors,
@@ -194,36 +205,33 @@ async function analyzeCompetitors({ userId, briefId, competitors }) {
   };
 }
 
-function getCompetitorAnalysis(briefId) {
+async function getCompetitorAnalysis(briefId) {
   const db = getDb();
-  const result = db.exec(
-    `SELECT competitors, common_strengths, common_gaps, opportunity, created_at, updated_at
-     FROM competitor_analyses WHERE brief_id = ?`,
-    [briefId]
-  );
-  if (!result[0]?.values.length) return null;
-  const row = result[0].values[0];
-  let competitors, strengths, gaps;
-  try { competitors = JSON.parse(row[0]); } catch { competitors = []; }
-  try { strengths = JSON.parse(row[1]); } catch { strengths = []; }
-  try { gaps = JSON.parse(row[2]); } catch { gaps = []; }
+  const { data, error } = await db
+    .from("competitor_analyses")
+    .select("competitors, common_strengths, common_gaps, opportunity, created_at, updated_at")
+    .eq("brief_id", briefId)
+    .maybeSingle();
+  if (!data) return null;
   return {
-    competitors,
-    commonStrengths: strengths,
-    commonGaps: gaps,
-    opportunity: row[3] || "",
-    createdAt: row[4],
-    updatedAt: row[5],
+    competitors: data.competitors || [],
+    commonStrengths: data.common_strengths || [],
+    commonGaps: data.common_gaps || [],
+    opportunity: data.opportunity || "",
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
   };
 }
 
-function verifyBriefOwnership(briefId, userId) {
+async function verifyBriefOwnership(briefId, userId) {
   const db = getDb();
-  const result = db.exec(
-    "SELECT 1 FROM briefs WHERE id = ? AND user_id = ?",
-    [briefId, userId]
-  );
-  return result[0]?.values?.length > 0;
+  const { data, error } = await db
+    .from("briefs")
+    .select("id")
+    .eq("id", briefId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return !!data;
 }
 
 module.exports = { analyzeCompetitors, getCompetitorAnalysis, verifyBriefOwnership };

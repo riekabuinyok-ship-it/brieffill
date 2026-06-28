@@ -13,26 +13,17 @@ const {
 } = require("../services/billingService");
 const { getDb } = require("../utils/db");
 
-// ============================================================
-// Plan catalog (public — used by /pricing page)
-// ============================================================
 exports.getPlans = (req, res) => {
   res.json({ plans: listPlans() });
 };
 
-// ============================================================
-// Current user billing state
-// ============================================================
-exports.getMe = (req, res) => {
-  const billing = getUserBilling(req.user.id);
+exports.getMe = async (req, res) => {
+  const billing = await getUserBilling(req.user.id);
   if (!billing) return res.status(404).json({ error: "User not found" });
-  const invoices = listInvoices(req.user.id, 12);
+  const invoices = await listInvoices(req.user.id, 12);
   res.json({ billing, invoices });
 };
 
-// ============================================================
-// Create Stripe Checkout session
-// ============================================================
 exports.createCheckout = async (req, res) => {
   try {
     const { plan, billingCycle = "monthly" } = req.body || {};
@@ -51,9 +42,6 @@ exports.createCheckout = async (req, res) => {
   }
 };
 
-// ============================================================
-// Verify a Checkout session after the user returns from Stripe
-// ============================================================
 exports.verifyCheckout = async (req, res) => {
   try {
     const { sessionId } = req.body || {};
@@ -67,9 +55,6 @@ exports.verifyCheckout = async (req, res) => {
   }
 };
 
-// ============================================================
-// Stripe Customer Portal (self-service billing)
-// ============================================================
 exports.openPortal = async (req, res) => {
   try {
     const result = await createPortalSession(req.user.id);
@@ -81,9 +66,6 @@ exports.openPortal = async (req, res) => {
   }
 };
 
-// ============================================================
-// Webhook (public — verified via Stripe signature)
-// ============================================================
 exports.webhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
   const rawBody = req.rawBody || (req.body && Buffer.from(JSON.stringify(req.body)));
@@ -100,23 +82,17 @@ exports.webhook = async (req, res) => {
   }
 };
 
-// ============================================================
-// Invoices
-// ============================================================
-exports.getInvoices = (req, res) => {
-  const invoices = listInvoices(req.user.id, 50);
+exports.getInvoices = async (req, res) => {
+  const invoices = await listInvoices(req.user.id, 50);
   res.json({ invoices });
 };
 
-// ============================================================
-// Dev-only bypass (no Stripe required)
-// ============================================================
-exports.bypass = (req, res) => {
+exports.bypass = async (req, res) => {
   const { plan, billingCycle = "monthly" } = req.body || {};
   if (!plan) return res.status(400).json({ error: "plan is required" });
   const valid = ["free", "pro", "team", "agency"];
   if (!valid.includes(plan)) return res.status(400).json({ error: "Invalid plan" });
-  const billing = applyPlanChange(req.user.id, {
+  const billing = await applyPlanChange(req.user.id, {
     plan,
     status: "active",
     stripeCustomerId: null,
@@ -124,11 +100,10 @@ exports.bypass = (req, res) => {
     currentPeriodEnd: null,
     cancelAtPeriodEnd: false,
   });
-  // Record a fake invoice so the billing page shows history
   const planDef = getPlan(plan);
   const amount = billingCycle === "annual" ? planDef.annualPrice : planDef.monthlyPrice;
   if (amount > 0) {
-    recordInvoice(req.user.id, {
+    await recordInvoice(req.user.id, {
       stripeInvoiceId: "bypass_" + Date.now(),
       amount,
       currency: "usd",
@@ -138,14 +113,13 @@ exports.bypass = (req, res) => {
       periodEnd: new Date(Date.now() + 30 * 86400000).toISOString(),
     });
   }
-  res.json({ billing, invoices: listInvoices(req.user.id, 50) });
+  const invoices = await listInvoices(req.user.id, 50);
+  res.json({ billing, invoices });
 };
 
-// ============================================================
-// Cancel subscription (sets status='cancelled', keeps plan until period end)
-// ============================================================
-exports.cancel = (req, res) => {
+exports.cancel = async (req, res) => {
   const db = getDb();
-  db.run("UPDATE users SET subscription_status = 'cancelled', cancel_at_period_end = 1 WHERE id = ?", [req.user.id]);
-  res.json({ ok: true, billing: getUserBilling(req.user.id) });
+  await db.from('users').update({ subscription_status: 'cancelled', cancel_at_period_end: true }).eq('id', req.user.id);
+  const billing = await getUserBilling(req.user.id);
+  res.json({ ok: true, billing });
 };

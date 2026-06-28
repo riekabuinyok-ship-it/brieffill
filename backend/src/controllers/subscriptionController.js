@@ -1,4 +1,4 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 
 const PLANS = [
   { id: "free_trial", name: "Free Trial", price: 0, period: "7 days", briefLimit: 5 },
@@ -10,26 +10,32 @@ exports.getPlans = (_req, res) => {
   res.json({ plans: PLANS });
 };
 
-exports.getMySubscription = (req, res) => {
+exports.getMySubscription = async (req, res) => {
   const db = getDb();
-  const userResult = db.exec(`SELECT subscription_status, trial_end_date FROM users WHERE id = ${req.user.id}`);
-  if (!userResult[0]?.values.length) {
+
+  const { data: userData } = await db.from('users')
+    .select('subscription_status, trial_end_date')
+    .eq('id', req.user.id)
+    .maybeSingle();
+  if (!userData) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  const row = userResult[0].values[0];
-  const status = row[0];
-  const trialEnd = row[1];
+  const status = userData.subscription_status;
+  const trialEnd = userData.trial_end_date;
 
-  const paymentsResult = db.exec(
-    `SELECT plan, amount, currency, status, created_at FROM payments WHERE user_id = ${req.user.id} ORDER BY created_at DESC LIMIT 10`
-  );
-  const payments = paymentsResult[0]?.values.map((p) => ({
-    plan: p[0], amount: p[1], currency: p[2], status: p[3], createdAt: p[4],
-  })) || [];
+  const { data: paymentsData } = await db.from('payments')
+    .select('plan, amount, currency, status, created_at')
+    .eq('user_id', req.user.id)
+    .order('created_at', { ascending: false })
+    .limit(10);
+  const payments = (paymentsData || []).map((p) => ({
+    plan: p.plan, amount: p.amount, currency: p.currency, status: p.status, createdAt: p.created_at,
+  }));
 
-  const briefCountResult = db.exec(`SELECT count(*) AS cnt FROM briefs WHERE user_id = ${req.user.id}`);
-  const briefsUsed = briefCountResult[0]?.values[0][0] || 0;
+  const { count: briefsUsed } = await db.from('briefs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', req.user.id);
 
   const currentPlan = PLANS.find((p) => p.id === status) || PLANS[0];
 
@@ -37,7 +43,7 @@ exports.getMySubscription = (req, res) => {
     plan: currentPlan,
     status,
     trialEndDate: trialEnd,
-    briefsUsed,
+    briefsUsed: briefsUsed || 0,
     briefLimit: currentPlan.briefLimit,
     payments,
   });
@@ -57,7 +63,7 @@ exports.createCheckout = (req, res) => {
   });
 };
 
-exports.bypassPayment = (req, res) => {
+exports.bypassPayment = async (req, res) => {
   const { planId } = req.body;
   const plan = PLANS.find((p) => p.id === planId);
   if (!plan) return res.status(400).json({ error: "Invalid plan" });
@@ -65,30 +71,30 @@ exports.bypassPayment = (req, res) => {
   const db = getDb();
   const newStatus = planId;
   const trialEnd = planId === "free_trial"
-    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace("T", " ")
+    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     : null;
 
-  db.run("UPDATE users SET subscription_status = ?, trial_end_date = ? WHERE id = ?", [newStatus, trialEnd, req.user.id]);
-  db.run("INSERT INTO payments (user_id, amount, currency, plan, status) VALUES (?, ?, 'usd', ?, 'bypass')", [req.user.id, plan.price, plan.id]);
-  save();
+  await db.from('users').update({ subscription_status: newStatus, trial_end_date: trialEnd }).eq('id', req.user.id);
+  await db.from('payments').insert({ user_id: req.user.id, amount: plan.price, currency: 'usd', plan: plan.id, status: 'bypass' });
 
-  const userResult = db.exec(`SELECT id, email, name, created_at, subscription_status, trial_end_date FROM users WHERE id = ${req.user.id}`);
-  const row = userResult[0].values[0];
+  const { data: userData } = await db.from('users')
+    .select('id, email, name, created_at, subscription_status, trial_end_date')
+    .eq('id', req.user.id)
+    .single();
 
   res.json({
     success: true,
     message: `Payment bypassed. You are now on the ${plan.name} plan.`,
     user: {
-      id: row[0], email: row[1], name: row[2], createdAt: row[3],
-      subscriptionStatus: row[4], trialEndDate: row[5],
+      id: userData.id, email: userData.email, name: userData.name, createdAt: userData.created_at,
+      subscriptionStatus: userData.subscription_status, trialEndDate: userData.trial_end_date,
     },
   });
 };
 
-exports.cancelSubscription = (req, res) => {
+exports.cancelSubscription = async (req, res) => {
   const db = getDb();
-  db.run("UPDATE users SET subscription_status = 'cancelled' WHERE id = ?", [req.user.id]);
-  save();
+  await db.from('users').update({ subscription_status: 'cancelled' }).eq('id', req.user.id);
 
   res.json({ success: true, message: "Subscription cancelled. You still have access until the end of the billing period." });
 };

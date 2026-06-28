@@ -21,55 +21,64 @@ function detectIndustry(clientName, briefText) {
   return "other";
 }
 
-function getOutcomeSummary(userId) {
+async function getOutcomeSummary(userId) {
   const db = getDb();
-  const result = db.exec("SELECT status, rating FROM brief_outcomes WHERE user_id = ?", [userId]);
-  const rows = result[0]?.values || [];
+  const { data: rows } = await db
+    .from("brief_outcomes")
+    .select("status, rating")
+    .eq("user_id", userId);
+
+  if (!rows || rows.length === 0) return { total: 0, success: 0, successRate: 0, avgRating: 0 };
   const total = rows.length;
-  if (!total) return { total: 0, success: 0, successRate: 0, avgRating: 0 };
-  const success = rows.filter((r) => r[0] === "success").length;
-  const avgRating = (rows.reduce((s, r) => s + r[1], 0) / total).toFixed(1);
+  const success = rows.filter((r) => r.status === "success").length;
+  const avgRating = (rows.reduce((s, r) => s + r.rating, 0) / total).toFixed(1);
   return { total, success, successRate: Math.round((success / total) * 100), avgRating: Number(avgRating) };
 }
 
-function getScoreTimeline(userId, limit = 30) {
+async function getScoreTimeline(userId, limit = 30) {
   const cappedLimit = Math.max(1, Math.min(100, parseInt(limit) || 30));
   const db = getDb();
-  const result = db.exec(
-    "SELECT id, client_name, project_name, completeness_score, created_at FROM briefs WHERE user_id = ? AND completeness_score IS NOT NULL ORDER BY created_at ASC, id ASC LIMIT ?",
-    [userId, cappedLimit]
-  );
-  return (result[0]?.values || []).map((row) => ({
-    briefId: row[0],
-    clientName: row[1],
-    projectName: row[2],
-    score: row[3],
-    createdAt: row[4],
+  const { data: rows } = await db
+    .from("briefs")
+    .select("id, client_name, project_name, completeness_score, created_at")
+    .eq("user_id", userId)
+    .not("completeness_score", "is", null)
+    .order("created_at", { ascending: true })
+    .order("id", { ascending: true })
+    .limit(cappedLimit);
+
+  return (rows || []).map((row) => ({
+    briefId: row.id,
+    clientName: row.client_name,
+    projectName: row.project_name,
+    score: row.completeness_score,
+    createdAt: row.created_at,
   }));
 }
 
-function getBenchmarks(userId) {
+async function getBenchmarks(userId) {
   const db = getDb();
-  const result = db.exec(
-    "SELECT id, client_name, original_text, completeness_score FROM briefs WHERE user_id = ? AND completeness_score IS NOT NULL",
-    [userId]
-  );
-  const rows = result[0]?.values || [];
-  if (!rows.length) {
+  const { data: rows } = await db
+    .from("briefs")
+    .select("id, client_name, original_text, completeness_score")
+    .eq("user_id", userId)
+    .not("completeness_score", "is", null);
+
+  if (!rows || rows.length === 0) {
     return { byIndustry: [], overallAverage: 0, total: 0 };
   }
 
   const byIndustryMap = new Map();
   let totalScore = 0;
   for (const row of rows) {
-    const industry = detectIndustry(row[1], row[2]);
-    totalScore += row[3];
+    const industry = detectIndustry(row.client_name, row.original_text);
+    totalScore += row.completeness_score;
     if (!byIndustryMap.has(industry)) {
       byIndustryMap.set(industry, { count: 0, totalScore: 0 });
     }
     const entry = byIndustryMap.get(industry);
     entry.count += 1;
-    entry.totalScore += row[3];
+    entry.totalScore += row.completeness_score;
   }
 
   const overallAverage = Math.round(totalScore / rows.length);
@@ -85,10 +94,10 @@ function getBenchmarks(userId) {
   return { byIndustry, overallAverage, total: rows.length };
 }
 
-exports.getScoreTimeline = (req, res) => {
+exports.getScoreTimeline = async (req, res) => {
   try {
     const limit = req.query.limit;
-    const points = getScoreTimeline(req.user.id, limit);
+    const points = await getScoreTimeline(req.user.id, limit);
     res.json({ points });
   } catch (err) {
     console.error("getScoreTimeline error:", err);
@@ -96,9 +105,9 @@ exports.getScoreTimeline = (req, res) => {
   }
 };
 
-exports.getOutcomeSummary = (req, res) => {
+exports.getOutcomeSummary = async (req, res) => {
   try {
-    const data = getOutcomeSummary(req.user.id);
+    const data = await getOutcomeSummary(req.user.id);
     res.json(data);
   } catch (err) {
     console.error("getOutcomeSummary error:", err);
@@ -106,9 +115,9 @@ exports.getOutcomeSummary = (req, res) => {
   }
 };
 
-exports.getBenchmarks = (req, res) => {
+exports.getBenchmarks = async (req, res) => {
   try {
-    const data = getBenchmarks(req.user.id);
+    const data = await getBenchmarks(req.user.id);
     res.json(data);
   } catch (err) {
     console.error("getBenchmarks error:", err);

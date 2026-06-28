@@ -1,11 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { getUserBilling, getPlan } = require("../services/billingService");
 const { attributeReferralOnSignup } = require("../services/referralService");
 
-function billingShape(userId, fallbackSubscriptionStatus) {
-  const b = getUserBilling(userId);
+async function billingShape(userId, fallbackSubscriptionStatus) {
+  const b = await getUserBilling(userId);
   if (!b) return null;
   return {
     plan: b.plan,
@@ -31,18 +31,22 @@ exports.register = async (req, res) => {
     }
 
     const db = getDb();
-    const existing = db.exec(`SELECT id FROM users WHERE email = '${email.replace(/'/g, "''")}'`);
-    if (existing[0]?.values.length) {
+    const { data: existing } = await db.from("users").select("id").eq("email", email).maybeSingle();
+    if (existing) {
       return res.status(409).json({ error: "Email already registered" });
     }
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19).replace("T", " ");
+    const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
     const requestedLocale = typeof req.body?.locale === "string" ? req.body.locale : null;
     const initialLocale = requestedLocale && SUPPORTED_LOCALES.includes(requestedLocale) ? requestedLocale : "en";
-    db.run("INSERT INTO users (email, name, password_hash, trial_end_date, locale) VALUES (?, ?, ?, ?, ?)", [email, name, passwordHash, trialEnd, initialLocale]);
-    const id = db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
-    save();
+    const { data: newUser, error: insertErr } = await db
+      .from("users")
+      .insert({ email, name, password_hash: passwordHash, trial_end_date: trialEnd, locale: initialLocale })
+      .select()
+      .single();
+    if (insertErr) throw insertErr;
+    const id = newUser.id;
     const token = jwt.sign({ id, email, name }, SECRET, { expiresIn: "7d" });
 
     const referralCode = (req.body?.ref || req.body?.referralCode || "").toString();
@@ -61,7 +65,7 @@ exports.register = async (req, res) => {
         subscriptionStatus: "free_trial",
         trialEndDate: trialEnd,
         locale: initialLocale,
-        billing: billingShape(id, "free_trial"),
+        billing: await billingShape(id, "free_trial"),
         referredBy: referralResult ? { referrerId: referralResult.referrerId, friendReward: referralResult.friendReward } : null,
       },
     });
@@ -79,27 +83,30 @@ exports.login = async (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT id, email, name, password_hash, locale FROM users WHERE email = '${email.replace(/'/g, "''")}'`);
+    const { data: row } = await db
+      .from("users")
+      .select("id, email, name, password_hash, locale")
+      .eq("email", email)
+      .maybeSingle();
 
-    if (!result[0]?.values.length) {
+    if (!row) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const row = result[0].values[0];
-    const valid = await bcrypt.compare(password, row[3]);
+    const valid = await bcrypt.compare(password, row.password_hash);
     if (!valid) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ id: row[0], email: row[1], name: row[2] }, SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ id: row.id, email: row.email, name: row.name }, SECRET, { expiresIn: "7d" });
     res.json({
       token,
       user: {
-        id: row[0],
-        email: row[1],
-        name: row[2],
-        locale: row[4] || "en",
-        billing: billingShape(row[0], "active"),
+        id: row.id,
+        email: row.email,
+        name: row.name,
+        locale: row.locale || "en",
+        billing: await billingShape(row.id, "active"),
       },
     });
   } catch (err) {
@@ -108,44 +115,47 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.me = (req, res) => {
+exports.me = async (req, res) => {
   const db = getDb();
-  const result = db.exec(`SELECT id, email, name, created_at, subscription_status, trial_end_date, locale, avatar_url, first_name, last_name, display_name, bio, company, job_title, location, website, social_links, totp_enabled, password_changed_at FROM users WHERE id = ${req.user.id}`);
-
-  if (!result[0]?.values.length) {
+  const { data: row, error } = await db
+    .from("users")
+    .select("*")
+    .eq("id", req.user.id)
+    .single();
+  if (error || !row) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  const row = result[0].values[0];
   let socialLinks = {};
-  try { socialLinks = row[16] ? JSON.parse(row[16]) : {}; } catch { /* ignore */ }
+  try { socialLinks = row.social_links || {}; } catch { }
+
   res.json({
     user: {
-      id: row[0],
-      email: row[1],
-      name: row[2],
-      createdAt: row[3],
-      subscriptionStatus: row[4],
-      trialEndDate: row[5],
-      locale: row[6] || "en",
-      avatarUrl: row[7] || null,
-      firstName: row[8] || "",
-      lastName: row[9] || "",
-      displayName: row[10] || row[2] || "",
-      bio: row[11] || "",
-      company: row[12] || "",
-      jobTitle: row[13] || "",
-      location: row[14] || "",
-      website: row[15] || "",
+      id: row.id,
+      email: row.email,
+      name: row.name,
+      createdAt: row.created_at,
+      subscriptionStatus: row.subscription_status,
+      trialEndDate: row.trial_end_date,
+      locale: row.locale || "en",
+      avatarUrl: row.avatar_url || null,
+      firstName: row.first_name || "",
+      lastName: row.last_name || "",
+      displayName: row.display_name || row.name || "",
+      bio: row.bio || "",
+      company: row.company || "",
+      jobTitle: row.job_title || "",
+      location: row.location || "",
+      website: row.website || "",
       socialLinks,
-      totpEnabled: !!row[17],
-      passwordChangedAt: row[18] || null,
-      billing: billingShape(row[0], row[4]),
+      totpEnabled: !!row.totp_enabled,
+      passwordChangedAt: row.password_changed_at || null,
+      billing: await billingShape(row.id, row.subscription_status),
     },
   });
 };
 
-exports.updateMe = (req, res) => {
+exports.updateMe = async (req, res) => {
   const db = getDb();
   const updates = {};
 
@@ -175,7 +185,7 @@ exports.updateMe = (req, res) => {
   if (req.body.social_links !== undefined) {
     const sl = req.body.social_links;
     if (typeof sl === "object" && sl !== null) {
-      updates.social_links = JSON.stringify(sl);
+      updates.social_links = sl;
     }
   }
 
@@ -187,19 +197,16 @@ exports.updateMe = (req, res) => {
     return res.status(400).json({ error: "Unsupported locale" });
   }
 
-  const sets = Object.keys(updates).map((k) => `${k} = ?`).join(", ");
-  const vals = Object.values(updates);
-  db.run(`UPDATE users SET ${sets} WHERE id = ?`, [...vals, req.user.id]);
-  save();
+  const { error: updateErr } = await db.from("users").update(updates).eq("id", req.user.id);
+  if (updateErr) throw updateErr;
   exports.me(req, res);
 };
 
-exports.uploadAvatar = (req, res) => {
+exports.uploadAvatar = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
   const avatarUrl = `/uploads/avatars/${req.file.filename}`;
   const db = getDb();
-  db.run("UPDATE users SET avatar_url = ? WHERE id = ?", [avatarUrl, req.user.id]);
-  save();
+  await db.from("users").update({ avatar_url: avatarUrl }).eq("id", req.user.id);
   res.json({ avatarUrl });
 };
 
@@ -214,19 +221,18 @@ exports.changePassword = async (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT password_hash FROM users WHERE id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: row } = await db.from("users").select("password_hash").eq("id", req.user.id).maybeSingle();
+    if (!row) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const valid = await bcrypt.compare(currentPassword, result[0].values[0][0]);
+    const valid = await bcrypt.compare(currentPassword, row.password_hash);
     if (!valid) {
       return res.status(401).json({ error: "Current password is incorrect" });
     }
 
     const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    db.run("UPDATE users SET password_hash = ?, password_changed_at = datetime('now') WHERE id = ?", [passwordHash, req.user.id]);
-    save();
+    await db.from("users").update({ password_hash: passwordHash, password_changed_at: new Date().toISOString() }).eq("id", req.user.id);
     res.json({ success: true, message: "Password updated successfully" });
   } catch (err) {
     console.error("changePassword error:", err);
@@ -234,15 +240,15 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-exports.setup2fa = (req, res) => {
+exports.setup2fa = async (req, res) => {
   try {
     const db = getDb();
-    const result = db.exec(`SELECT totp_secret, totp_enabled FROM users WHERE id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: row } = await db.from("users").select("totp_secret, totp_enabled").eq("id", req.user.id).maybeSingle();
+    if (!row) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (result[0].values[0][1] === 1) {
+    if (row.totp_enabled) {
       return res.status(400).json({ error: "2FA is already enabled. Disable it first to reconfigure." });
     }
 
@@ -250,8 +256,7 @@ exports.setup2fa = (req, res) => {
     const secret = otplib.generateSecret();
     const otpauth = otplib.generateURI({ type: "totp", issuer: "BriefFill", label: req.user.email, secret });
 
-    db.run("UPDATE users SET totp_secret = ? WHERE id = ?", [secret, req.user.id]);
-    save();
+    await db.from("users").update({ totp_secret: secret }).eq("id", req.user.id);
 
     res.json({ secret, otpauth });
   } catch (err) {
@@ -260,7 +265,7 @@ exports.setup2fa = (req, res) => {
   }
 };
 
-exports.verify2fa = (req, res) => {
+exports.verify2fa = async (req, res) => {
   try {
     const { token } = req.body;
     if (!token) {
@@ -268,12 +273,12 @@ exports.verify2fa = (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT totp_secret FROM users WHERE id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: row } = await db.from("users").select("totp_secret").eq("id", req.user.id).maybeSingle();
+    if (!row) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const secret = result[0].values[0][0];
+    const secret = row.totp_secret;
     if (!secret) {
       return res.status(400).json({ error: "2FA has not been set up. Call setup first." });
     }
@@ -284,8 +289,7 @@ exports.verify2fa = (req, res) => {
       return res.status(401).json({ error: "Invalid verification code" });
     }
 
-    db.run("UPDATE users SET totp_enabled = 1 WHERE id = ?", [req.user.id]);
-    save();
+    await db.from("users").update({ totp_enabled: true }).eq("id", req.user.id);
     res.json({ success: true, message: "2FA enabled successfully" });
   } catch (err) {
     console.error("verify2fa error:", err);
@@ -293,7 +297,7 @@ exports.verify2fa = (req, res) => {
   }
 };
 
-exports.disable2fa = (req, res) => {
+exports.disable2fa = async (req, res) => {
   try {
     const { password } = req.body;
     if (!password) {
@@ -301,18 +305,17 @@ exports.disable2fa = (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT password_hash FROM users WHERE id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: row } = await db.from("users").select("password_hash").eq("id", req.user.id).maybeSingle();
+    if (!row) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const valid = bcrypt.compareSync(password, result[0].values[0][0]);
+    const valid = bcrypt.compareSync(password, row.password_hash);
     if (!valid) {
       return res.status(401).json({ error: "Password is incorrect" });
     }
 
-    db.run("UPDATE users SET totp_secret = NULL, totp_enabled = 0 WHERE id = ?", [req.user.id]);
-    save();
+    await db.from("users").update({ totp_secret: null, totp_enabled: false }).eq("id", req.user.id);
     res.json({ success: true, message: "2FA disabled" });
   } catch (err) {
     console.error("disable2fa error:", err);
@@ -320,19 +323,22 @@ exports.disable2fa = (req, res) => {
   }
 };
 
-exports.getSessions = (req, res) => {
+exports.getSessions = async (req, res) => {
   try {
     const db = getDb();
-    const rows = db.exec(
-      `SELECT id, user_agent, ip_address, last_active_at, created_at FROM user_sessions WHERE user_id = ${req.user.id} ORDER BY last_active_at DESC`
-    );
+    const { data: rows, error } = await db
+      .from("user_sessions")
+      .select("id, user_agent, ip_address, last_active_at, created_at")
+      .eq("user_id", req.user.id)
+      .order("last_active_at", { ascending: false });
 
-    const sessions = (rows[0]?.values || []).map((row) => ({
-      id: row[0],
-      userAgent: row[1] || "",
-      ipAddress: row[2] || "",
-      lastActiveAt: row[3],
-      createdAt: row[4],
+    if (error) throw error;
+    const sessions = (rows || []).map((row) => ({
+      id: row.id,
+      userAgent: row.user_agent || "",
+      ipAddress: row.ip_address || "",
+      lastActiveAt: row.last_active_at,
+      createdAt: row.created_at,
     }));
 
     res.json({ sessions });
@@ -342,7 +348,7 @@ exports.getSessions = (req, res) => {
   }
 };
 
-exports.revokeSession = (req, res) => {
+exports.revokeSession = async (req, res) => {
   try {
     const sessionId = parseInt(req.params.id, 10);
     if (!Number.isFinite(sessionId) || sessionId <= 0) {
@@ -350,13 +356,12 @@ exports.revokeSession = (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT id FROM user_sessions WHERE id = ${sessionId} AND user_id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: session } = await db.from("user_sessions").select("id").eq("id", sessionId).eq("user_id", req.user.id).maybeSingle();
+    if (!session) {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    db.run("DELETE FROM user_sessions WHERE id = ?", [sessionId]);
-    save();
+    await db.from("user_sessions").delete().eq("id", sessionId);
     res.json({ success: true });
   } catch (err) {
     console.error("revokeSession error:", err);
@@ -364,7 +369,7 @@ exports.revokeSession = (req, res) => {
   }
 };
 
-exports.deleteAccount = (req, res) => {
+exports.deleteAccount = async (req, res) => {
   try {
     const { password } = req.body;
     if (!password) {
@@ -372,18 +377,17 @@ exports.deleteAccount = (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(`SELECT password_hash FROM users WHERE id = ${req.user.id}`);
-    if (!result[0]?.values.length) {
+    const { data: row } = await db.from("users").select("password_hash").eq("id", req.user.id).maybeSingle();
+    if (!row) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const valid = bcrypt.compareSync(password, result[0].values[0][0]);
+    const valid = bcrypt.compareSync(password, row.password_hash);
     if (!valid) {
       return res.status(401).json({ error: "Password is incorrect" });
     }
 
-    db.run("DELETE FROM users WHERE id = ?", [req.user.id]);
-    save();
+    await db.from("users").delete().eq("id", req.user.id);
     res.json({ success: true, message: "Account permanently deleted" });
   } catch (err) {
     console.error("deleteAccount error:", err);

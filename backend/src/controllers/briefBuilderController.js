@@ -1,27 +1,26 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { improveBrief } = require("../services/briefBuilderService");
 const { emit } = require("../services/eventService");
 
 exports.buildBrief = async (req, res) => {
   try {
     const db = getDb();
-    const result = db.exec(
-      `SELECT id, user_id, original_text, analyzed_text, client_name, project_name
-       FROM briefs WHERE id = ?`,
-      [req.params.id]
-    );
+    const { data: brief, error } = await db
+      .from("briefs")
+      .select("id, user_id, original_text, analyzed_text, client_name, project_name")
+      .eq("id", req.params.id)
+      .maybeSingle();
 
-    if (!result[0]?.values.length) {
+    if (!brief) {
       return res.status(404).json({ error: "Brief not found" });
     }
 
-    const row = result[0].values[0];
-    if (row[1] !== req.user.id) {
+    if (brief.user_id !== req.user.id) {
       return res.status(403).json({ error: "Not authorized to build this brief" });
     }
 
-    const originalBrief = row[2];
-    const analysis = row[3] ? JSON.parse(row[3]) : null;
+    const originalBrief = brief.original_text;
+    const analysis = brief.analyzed_text;
 
     if (!analysis) {
       return res.status(400).json({ error: "Brief has not been analyzed yet" });
@@ -35,8 +34,8 @@ exports.buildBrief = async (req, res) => {
     emit("brief.rebuilt", {
       userId: req.user.id,
       briefId: req.params.id,
-      clientName: row[4],
-      projectName: row[5],
+      clientName: brief.client_name,
+      projectName: brief.project_name,
     });
 
     res.json({
@@ -52,7 +51,7 @@ exports.buildBrief = async (req, res) => {
   }
 };
 
-exports.saveImprovedBrief = (req, res) => {
+exports.saveImprovedBrief = async (req, res) => {
   try {
     const { improvedBrief } = req.body;
     if (!improvedBrief || typeof improvedBrief !== "string") {
@@ -60,21 +59,24 @@ exports.saveImprovedBrief = (req, res) => {
     }
 
     const db = getDb();
-    const result = db.exec(
-      `SELECT user_id FROM briefs WHERE id = ?`,
-      [req.params.id]
-    );
+    const { data: brief, error } = await db
+      .from("briefs")
+      .select("user_id")
+      .eq("id", req.params.id)
+      .maybeSingle();
 
-    if (!result[0]?.values.length) {
+    if (!brief) {
       return res.status(404).json({ error: "Brief not found" });
     }
 
-    if (result[0].values[0][0] !== req.user.id) {
+    if (brief.user_id !== req.user.id) {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    db.run("UPDATE briefs SET original_text = ?, status = 'draft' WHERE id = ?", [improvedBrief, req.params.id]);
-    save();
+    await db
+      .from("briefs")
+      .update({ original_text: improvedBrief, status: "draft" })
+      .eq("id", req.params.id);
 
     emit("brief.rebuilt", {
       userId: req.user.id,

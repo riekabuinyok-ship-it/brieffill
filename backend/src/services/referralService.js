@@ -4,11 +4,11 @@
 // referrer. Email sending is delegated to emailService (no-op transport in
 // dev; pluggable for SendGrid/Mailgun in prod).
 
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { sendEmail } = require("./emailService");
 
-const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // omit confusable chars
-const REFERRER_CREDIT_CENTS = 1000; // $10
+const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const REFERRER_CREDIT_CENTS = 1000;
 const FRIEND_REWARD_DESCRIPTION = "1 month free Pro (credited after qualifying)";
 
 function generateReferralCode() {
@@ -19,71 +19,107 @@ function generateReferralCode() {
   return s;
 }
 
-function ensureReferralCode(userId) {
+async function ensureReferralCode(userId) {
   const db = getDb();
-  const row = db.exec("SELECT referral_code FROM users WHERE id = ?", [userId])[0]?.values?.[0];
-  if (row && row[0]) return row[0];
-  // Try a few times in case of collision
+  const { data: existing } = await db
+    .from("users")
+    .select("referral_code")
+    .eq("id", userId)
+    .maybeSingle();
+  if (existing?.referral_code) return existing.referral_code;
   for (let i = 0; i < 5; i++) {
     const code = generateReferralCode();
     try {
-      db.run("UPDATE users SET referral_code = ? WHERE id = ?", [code, userId]);
-      save();
+      const { error } = await db
+        .from("users")
+        .update({ referral_code: code })
+        .eq("id", userId);
+      if (error) throw error;
       return code;
     } catch (err) {
-      if (!String(err.message).includes("UNIQUE") && !String(err.message).includes("unique")) throw err;
+      const msg = String(err.message || err).toLowerCase();
+      if (!msg.includes("unique") && !msg.includes("duplicate")) throw err;
     }
   }
   throw new Error("Failed to generate a unique referral code");
 }
 
-function getReferralCode(userId) {
+async function getReferralCode(userId) {
   const db = getDb();
-  const row = db.exec("SELECT referral_code FROM users WHERE id = ?", [userId])[0]?.values?.[0];
-  return row ? row[0] : null;
+  const { data } = await db
+    .from("users")
+    .select("referral_code")
+    .eq("id", userId)
+    .maybeSingle();
+  return data?.referral_code ?? null;
 }
 
-function resolveReferrerByCode(code) {
+async function resolveReferrerByCode(code) {
   if (!code || typeof code !== "string") return null;
   const db = getDb();
-  const row = db.exec("SELECT id, email, name, plan FROM users WHERE referral_code = ?", [code.trim().toUpperCase()])[0]?.values?.[0];
-  if (!row) return null;
-  return { id: row[0], email: row[1], name: row[2], plan: row[3] };
+  const { data } = await db
+    .from("users")
+    .select("id, email, name, plan")
+    .eq("referral_code", code.trim().toUpperCase())
+    .maybeSingle();
+  if (!data) return null;
+  return { id: data.id, email: data.email, name: data.name, plan: data.plan };
 }
 
-// Called by authController at signup. Returns the friend reward description if
-// attribution succeeded, or null if no code / code invalid / self-referral /
-// anti-abuse rejection.
-function attributeReferralOnSignup({ referredUserId, referredEmail, referralCode, ipAddress }) {
+async function attributeReferralOnSignup({ referredUserId, referredEmail, referralCode, ipAddress }) {
   if (!referralCode) return null;
-  const referrer = resolveReferrerByCode(referralCode);
+  const referrer = await resolveReferrerByCode(referralCode);
   if (!referrer) return null;
-  if (referrer.id === referredUserId) return null; // self-referral
+  if (referrer.id === referredUserId) return null;
 
   const db = getDb();
+  const code = referralCode.trim().toUpperCase();
 
-  // Anti-abuse: same email-domain as the referrer
   if (referrer.email && referredEmail) {
     const referrerDomain = referrer.email.split("@")[1]?.toLowerCase();
     const referredDomain = referredEmail.split("@")[1]?.toLowerCase();
     if (referrerDomain && referredDomain && referrerDomain === referredDomain) {
-      db.run(
-        "INSERT OR IGNORE INTO referrals (referrer_user_id, referred_user_id, referral_code, status, rejected_reason, ip_address) VALUES (?, ?, ?, 'rejected', 'same_email_domain', ?)",
-        [referrer.id, referredUserId, referralCode.trim().toUpperCase(), ipAddress || null]
-      );
-      save();
+      try {
+        await db.from("referrals").insert({
+          referrer_user_id: referrer.id,
+          referred_user_id: referredUserId,
+          referral_code: code,
+          status: "rejected",
+          rejected_reason: "same_email_domain",
+          ip_address: ipAddress || null,
+        });
+      } catch (e) {
+        if (!String(e.message || e).toLowerCase().includes("unique") &&
+            !String(e.message || e).toLowerCase().includes("duplicate")) throw e;
+      }
       return null;
     }
   }
 
-  // Mark the referred user with the referrer
-  db.run("UPDATE users SET referred_by_user_id = ? WHERE id = ?", [referrer.id, referredUserId]);
-  db.run(
-    "INSERT OR IGNORE INTO referrals (referrer_user_id, referred_user_id, referral_code, status, referrer_credit_cents, friend_reward, ip_address) VALUES (?, ?, ?, 'signed_up', ?, ?, ?)",
-    [referrer.id, referredUserId, referralCode.trim().toUpperCase(), REFERRER_CREDIT_CENTS, FRIEND_REWARD_DESCRIPTION, ipAddress || null]
-  );
-  db.run("UPDATE users SET last_referral_activity_at = datetime('now') WHERE id = ?", [referrer.id]);
-  save();
+  await db
+    .from("users")
+    .update({ referred_by_user_id: referrer.id })
+    .eq("id", referredUserId);
+
+  try {
+    await db.from("referrals").insert({
+      referrer_user_id: referrer.id,
+      referred_user_id: referredUserId,
+      referral_code: code,
+      status: "signed_up",
+      referrer_credit_cents: REFERRER_CREDIT_CENTS,
+      friend_reward: FRIEND_REWARD_DESCRIPTION,
+      ip_address: ipAddress || null,
+    });
+  } catch (e) {
+    if (!String(e.message || e).toLowerCase().includes("unique") &&
+        !String(e.message || e).toLowerCase().includes("duplicate")) throw e;
+  }
+
+  await db
+    .from("users")
+    .update({ last_referral_activity_at: new Date().toISOString() })
+    .eq("id", referrer.id);
 
   return {
     referrerId: referrer.id,
@@ -92,96 +128,104 @@ function attributeReferralOnSignup({ referredUserId, referredEmail, referralCode
   };
 }
 
-// Called by billingService.applyPlanChange() when a user becomes paid.
-// Idempotent: subsequent calls after the first reward are no-ops.
-function qualifyReferralOnPlanChange({ referredUserId, newPlan }) {
+async function qualifyReferralOnPlanChange({ referredUserId, newPlan }) {
   if (!referredUserId) return null;
   if (newPlan === "free") return null;
 
   const db = getDb();
-  const row = db.exec(
-    "SELECT id, referrer_user_id, status FROM referrals WHERE referred_user_id = ?",
-    [referredUserId]
-  )[0]?.values?.[0];
+  const { data: row } = await db
+    .from("referrals")
+    .select("id, referrer_user_id, status")
+    .eq("referred_user_id", referredUserId)
+    .maybeSingle();
+
   if (!row) return null;
-  const [refId, referrerUserId, currentStatus] = row;
-  if (currentStatus === "rewarded" || currentStatus === "cancelled" || currentStatus === "rejected") {
-    return null;
-  }
+  if (row.status === "rewarded" || row.status === "cancelled" || row.status === "rejected") return null;
 
-  // Mark qualified
-  db.run(
-    "UPDATE referrals SET status = 'rewarded', qualified_at = datetime('now'), rewarded_at = datetime('now') WHERE id = ?",
-    [refId]
-  );
-  // Credit the referrer
-  db.run(
-    "INSERT INTO referral_credits (user_id, amount_cents, reason, referral_id) VALUES (?, ?, ?, ?)",
-    [referrerUserId, REFERRER_CREDIT_CENTS, "referral_reward", refId]
-  );
-  db.run("UPDATE users SET last_referral_activity_at = datetime('now') WHERE id = ?", [referrerUserId]);
-  save();
+  await db
+    .from("referrals")
+    .update({
+      status: "rewarded",
+      qualified_at: new Date().toISOString(),
+      rewarded_at: new Date().toISOString(),
+    })
+    .eq("id", row.id);
 
-  // Notify the referrer
-  const refRow = db.exec("SELECT email, name FROM users WHERE id = ?", [referrerUserId])[0]?.values?.[0];
-  if (refRow) {
-    const [email, name] = refRow;
+  await db.from("referral_credits").insert({
+    user_id: row.referrer_user_id,
+    amount_cents: REFERRER_CREDIT_CENTS,
+    reason: "referral_reward",
+    referral_id: row.id,
+  });
+
+  await db
+    .from("users")
+    .update({ last_referral_activity_at: new Date().toISOString() })
+    .eq("id", row.referrer_user_id);
+
+  const { data: referrer } = await db
+    .from("users")
+    .select("email, name")
+    .eq("id", row.referrer_user_id)
+    .maybeSingle();
+
+  if (referrer) {
     sendEmail({
-      to: email,
+      to: referrer.email,
       subject: `You earned a $${REFERRER_CREDIT_CENTS / 100} credit on BriefFill`,
-      body: `Hi ${name},\n\nGreat news — the friend you referred just activated a paid plan. We've added a $${REFERRER_CREDIT_CENTS / 100} credit to your account, which will be applied automatically to your next invoice.\n\nKeep sharing to earn more: visit /dashboard/referrals.\n\n— The BriefFill team`,
+      body: `Hi ${referrer.name},\n\nGreat news — the friend you referred just activated a paid plan. We've added a $${REFERRER_CREDIT_CENTS / 100} credit to your account, which will be applied automatically to your next invoice.\n\nKeep sharing to earn more: visit /dashboard/referrals.\n\n— The BriefFill team`,
     }).catch((err) => console.error("Referral reward email failed:", err.message));
   }
 
-  return { referralId: refId, referrerUserId, creditCents: REFERRER_CREDIT_CENTS };
+  return { referralId: row.id, referrerUserId: row.referrer_user_id, creditCents: REFERRER_CREDIT_CENTS };
 }
 
-// Returns a referrer's full referral state for the dashboard page.
-function getReferralStats(userId) {
+async function getReferralStats(userId) {
   const db = getDb();
-  const code = ensureReferralCode(userId);
-  const invitees = db.exec(
-    `SELECT r.id, r.referred_user_id, r.status, r.referrer_credit_cents, r.friend_reward,
-            r.created_at, r.qualified_at, r.rewarded_at, u.email, u.name, u.created_at AS user_created_at
-     FROM referrals r
-     JOIN users u ON u.id = r.referred_user_id
-     WHERE r.referrer_user_id = ?
-     ORDER BY r.created_at DESC`,
-    [userId]
-  )[0]?.values || [];
+  const code = await ensureReferralCode(userId);
 
-  const credits = db.exec(
-    "SELECT COALESCE(SUM(amount_cents), 0) FROM referral_credits WHERE user_id = ?",
-    [userId]
-  )[0]?.values?.[0]?.[0] || 0;
-  const pendingCredits = db.exec(
-    "SELECT COUNT(*) FROM referrals WHERE referrer_user_id = ? AND status IN ('signed_up')",
-    [userId]
-  )[0]?.values?.[0]?.[0] || 0;
+  const { data: invitees } = await db
+    .from("referrals")
+    .select("id, referred_user_id, status, referrer_credit_cents, friend_reward, created_at, qualified_at, rewarded_at, users!inner(email, name, created_at)")
+    .eq("referrer_user_id", userId)
+    .order("created_at", { ascending: false });
+
+  const { data: creditRows } = await db
+    .from("referral_credits")
+    .select("amount_cents")
+    .eq("user_id", userId);
+
+  const { count: pendingCredits } = await db
+    .from("referrals")
+    .select("*", { count: "exact", head: true })
+    .eq("referrer_user_id", userId)
+    .in("status", ["signed_up"]);
+
+  const list = invitees || [];
 
   return {
     code,
     link: buildReferralLink(code),
     totals: {
-      invited: invitees.length,
-      signedUp: invitees.filter((r) => ["signed_up", "paid", "rewarded"].includes(r[2])).length,
-      paid: invitees.filter((r) => ["paid", "rewarded"].includes(r[2])).length,
-      rewarded: invitees.filter((r) => r[2] === "rewarded").length,
+      invited: list.length,
+      signedUp: list.filter((r) => ["signed_up", "paid", "rewarded"].includes(r.status)).length,
+      paid: list.filter((r) => ["paid", "rewarded"].includes(r.status)).length,
+      rewarded: list.filter((r) => r.status === "rewarded").length,
     },
-    creditsEarnedCents: credits,
-    pendingRewards: pendingCredits,
-    invitees: invitees.map((row) => ({
-      id: row[0],
-      referredUserId: row[1],
-      status: row[2],
-      creditCents: row[3],
-      friendReward: row[4],
-      createdAt: row[5],
-      qualifiedAt: row[6],
-      rewardedAt: row[7],
-      friendEmail: row[8],
-      friendName: row[9],
-      friendSignedUpAt: row[10],
+    creditsEarnedCents: creditRows?.reduce((sum, r) => sum + (r.amount_cents || 0), 0) || 0,
+    pendingRewards: pendingCredits || 0,
+    invitees: list.map((row) => ({
+      id: row.id,
+      referredUserId: row.referred_user_id,
+      status: row.status,
+      creditCents: row.referrer_credit_cents,
+      friendReward: row.friend_reward,
+      createdAt: row.created_at,
+      qualifiedAt: row.qualified_at,
+      rewardedAt: row.rewarded_at,
+      friendEmail: row.users?.email,
+      friendName: row.users?.name,
+      friendSignedUpAt: row.users?.created_at,
     })),
   };
 }

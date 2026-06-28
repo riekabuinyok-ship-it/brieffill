@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 
 const ROLE_LEVEL = { viewer: 0, editor: 1, admin: 2 };
 
@@ -11,77 +11,113 @@ function requireRole(currentRole, minimum) {
   return (ROLE_LEVEL[currentRole] || 0) >= (ROLE_LEVEL[minimum] || 0);
 }
 
-exports.createTeam = (req, res) => {
+exports.createTeam = async (req, res) => {
   const { name } = req.body;
   if (!name) return res.status(400).json({ error: "Team name is required" });
   const db = getDb();
-  db.run("INSERT INTO teams (name, owner_id) VALUES (?, ?)", [name, req.user.id]);
-  const teamId = db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
-  db.run("INSERT INTO team_members (team_id, user_id, role) VALUES (?, ?, 'admin')", [teamId, req.user.id]);
-  save();
-  res.status(201).json({ team: { id: teamId, name, ownerId: req.user.id, role: "admin" } });
+  const { data: team, error } = await db
+    .from("teams")
+    .insert({ name, owner_id: req.user.id })
+    .select("id")
+    .single();
+  if (error) return res.status(500).json({ error: error.message });
+  await db.from("team_members").insert({ team_id: team.id, user_id: req.user.id, role: "admin" });
+  res.status(201).json({ team: { id: team.id, name, ownerId: req.user.id, role: "admin" } });
 };
 
-exports.listTeams = (req, res) => {
+exports.listTeams = async (req, res) => {
   const db = getDb();
-  const result = db.exec(
-    `SELECT t.id, t.name, t.owner_id, t.created_at, tm.role
-     FROM teams t JOIN team_members tm ON t.id = tm.team_id
-     WHERE tm.user_id = ${req.user.id} ORDER BY t.created_at DESC`
-  );
-  const teams = result[0]?.values.map((row) => ({
-    id: row[0], name: row[1], ownerId: row[2], createdAt: row[3], role: row[4],
-  })) || [];
-  res.json({ teams });
-};
+  const { data: members, error: mErr } = await db
+    .from("team_members")
+    .select("team_id, role")
+    .eq("user_id", req.user.id);
+  if (mErr) return res.status(500).json({ error: mErr.message });
+  if (!members || members.length === 0) return res.json({ teams: [] });
 
-exports.getTeam = (req, res) => {
-  const db = getDb();
-  const memberResult = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!memberResult[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
+  const teamIds = members.map((m) => m.team_id);
+  const roleMap = Object.fromEntries(members.map((m) => [m.team_id, m.role]));
 
-  const teamResult = db.exec(`SELECT id, name, owner_id, created_at, description, logo_url FROM teams WHERE id = ${req.params.id}`);
-  if (!teamResult[0]?.values.length) return res.status(404).json({ error: "Team not found" });
-
-  const team = teamResult[0].values[0];
-  const members = db.exec(
-    `SELECT u.id, u.email, u.name, tm.role, tm.joined_at
-     FROM team_members tm JOIN users u ON u.id = tm.user_id
-     WHERE tm.team_id = ${req.params.id}`
-  ).at(0)?.values.map((m) => ({ id: m[0], email: m[1], name: m[2], role: m[3], joinedAt: m[4] })) || [];
-
-  const invites = db.exec(
-    `SELECT id, email, role, created_at, accepted_at FROM team_invites WHERE team_id = ${req.params.id} AND accepted_at IS NULL`
-  ).at(0)?.values.map((i) => ({ id: i[0], email: i[1], role: i[2], createdAt: i[3] })) || [];
+  const { data: teams, error: tErr } = await db
+    .from("teams")
+    .select("id, name, owner_id, created_at")
+    .in("id", teamIds)
+    .order("created_at", { ascending: false });
+  if (tErr) return res.status(500).json({ error: tErr.message });
 
   res.json({
-    team: { id: team[0], name: team[1], ownerId: team[2], createdAt: team[3], description: team[4] || "", logoUrl: team[5] || null },
-    members,
-    invites,
-    currentUserRole: memberResult[0].values[0][0],
+    teams: (teams || []).map((t) => ({
+      id: t.id, name: t.name, ownerId: t.owner_id, createdAt: t.created_at, role: roleMap[t.id],
+    })),
   });
 };
 
-exports.inviteToTeam = (req, res) => {
+exports.getTeam = async (req, res) => {
+  const db = getDb();
+
+  const { data: memberRole, error: mErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (mErr) return res.status(500).json({ error: mErr.message });
+  if (!memberRole) return res.status(403).json({ error: "Not a team member" });
+
+  const { data: team, error: tErr } = await db
+    .from("teams")
+    .select("id, name, owner_id, created_at, description, logo_url")
+    .eq("id", req.params.id)
+    .maybeSingle();
+  if (tErr) return res.status(500).json({ error: tErr.message });
+  if (!team) return res.status(404).json({ error: "Team not found" });
+
+  const { data: members, error: memErr2 } = await db
+    .from("team_members")
+    .select("user_id, role, joined_at, users ( id, email, name )")
+    .eq("team_id", req.params.id);
+
+  const { data: invites, error: invErr } = await db
+    .from("team_invites")
+    .select("id, email, role, created_at")
+    .eq("team_id", req.params.id)
+    .is("accepted_at", null);
+
+  res.json({
+    team: {
+      id: team.id, name: team.name, ownerId: team.owner_id, createdAt: team.created_at,
+      description: team.description || "", logoUrl: team.logo_url || null,
+    },
+    members: (members || []).map((m) => ({
+      id: m.users.id, email: m.users.email, name: m.users.name, role: m.role, joinedAt: m.joined_at,
+    })),
+    invites: (invites || []).map((i) => ({
+      id: i.id, email: i.email, role: i.role, createdAt: i.created_at,
+    })),
+    currentUserRole: memberRole.role,
+  });
+};
+
+exports.inviteToTeam = async (req, res) => {
   const { email, role } = req.body;
   if (!email) return res.status(400).json({ error: "Email is required" });
   if (role && !["admin", "editor", "viewer"].includes(role)) return res.status(400).json({ error: "Invalid role" });
 
   const db = getDb();
-  const adminCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!adminCheck[0]?.values.length) return res.status(403).json({ error: "Not authorized" });
-  if (adminCheck[0].values[0][0] !== "admin") return res.status(403).json({ error: "Only admins can invite" });
+  const { data: adminCheck, error: aErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (aErr) return res.status(500).json({ error: aErr.message });
+  if (!adminCheck) return res.status(403).json({ error: "Not authorized" });
+  if (adminCheck.role !== "admin") return res.status(403).json({ error: "Only admins can invite" });
 
   const token = generateToken();
-  db.run(
-    "INSERT INTO team_invites (team_id, email, role, token) VALUES (?, ?, ?, ?)",
-    [req.params.id, email, role || "viewer", token]
-  );
-  save();
+  const { error: insErr } = await db
+    .from("team_invites")
+    .insert({ team_id: req.params.id, email, role: role || "viewer", token });
+  if (insErr) return res.status(500).json({ error: insErr.message });
 
   res.status(201).json({
     invite: { email, role: role || "viewer", token },
@@ -89,212 +125,298 @@ exports.inviteToTeam = (req, res) => {
   });
 };
 
-exports.acceptInvite = (req, res) => {
+exports.acceptInvite = async (req, res) => {
   const { token } = req.body;
   const db = getDb();
 
-  const inviteResult = db.exec(
-    `SELECT id, team_id, email, role, accepted_at FROM team_invites WHERE token = '${token.replace(/'/g, "''")}'`
-  );
-  if (!inviteResult[0]?.values.length) return res.status(404).json({ error: "Invite not found" });
-
-  const invite = inviteResult[0].values[0];
-  if (invite[4]) return res.status(400).json({ error: "Invite already accepted" });
-
-  if (invite[2].toLowerCase() !== req.user.email.toLowerCase()) {
+  const { data: invite, error: iErr } = await db
+    .from("team_invites")
+    .select("id, team_id, email, role, accepted_at")
+    .eq("token", token)
+    .maybeSingle();
+  if (iErr) return res.status(500).json({ error: iErr.message });
+  if (!invite) return res.status(404).json({ error: "Invite not found" });
+  if (invite.accepted_at) return res.status(400).json({ error: "Invite already accepted" });
+  if (invite.email.toLowerCase() !== req.user.email.toLowerCase()) {
     return res.status(403).json({ error: "Invite is for a different email" });
   }
 
-  const existing = db.exec(
-    `SELECT id FROM team_members WHERE team_id = ${invite[1]} AND user_id = ${req.user.id}`
-  );
-  if (!existing[0]?.values.length) {
-    db.run("INSERT INTO team_members (team_id, user_id, role) VALUES (?, ?, ?)", [invite[1], req.user.id, invite[3]]);
-  }
-  db.run("UPDATE team_invites SET accepted_at = datetime('now') WHERE id = ?", [invite[0]]);
-  save();
+  const { data: existing } = await db
+    .from("team_members")
+    .select("id")
+    .eq("team_id", invite.team_id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
 
-  res.json({ success: true, teamId: invite[1] });
+  if (!existing) {
+    await db.from("team_members").insert({ team_id: invite.team_id, user_id: req.user.id, role: invite.role });
+  }
+
+  await db
+    .from("team_invites")
+    .update({ accepted_at: new Date().toISOString() })
+    .eq("id", invite.id);
+
+  res.json({ success: true, teamId: invite.team_id });
 };
 
-exports.shareBrief = (req, res) => {
+exports.shareBrief = async (req, res) => {
   const teamId = req.params.id;
   const briefId = req.params.briefId;
   const db = getDb();
 
-  const memberCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${teamId} AND user_id = ${req.user.id}`
-  );
-  if (!memberCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
-  const role = memberCheck[0].values[0][0];
-  if (!requireRole(role, "editor")) {
+  const { data: memberCheck, error: mcErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", teamId)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (mcErr) return res.status(500).json({ error: mcErr.message });
+  if (!memberCheck) return res.status(403).json({ error: "Not a team member" });
+  if (!requireRole(memberCheck.role, "editor")) {
     return res.status(403).json({ error: "Editors and admins can share briefs" });
   }
 
-  const briefCheck = db.exec(`SELECT user_id FROM briefs WHERE id = ${briefId}`);
-  if (!briefCheck[0]?.values.length) return res.status(404).json({ error: "Brief not found" });
-  if (briefCheck[0].values[0][0] !== req.user.id) return res.status(403).json({ error: "Not the brief owner" });
+  const { data: brief, error: bErr } = await db
+    .from("briefs")
+    .select("user_id")
+    .eq("id", briefId)
+    .maybeSingle();
+  if (bErr) return res.status(500).json({ error: bErr.message });
+  if (!brief) return res.status(404).json({ error: "Brief not found" });
+  if (brief.user_id !== req.user.id) return res.status(403).json({ error: "Not the brief owner" });
 
-  try {
-    db.run("INSERT INTO brief_shares (brief_id, team_id, shared_by) VALUES (?, ?, ?)", [briefId, teamId, req.user.id]);
-    save();
-    res.status(201).json({ success: true });
-  } catch {
-    res.status(409).json({ error: "Already shared" });
+  const { error: insErr } = await db
+    .from("brief_shares")
+    .insert({ brief_id: briefId, team_id: teamId, shared_by: req.user.id });
+  if (insErr) {
+    if (insErr.code === "23505") return res.status(409).json({ error: "Already shared" });
+    return res.status(500).json({ error: insErr.message });
   }
+  res.status(201).json({ success: true });
 };
 
-exports.listTeamBriefs = (req, res) => {
+exports.listTeamBriefs = async (req, res) => {
   const db = getDb();
-  const memberCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!memberCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
 
-  const result = db.exec(
-    `SELECT b.id, b.client_name, b.project_name, b.completeness_score, b.status, b.created_at, u.name as owner_name
-     FROM brief_shares bs
-     JOIN briefs b ON b.id = bs.brief_id
-     JOIN users u ON u.id = b.user_id
-     WHERE bs.team_id = ${req.params.id}
-     ORDER BY bs.created_at DESC`
-  );
-  const briefs = result[0]?.values.map((row) => ({
-    id: row[0], clientName: row[1], projectName: row[2], completenessScore: row[3],
-    status: row[4], createdAt: row[5], ownerName: row[6],
-  })) || [];
+  const { data: member, error: mcErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (mcErr) return res.status(500).json({ error: mcErr.message });
+  if (!member) return res.status(403).json({ error: "Not a team member" });
+
+  const { data: rows, error } = await db
+    .from("brief_shares")
+    .select("created_at, briefs ( id, client_name, project_name, completeness_score, status, created_at, users ( name ) )")
+    .eq("team_id", req.params.id)
+    .order("created_at", { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+
+  const briefs = (rows || []).map((r) => ({
+    id: r.briefs.id, clientName: r.briefs.client_name, projectName: r.briefs.project_name,
+    completenessScore: r.briefs.completeness_score, status: r.briefs.status,
+    createdAt: r.briefs.created_at, ownerName: r.briefs.users.name,
+  }));
   res.json({ briefs });
 };
 
-exports.updateMemberRole = (req, res) => {
+exports.updateMemberRole = async (req, res) => {
   const { role } = req.body;
   if (!role || !["admin", "editor", "viewer"].includes(role)) {
     return res.status(400).json({ error: "Invalid role" });
   }
 
   const db = getDb();
-  const adminCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!adminCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
-  if (!requireRole(adminCheck[0].values[0][0], "admin")) {
+  const { data: adminCheck, error: aErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (aErr) return res.status(500).json({ error: aErr.message });
+  if (!adminCheck) return res.status(403).json({ error: "Not a team member" });
+  if (!requireRole(adminCheck.role, "admin")) {
     return res.status(403).json({ error: "Only admins can change roles" });
   }
 
-  // Prevent removing the last admin
   if (role !== "admin") {
-    const ownerCheck = db.exec(`SELECT owner_id FROM teams WHERE id = ${req.params.id}`);
-    if (ownerCheck[0]?.values[0]?.[0] === Number(req.params.userId)) {
+    const { data: ownerCheck, error: oErr } = await db
+      .from("teams")
+      .select("owner_id")
+      .eq("id", req.params.id)
+      .maybeSingle();
+    if (oErr) return res.status(500).json({ error: oErr.message });
+    if (ownerCheck && ownerCheck.owner_id === Number(req.params.userId)) {
       return res.status(400).json({ error: "Cannot demote the team owner" });
     }
   }
 
-  const result = db.run(
-    `UPDATE team_members SET role = ? WHERE team_id = ? AND user_id = ?`,
-    [role, req.params.id, req.params.userId]
-  );
-  save();
+  const { error: uErr } = await db
+    .from("team_members")
+    .update({ role })
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.params.userId);
+  if (uErr) return res.status(500).json({ error: uErr.message });
+
   res.json({ success: true });
 };
 
-exports.removeMember = (req, res) => {
+exports.removeMember = async (req, res) => {
   const db = getDb();
-  const adminCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!adminCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
-  if (!requireRole(adminCheck[0].values[0][0], "admin")) {
+  const { data: adminCheck, error: aErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (aErr) return res.status(500).json({ error: aErr.message });
+  if (!adminCheck) return res.status(403).json({ error: "Not a team member" });
+  if (!requireRole(adminCheck.role, "admin")) {
     return res.status(403).json({ error: "Only admins can remove members" });
   }
 
-  // Prevent removing the team owner
-  const ownerCheck = db.exec(`SELECT owner_id FROM teams WHERE id = ${req.params.id}`);
-  if (ownerCheck[0]?.values[0]?.[0] === Number(req.params.userId)) {
+  const { data: ownerCheck, error: oErr } = await db
+    .from("teams")
+    .select("owner_id")
+    .eq("id", req.params.id)
+    .maybeSingle();
+  if (oErr) return res.status(500).json({ error: oErr.message });
+  if (ownerCheck && ownerCheck.owner_id === Number(req.params.userId)) {
     return res.status(400).json({ error: "Cannot remove the team owner" });
   }
 
-  db.run("DELETE FROM team_members WHERE team_id = ? AND user_id = ?", [req.params.id, req.params.userId]);
-  save();
+  const { error: dErr } = await db
+    .from("team_members")
+    .delete()
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.params.userId);
+  if (dErr) return res.status(500).json({ error: dErr.message });
+
   res.json({ success: true });
 };
 
-exports.updateTeam = (req, res) => {
+exports.updateTeam = async (req, res) => {
   const { name, description } = req.body;
   const db = getDb();
-  const adminCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!adminCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
-  if (adminCheck[0].values[0][0] !== "admin") return res.status(403).json({ error: "Only admins can update team settings" });
 
-  const sets = [];
-  const vals = [];
-  if (name !== undefined) { sets.push("name = ?"); vals.push(name.trim().slice(0, 100)); }
-  if (description !== undefined) { sets.push("description = ?"); vals.push(description.trim().slice(0, 500)); }
-  if (sets.length === 0) return res.status(400).json({ error: "Nothing to update" });
+  const { data: adminCheck, error: aErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (aErr) return res.status(500).json({ error: aErr.message });
+  if (!adminCheck) return res.status(403).json({ error: "Not a team member" });
+  if (adminCheck.role !== "admin") return res.status(403).json({ error: "Only admins can update team settings" });
 
-  db.run(`UPDATE teams SET ${sets.join(", ")} WHERE id = ?`, [...vals, req.params.id]);
-  save();
+  const updates = {};
+  if (name !== undefined) updates.name = name.trim().slice(0, 100);
+  if (description !== undefined) updates.description = description.trim().slice(0, 500);
+  if (Object.keys(updates).length === 0) return res.status(400).json({ error: "Nothing to update" });
+
+  const { error: uErr } = await db.from("teams").update(updates).eq("id", req.params.id);
+  if (uErr) return res.status(500).json({ error: uErr.message });
+
   res.json({ success: true });
 };
 
-exports.uploadTeamLogo = (req, res) => {
+exports.uploadTeamLogo = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
   const logoUrl = `/uploads/team-logos/${req.file.filename}`;
   const db = getDb();
-  const adminCheck = db.exec(
-    `SELECT role FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${req.user.id}`
-  );
-  if (!adminCheck[0]?.values.length) return res.status(403).json({ error: "Not a team member" });
-  if (adminCheck[0].values[0][0] !== "admin") return res.status(403).json({ error: "Only admins can update team settings" });
 
-  db.run("UPDATE teams SET logo_url = ? WHERE id = ?", [logoUrl, req.params.id]);
-  save();
+  const { data: adminCheck, error: aErr } = await db
+    .from("team_members")
+    .select("role")
+    .eq("team_id", req.params.id)
+    .eq("user_id", req.user.id)
+    .maybeSingle();
+  if (aErr) return res.status(500).json({ error: aErr.message });
+  if (!adminCheck) return res.status(403).json({ error: "Not a team member" });
+  if (adminCheck.role !== "admin") return res.status(403).json({ error: "Only admins can update team settings" });
+
+  const { error: uErr } = await db.from("teams").update({ logo_url: logoUrl }).eq("id", req.params.id);
+  if (uErr) return res.status(500).json({ error: uErr.message });
+
   res.json({ logoUrl });
 };
 
-exports.transferOwnership = (req, res) => {
+exports.transferOwnership = async (req, res) => {
   const { userId } = req.body;
   if (!userId) return res.status(400).json({ error: "userId is required" });
   const db = getDb();
 
-  const teamResult = db.exec(`SELECT owner_id FROM teams WHERE id = ${req.params.id}`);
-  if (!teamResult[0]?.values.length) return res.status(404).json({ error: "Team not found" });
-  if (teamResult[0].values[0][0] !== req.user.id) return res.status(403).json({ error: "Only the team owner can transfer ownership" });
+  const { data: team, error: tErr } = await db
+    .from("teams")
+    .select("owner_id")
+    .eq("id", req.params.id)
+    .maybeSingle();
+  if (tErr) return res.status(500).json({ error: tErr.message });
+  if (!team) return res.status(404).json({ error: "Team not found" });
+  if (team.owner_id !== req.user.id) return res.status(403).json({ error: "Only the team owner can transfer ownership" });
 
-  const memberCheck = db.exec(
-    `SELECT id FROM team_members WHERE team_id = ${req.params.id} AND user_id = ${Number(userId)}`
-  );
-  if (!memberCheck[0]?.values.length) return res.status(400).json({ error: "User is not a team member" });
+  const { data: member, error: mErr } = await db
+    .from("team_members")
+    .select("id")
+    .eq("team_id", req.params.id)
+    .eq("user_id", Number(userId))
+    .maybeSingle();
+  if (mErr) return res.status(500).json({ error: mErr.message });
+  if (!member) return res.status(400).json({ error: "User is not a team member" });
 
-  db.run("UPDATE teams SET owner_id = ? WHERE id = ?", [Number(userId), req.params.id]);
-  db.run("UPDATE team_members SET role = 'admin' WHERE team_id = ? AND user_id = ?", [req.params.id, Number(userId)]);
-  save();
+  const { error: u1Err } = await db.from("teams").update({ owner_id: Number(userId) }).eq("id", req.params.id);
+  if (u1Err) return res.status(500).json({ error: u1Err.message });
+
+  const { error: u2Err } = await db
+    .from("team_members")
+    .update({ role: "admin" })
+    .eq("team_id", req.params.id)
+    .eq("user_id", Number(userId));
+  if (u2Err) return res.status(500).json({ error: u2Err.message });
+
   res.json({ success: true });
 };
 
-exports.deleteTeam = (req, res) => {
+exports.deleteTeam = async (req, res) => {
   const db = getDb();
-  const teamResult = db.exec(`SELECT owner_id FROM teams WHERE id = ${req.params.id}`);
-  if (!teamResult[0]?.values.length) return res.status(404).json({ error: "Team not found" });
-  if (teamResult[0].values[0][0] !== req.user.id) return res.status(403).json({ error: "Only the team owner can delete the team" });
+  const { data: team, error: tErr } = await db
+    .from("teams")
+    .select("owner_id")
+    .eq("id", req.params.id)
+    .maybeSingle();
+  if (tErr) return res.status(500).json({ error: tErr.message });
+  if (!team) return res.status(404).json({ error: "Team not found" });
+  if (team.owner_id !== req.user.id) return res.status(403).json({ error: "Only the team owner can delete the team" });
 
-  db.run("DELETE FROM teams WHERE id = ?", [req.params.id]);
-  save();
+  const { error: dErr } = await db.from("teams").delete().eq("id", req.params.id);
+  if (dErr) return res.status(500).json({ error: dErr.message });
+
   res.json({ success: true });
 };
 
-exports.listMyTeamsForBrief = (req, res) => {
-  // Returns the list of teams that the current user belongs to, used by the
-  // "Share with team" UI on BriefDetail so users can pick a team.
+exports.listMyTeamsForBrief = async (req, res) => {
   const db = getDb();
-  const result = db.exec(
-    `SELECT t.id, t.name, tm.role
-     FROM teams t JOIN team_members tm ON t.id = tm.team_id
-     WHERE tm.user_id = ${req.user.id} ORDER BY t.name`
-  );
-  const teams = result[0]?.values.map((row) => ({
-    id: row[0], name: row[1], role: row[2],
-  })) || [];
-  res.json({ teams });
+  const { data: members, error: mErr } = await db
+    .from("team_members")
+    .select("team_id, role")
+    .eq("user_id", req.user.id);
+  if (mErr) return res.status(500).json({ error: mErr.message });
+  if (!members || members.length === 0) return res.json({ teams: [] });
+
+  const teamIds = members.map((m) => m.team_id);
+  const roleMap = Object.fromEntries(members.map((m) => [m.team_id, m.role]));
+
+  const { data: teams, error: tErr } = await db
+    .from("teams")
+    .select("id, name")
+    .in("id", teamIds)
+    .order("name");
+  if (tErr) return res.status(500).json({ error: tErr.message });
+
+  res.json({
+    teams: (teams || []).map((t) => ({ id: t.id, name: t.name, role: roleMap[t.id] })),
+  });
 };

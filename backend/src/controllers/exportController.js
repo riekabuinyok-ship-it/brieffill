@@ -1,22 +1,22 @@
 const { getDb } = require("../utils/db");
 const { getGoogleDocsUrl, exportToNotion, getNotionStatus } = require("../services/exportService");
 
-function loadBrief(id, userId) {
+async function loadBrief(id, userId) {
   const db = getDb();
-  const result = db.exec(
-    `SELECT id, user_id, original_text, analyzed_text, client_name, project_name
-     FROM briefs WHERE id = ?`,
-    [id]
-  );
-  if (!result[0]?.values.length) return { error: "not_found" };
-  const row = result[0].values[0];
-  if (row[1] !== userId) return { error: "forbidden" };
+  const { data: brief, error } = await db
+    .from("briefs")
+    .select("id, user_id, original_text, analyzed_text, client_name, project_name")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!brief) return { error: "not_found" };
+  if (brief.user_id !== userId) return { error: "forbidden" };
   return {
-    id: row[0],
-    clientName: row[4],
-    projectName: row[5],
-    originalText: row[2],
-    analyzedText: row[3] ? JSON.parse(row[3]) : null,
+    id: brief.id,
+    clientName: brief.client_name,
+    projectName: brief.project_name,
+    originalText: brief.original_text,
+    analyzedText: brief.analyzed_text,
     improvedText: null,
   };
 }
@@ -32,8 +32,8 @@ exports.getIntegrationsStatus = (req, res) => {
   res.json(getNotionStatus());
 };
 
-exports.getGoogleDocsExport = (req, res) => {
-  const brief = loadBrief(req.params.id, req.user.id);
+exports.getGoogleDocsExport = async (req, res) => {
+  const brief = await loadBrief(req.params.id, req.user.id);
   if (brief.error === "not_found") return res.status(404).json({ error: "Brief not found" });
   if (brief.error === "forbidden") return res.status(403).json({ error: "Not authorized" });
 
@@ -56,7 +56,7 @@ exports.getGoogleDocsExport = (req, res) => {
 };
 
 exports.postNotionExport = async (req, res) => {
-  const brief = loadBrief(req.params.id, req.user.id);
+  const brief = await loadBrief(req.params.id, req.user.id);
   if (brief.error === "not_found") return res.status(404).json({ error: "Brief not found" });
   if (brief.error === "forbidden") return res.status(403).json({ error: "Not authorized" });
 

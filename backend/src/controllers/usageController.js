@@ -1,48 +1,57 @@
 const { getDb } = require("../utils/db");
 
-exports.getUsage = (req, res) => {
+exports.getUsage = async (req, res) => {
   try {
     const db = getDb();
 
-    const totalResult = db.exec("SELECT COUNT(*) AS cnt FROM briefs WHERE user_id = ?", [req.user.id]);
-    const totalBriefs = totalResult[0]?.values[0]?.[0] || 0;
+    const { count: totalBriefs } = await db
+      .from("briefs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.user.id);
 
     const monthStart = new Date();
     monthStart.setDate(1);
     monthStart.setHours(0, 0, 0, 0);
     const monthStartStr = monthStart.toISOString();
 
-    const thisMonthResult = db.exec(
-      "SELECT COUNT(*) AS cnt FROM briefs WHERE user_id = ? AND created_at >= ?",
-      [req.user.id, monthStartStr]
-    );
-    const briefsThisMonth = thisMonthResult[0]?.values[0]?.[0] || 0;
+    const { count: briefsThisMonth } = await db
+      .from("briefs")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.user.id)
+      .gte("created_at", monthStartStr);
 
-    const firstResult = db.exec(
-      "SELECT created_at FROM briefs WHERE user_id = ? ORDER BY created_at ASC LIMIT 1",
-      [req.user.id]
-    );
-    const firstBrief = firstResult[0]?.values?.[0]?.[0] || null;
+    const { data: firstRow } = await db
+      .from("briefs")
+      .select("created_at")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    const avgResult = db.exec(
-      "SELECT completeness_score FROM briefs WHERE user_id = ? AND completeness_score IS NOT NULL",
-      [req.user.id]
-    );
-    const scores = avgResult[0]?.values || [];
+    const firstBrief = firstRow?.created_at || null;
+
+    const { data: scores } = await db
+      .from("briefs")
+      .select("completeness_score")
+      .eq("user_id", req.user.id)
+      .not("completeness_score", "is", null);
+
     const avgScore = scores.length
-      ? Math.round(scores.reduce((s, r) => s + r[0], 0) / scores.length)
+      ? Math.round(scores.reduce((s, r) => s + r.completeness_score, 0) / scores.length)
       : 0;
 
-    const paymentResult = db.exec("SELECT COUNT(*) AS cnt FROM payments WHERE user_id = ?", [req.user.id]);
-    const paymentCount = paymentResult[0]?.values[0]?.[0] || 0;
+    const { count: paymentCount } = await db
+      .from("payments")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.user.id);
 
     res.json({
-      totalBriefs,
-      briefsThisMonth,
+      totalBriefs: totalBriefs || 0,
+      briefsThisMonth: briefsThisMonth || 0,
       averageScore: avgScore,
       firstBriefAt: firstBrief,
-      apiCalls: totalBriefs,
-      paymentCount,
+      apiCalls: totalBriefs || 0,
+      paymentCount: paymentCount || 0,
     });
   } catch (err) {
     console.error("getUsage error:", err);

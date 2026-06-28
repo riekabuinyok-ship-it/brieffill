@@ -1,4 +1,4 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { maskSecret, unmaskSecret, maskPreview } = require("../utils/secrets");
 
 const VALID_PROVIDERS = ["notion", "clickup", "airtable", "webhook"];
@@ -9,44 +9,50 @@ const NOTION_VERSION = "2022-06-28";
 const CLICKUP_BASE = "https://api.clickup.com/api/v2";
 const AIRTABLE_BASE = "https://api.airtable.com/v0";
 
-function getUserIntegration(userId, provider) {
+async function getUserIntegration(userId, provider) {
   if (!VALID_PROVIDERS.includes(provider)) return null;
   const db = getDb();
-  const row = db.exec(
-    "SELECT api_key, target_id, target_id_2, webhook_url, webhook_events, updated_at FROM user_integrations WHERE user_id = ? AND provider = ?",
-    [userId, provider]
-  )[0]?.values?.[0];
-  if (!row) return null;
-  let events = [];
-  if (row[4]) {
-    try { events = JSON.parse(row[4]); } catch { events = []; }
-  }
+  const { data, error } = await db
+    .from("user_integrations")
+    .select("api_key, target_id, target_id_2, webhook_url, webhook_events, updated_at")
+    .eq("user_id", userId)
+    .eq("provider", provider)
+    .maybeSingle();
+  if (!data) return null;
+  const events = Array.isArray(data.webhook_events) ? data.webhook_events : [];
   return {
     provider,
-    hasKey: !!row[0],
-    apiKeyPreview: maskPreview(row[0]),
-    targetId: row[1] || null,
-    targetId2: row[2] || null,
-    webhookUrl: row[3] || null,
+    hasKey: !!data.api_key,
+    apiKeyPreview: maskPreview(data.api_key),
+    targetId: data.target_id || null,
+    targetId2: data.target_id_2 || null,
+    webhookUrl: data.webhook_url || null,
     webhookEvents: events,
-    updatedAt: row[5],
+    updatedAt: data.updated_at,
   };
 }
 
-function getAllUserIntegrations(userId) {
-  return VALID_PROVIDERS.map((p) => getUserIntegration(userId, p)).filter(Boolean);
+async function getAllUserIntegrations(userId) {
+  const results = await Promise.all(
+    VALID_PROVIDERS.map((p) => getUserIntegration(userId, p))
+  );
+  return results.filter(Boolean);
 }
 
-function setUserIntegration(userId, provider, fields) {
+async function setUserIntegration(userId, provider, fields) {
   if (!VALID_PROVIDERS.includes(provider)) {
     throw new Error(`Unknown provider: ${provider}`);
   }
   const db = getDb();
-  const existing = getUserIntegration(userId, provider);
-  const existingKey = db.exec(
-    "SELECT api_key FROM user_integrations WHERE user_id = ? AND provider = ?",
-    [userId, provider]
-  )[0]?.values?.[0]?.[0];
+  const existing = await getUserIntegration(userId, provider);
+
+  const { data: keyRow } = await db
+    .from("user_integrations")
+    .select("api_key")
+    .eq("user_id", userId)
+    .eq("provider", provider)
+    .maybeSingle();
+  const existingKey = keyRow?.api_key || null;
 
   let storedKey = existingKey || null;
   if (fields.apiKey !== undefined && fields.apiKey !== null) {
@@ -61,33 +67,45 @@ function setUserIntegration(userId, provider, fields) {
   const targetId2 = fields.targetId2 !== undefined ? (fields.targetId2 || null) : (existing?.targetId2 || null);
   const webhookUrl = fields.webhookUrl !== undefined ? (fields.webhookUrl || null) : (existing?.webhookUrl || null);
   const webhookEvents = fields.webhookEvents !== undefined
-    ? JSON.stringify(Array.isArray(fields.webhookEvents) ? fields.webhookEvents : [])
-    : (existing ? JSON.stringify(existing.webhookEvents) : "[]");
+    ? (Array.isArray(fields.webhookEvents) ? fields.webhookEvents : [])
+    : (existing ? existing.webhookEvents : []);
+
+  const now = new Date().toISOString();
+  const payload = {
+    api_key: storedKey,
+    target_id: targetId,
+    target_id_2: targetId2,
+    webhook_url: webhookUrl,
+    webhook_events: webhookEvents,
+    updated_at: now,
+  };
 
   if (existing) {
-    db.run(
-      `UPDATE user_integrations SET api_key = ?, target_id = ?, target_id_2 = ?, webhook_url = ?, webhook_events = ?, updated_at = datetime('now')
-       WHERE user_id = ? AND provider = ?`,
-      [storedKey, targetId, targetId2, webhookUrl, webhookEvents, userId, provider]
-    );
+    await db
+      .from("user_integrations")
+      .update(payload)
+      .eq("user_id", userId)
+      .eq("provider", provider);
   } else {
-    db.run(
-      `INSERT INTO user_integrations (user_id, provider, api_key, target_id, target_id_2, webhook_url, webhook_events, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`,
-      [userId, provider, storedKey, targetId, targetId2, webhookUrl, webhookEvents]
-    );
+    await db
+      .from("user_integrations")
+      .insert({ ...payload, user_id: userId, provider });
   }
-  save();
+
   return getUserIntegration(userId, provider);
 }
 
-function deleteUserIntegration(userId, provider) {
+async function deleteUserIntegration(userId, provider) {
   if (!VALID_PROVIDERS.includes(provider)) return false;
   const db = getDb();
-  db.run("DELETE FROM user_integrations WHERE user_id = ? AND provider = ?", [userId, provider]);
-  const changes = db.exec("SELECT changes() AS n")[0]?.values?.[0]?.[0] || 0;
-  save();
-  return changes > 0;
+  const { data, error } = await db
+    .from("user_integrations")
+    .delete()
+    .eq("user_id", userId)
+    .eq("provider", provider)
+    .select();
+  if (error) throw error;
+  return (data || []).length > 0;
 }
 
 async function testProvider(userId, provider) {
@@ -114,8 +132,8 @@ function safeJson(s) {
 }
 
 async function testNotion(userId) {
-  const stored = getUserIntegration(userId, "notion");
-  const apiKey = stored?.hasKey ? unmaskSecret(dbKey(userId, "notion")) : null;
+  const stored = await getUserIntegration(userId, "notion");
+  const apiKey = stored?.hasKey ? unmaskSecret(await dbKey(userId, "notion")) : null;
   const key = apiKey || process.env.NOTION_API_KEY;
   const dbId = stored?.targetId || process.env.NOTION_DATABASE_ID;
   if (!key) return { ok: false, message: "No Notion API key configured" };
@@ -132,19 +150,22 @@ async function testNotion(userId) {
   }
 }
 
-function dbKey(userId, provider) {
+async function dbKey(userId, provider) {
   const db = getDb();
-  return db.exec(
-    "SELECT api_key FROM user_integrations WHERE user_id = ? AND provider = ?",
-    [userId, provider]
-  )[0]?.values?.[0]?.[0] || null;
+  const { data, error } = await db
+    .from("user_integrations")
+    .select("api_key")
+    .eq("user_id", userId)
+    .eq("provider", provider)
+    .maybeSingle();
+  return data?.api_key || null;
 }
 
 async function testClickUp(userId) {
-  const stored = getUserIntegration(userId, "clickup");
+  const stored = await getUserIntegration(userId, "clickup");
   if (!stored?.hasKey) return { ok: false, message: "ClickUp API key not configured" };
   if (!stored.targetId) return { ok: false, message: "ClickUp list ID not configured" };
-  const apiKey = unmaskSecret(dbKey(userId, "clickup"));
+  const apiKey = unmaskSecret(await dbKey(userId, "clickup"));
   try {
     const r = await fetchOk(`${CLICKUP_BASE}/list/${stored.targetId}`, {
       headers: { Authorization: apiKey },
@@ -158,11 +179,11 @@ async function testClickUp(userId) {
 }
 
 async function testAirtable(userId) {
-  const stored = getUserIntegration(userId, "airtable");
+  const stored = await getUserIntegration(userId, "airtable");
   if (!stored?.hasKey) return { ok: false, message: "Airtable API key not configured" };
   if (!stored.targetId) return { ok: false, message: "Airtable base ID not configured" };
   if (!stored.targetId2) return { ok: false, message: "Airtable table ID not configured" };
-  const apiKey = unmaskSecret(dbKey(userId, "airtable"));
+  const apiKey = unmaskSecret(await dbKey(userId, "airtable"));
   try {
     const r = await fetchOk(`${AIRTABLE_BASE}/${stored.targetId}/${stored.targetId2}?maxRecords=1`, {
       headers: { Authorization: `Bearer ${apiKey}` },
@@ -175,7 +196,7 @@ async function testAirtable(userId) {
 }
 
 async function testWebhook(userId) {
-  const stored = getUserIntegration(userId, "webhook");
+  const stored = await getUserIntegration(userId, "webhook");
   if (!stored?.webhookUrl) return { ok: false, message: "Webhook URL not configured" };
   return fireWebhookOnce(userId, stored.webhookUrl, "webhook.test", { hello: "world" });
 }
@@ -295,15 +316,20 @@ function httpErr(status, message) {
   return e;
 }
 
-function logDelivery(userId, event, url, statusCode, responseSnippet, durationMs, error) {
+async function logDelivery(userId, event, url, statusCode, responseSnippet, durationMs, error) {
   try {
     const db = getDb();
-    db.run(
-      `INSERT INTO webhook_deliveries (user_id, event, url, status_code, response_snippet, duration_ms, error)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [userId, event, url, statusCode, (responseSnippet || "").slice(0, 500), durationMs, error || null]
-    );
-    save();
+    await db
+      .from("webhook_deliveries")
+      .insert({
+        user_id: userId,
+        event,
+        url,
+        status_code: statusCode,
+        response_snippet: (responseSnippet || "").slice(0, 500),
+        duration_ms: durationMs,
+        error: error || null,
+      });
   } catch (e) {
     console.error("logDelivery error:", e.message);
   }
@@ -337,37 +363,41 @@ async function fireWebhookOnce(userId, url, event, payload) {
 
 async function fireWebhooks(userId, event, payload) {
   const db = getDb();
-  const rows = db.exec(
-    "SELECT webhook_url, webhook_events FROM user_integrations WHERE user_id = ? AND provider = 'webhook' AND webhook_url IS NOT NULL",
-    [userId]
-  )[0]?.values || [];
+  const { data, error } = await db
+    .from("user_integrations")
+    .select("webhook_url, webhook_events")
+    .eq("user_id", userId)
+    .eq("provider", "webhook")
+    .not("webhook_url", "is", null);
 
   const results = [];
-  for (const [url, eventsJson] of rows) {
-    let events = [];
-    try { events = JSON.parse(eventsJson); } catch { events = []; }
-    if (!Array.isArray(events) || !events.includes(event)) continue;
-    const r = await fireWebhookOnce(userId, url, event, payload);
-    results.push({ url, ...r });
+  for (const row of data || []) {
+    const events = Array.isArray(row.webhook_events) ? row.webhook_events : [];
+    if (!events.includes(event)) continue;
+    const r = await fireWebhookOnce(userId, row.webhook_url, event, payload);
+    results.push({ url: row.webhook_url, ...r });
   }
   return results;
 }
 
-function listDeliveries(userId, limit = 20) {
+async function listDeliveries(userId, limit = 20) {
   const db = getDb();
-  const rows = db.exec(
-    "SELECT id, event, url, status_code, response_snippet, duration_ms, error, created_at FROM webhook_deliveries WHERE user_id = ? ORDER BY id DESC LIMIT ?",
-    [userId, limit]
-  )[0]?.values || [];
-  return rows.map((r) => ({
-    id: r[0],
-    event: r[1],
-    url: r[2],
-    statusCode: r[3],
-    responseSnippet: r[4],
-    durationMs: r[5],
-    error: r[6],
-    createdAt: r[7],
+  const { data, error } = await db
+    .from("webhook_deliveries")
+    .select("id, event, url, status_code, response_snippet, duration_ms, error, created_at")
+    .eq("user_id", userId)
+    .order("id", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data || []).map((row) => ({
+    id: row.id,
+    event: row.event,
+    url: row.url,
+    statusCode: row.status_code,
+    responseSnippet: row.response_snippet,
+    durationMs: row.duration_ms,
+    error: row.error,
+    createdAt: row.created_at,
   }));
 }
 

@@ -65,7 +65,7 @@ app.use("/api", portalRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.get("/api/fields", getFields);
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
   app.use(express.static(path.join(__dirname, "..", "frontend", "dist")));
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "frontend", "dist", "index.html"));
@@ -75,13 +75,17 @@ if (process.env.NODE_ENV === "production") {
 app.use(notFound);
 app.use(errorHandler);
 
-init()
-  .then(() => {
-    app.listen(PORT, () => {
-      logInfo(`BriefFill API running on http://localhost:${PORT}`);
+if (!process.env.VERCEL) {
+  init()
+    .then(() => {
+      app.listen(PORT, () => {
+        logInfo(`BriefFill API running on http://localhost:${PORT}`);
+      });
+    })
+    .catch((err) => {
+      logError(err, { context: "database initialization" });
+      process.exit(1);
     });
-  })
-  .catch((err) => {
-    logError(err, { context: "database initialization" });
-    process.exit(1);
-  });
+}
+
+module.exports = app;

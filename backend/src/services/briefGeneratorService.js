@@ -294,10 +294,15 @@ async function refineBrief({ currentBrief, feedback }) {
 // Lightweight wrapper to verify ownership of a briefId (used by the
 // future "save generated brief to account" path). Currently unused but
 // kept for parity with the rest of the controllers.
-function verifyBriefOwnership(briefId, userId) {
+async function verifyBriefOwnership(briefId, userId) {
   const db = getDb();
-  const row = db.exec("SELECT 1 FROM briefs WHERE id = ? AND user_id = ?", [briefId, userId])[0]?.values?.[0];
-  return !!row;
+  const { data, error } = await db
+    .from("briefs")
+    .select("id")
+    .eq("id", briefId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return !!data;
 }
 
 module.exports = {

@@ -10,7 +10,7 @@ const MIN_COMPETITORS = 1;
 exports.runCompetitorAnalysis = async (req, res) => {
   try {
     const briefId = req.params.id;
-    if (!verifyBriefOwnership(briefId, req.user.id)) {
+    if (!(await verifyBriefOwnership(briefId, req.user.id))) {
       return res.status(404).json({ error: "Brief not found" });
     }
 
@@ -54,13 +54,13 @@ exports.runCompetitorAnalysis = async (req, res) => {
   }
 };
 
-exports.getCompetitorAnalysis = (req, res) => {
+exports.getCompetitorAnalysis = async (req, res) => {
   try {
     const briefId = req.params.id;
-    if (!verifyBriefOwnership(briefId, req.user.id)) {
+    if (!(await verifyBriefOwnership(briefId, req.user.id))) {
       return res.status(404).json({ error: "Brief not found" });
     }
-    const analysis = getCompetitorAnalysis(briefId);
+    const analysis = await getCompetitorAnalysis(briefId);
     res.json({ analysis });
   } catch (err) {
     console.error("getCompetitorAnalysis error:", err);

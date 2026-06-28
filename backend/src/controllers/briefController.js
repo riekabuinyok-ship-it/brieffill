@@ -1,4 +1,4 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 const { analyzeBrief: runAnalysis } = require("../services/aiService");
 const { sanitizeAiResponse } = require("../utils/validation");
 const { generateClarificationEmail } = require("../services/emailService");
@@ -29,7 +29,7 @@ exports.analyzeBrief = async (req, res) => {
     }
 
     try {
-      enforceBriefLimit(req.user.id);
+      await enforceBriefLimit(req.user.id);
     } catch (limitErr) {
       if (limitErr.payload) return res.status(limitErr.status).json(limitErr.payload);
       throw limitErr;
@@ -39,25 +39,26 @@ exports.analyzeBrief = async (req, res) => {
     const analysis = sanitizeAiResponse(raw);
 
     const db = getDb();
-    db.run(
-      "INSERT INTO briefs (user_id, client_name, project_name, original_text, analyzed_text, completeness_score, missing_fields, status, industry) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        req.user.id,
-        clientName,
-        projectName,
-        briefText,
-        JSON.stringify(analysis),
-        analysis.completenessScore,
-        JSON.stringify(analysis.fields.filter((f) => f.status !== "present")),
-        "analyzed",
-        industry || null,
-      ]
-    );
-    save();
+    const { data: brief, error: insertErr } = await db
+      .from("briefs")
+      .insert({
+        user_id: req.user.id,
+        client_name: clientName,
+        project_name: projectName,
+        original_text: briefText,
+        analyzed_text: analysis,
+        completeness_score: analysis.completenessScore,
+        missing_fields: analysis.fields.filter((f) => f.status !== "present"),
+        status: "analyzed",
+        industry: industry || null,
+      })
+      .select()
+      .single();
 
-    const id = db.exec("SELECT last_insert_rowid() AS id")[0].values[0][0];
+    if (insertErr) throw insertErr;
+    const id = brief.id;
 
-    recordBriefCreated(req.user.id);
+    await recordBriefCreated(req.user.id);
 
     emit("brief.analyzed", {
       userId: req.user.id,
@@ -74,74 +75,80 @@ exports.analyzeBrief = async (req, res) => {
   }
 };
 
-exports.listBriefs = (req, res) => {
+exports.listBriefs = async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = 10;
     const offset = (page - 1) * limit;
 
     const db = getDb();
-    const countResult = db.exec("SELECT COUNT(*) AS total FROM briefs WHERE user_id = ?", [req.user.id]);
-    const total = countResult[0]?.values[0]?.[0] || 0;
+    const { count: total, error: countErr } = await db
+      .from("briefs")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", req.user.id);
+    if (countErr) throw countErr;
 
-    const result = db.exec(
-      "SELECT id, client_name, project_name, completeness_score, status, created_at, industry FROM briefs WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
-      [req.user.id, limit, offset]
-    );
+    const { data: rows, error } = await db
+      .from("briefs")
+      .select("id, client_name, project_name, completeness_score, status, created_at, industry")
+      .eq("user_id", req.user.id)
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
-    const rows = (result[0]?.values || []).map((r) => ({
-      id: r[0],
-      clientName: r[1],
-      projectName: r[2],
-      completenessScore: r[3],
-      status: r[4],
-      createdAt: r[5],
-      industry: r[6],
+    if (error) throw error;
+
+    const briefs = (rows || []).map((r) => ({
+      id: r.id,
+      clientName: r.client_name,
+      projectName: r.project_name,
+      completenessScore: r.completeness_score,
+      status: r.status,
+      createdAt: r.created_at,
+      industry: r.industry,
     }));
 
-    res.json({ briefs: rows, page, limit, total, totalPages: Math.ceil(total / limit) });
+    res.json({ briefs, page, limit, total: total || 0, totalPages: Math.ceil((total || 0) / limit) });
   } catch (err) {
     console.error("listBriefs error:", err);
     res.status(500).json({ error: "Failed to fetch briefs" });
   }
 };
 
-exports.getBrief = (req, res) => {
+exports.getBrief = async (req, res) => {
   try {
     const db = getDb();
-    const briefResult = db.exec("SELECT * FROM briefs WHERE id = ?", [req.params.id]);
-    const row = briefResult[0]?.values?.[0];
+    const { data: row, error } = await db.from("briefs").select("*").eq("id", req.params.id).maybeSingle();
+    if (error) throw error;
     if (!row) {
       return res.status(404).json({ error: "Brief not found" });
     }
 
-    const cols = briefResult[0].columns;
-    const idx = (name) => cols.indexOf(name);
-
     const result = {
-      id: row[idx("id")],
-      userId: row[idx("user_id")],
-      clientName: row[idx("client_name")],
-      projectName: row[idx("project_name")],
-      originalText: row[idx("original_text")],
-      analyzedText: tryParseJson(row[idx("analyzed_text")]),
-      completenessScore: row[idx("completeness_score")],
-      missingFields: tryParseJson(row[idx("missing_fields")]),
-      status: row[idx("status")],
-      createdAt: row[idx("created_at")],
+      id: row.id,
+      userId: row.user_id,
+      clientName: row.client_name,
+      projectName: row.project_name,
+      originalText: row.original_text,
+      analyzedText: row.analyzed_text,
+      completenessScore: row.completeness_score,
+      missingFields: row.missing_fields,
+      status: row.status,
+      createdAt: row.created_at,
     };
 
     if (result.userId !== req.user.id) {
-      const teamResult = db.exec("SELECT team_id FROM team_members WHERE user_id = ?", [req.user.id]);
-      const teamIds = (teamResult[0]?.values || []).map((t) => t[0]);
+      const { data: teamRows } = await db.from("team_members").select("team_id").eq("user_id", req.user.id);
+      const teamIds = (teamRows || []).map((t) => t.team_id);
 
       if (teamIds.length > 0) {
-        const placeholders = teamIds.map(() => "?").join(",");
-        const shareResult = db.exec(
-          `SELECT id FROM brief_shares WHERE brief_id = ? AND team_id IN (${placeholders}) LIMIT 1`,
-          [req.params.id, ...teamIds]
-        );
-        if (!shareResult[0]?.values?.[0]) {
+        const { data: shareRows } = await db
+          .from("brief_shares")
+          .select("id")
+          .eq("brief_id", req.params.id)
+          .in("team_id", teamIds)
+          .limit(1);
+
+        if (!shareRows || shareRows.length === 0) {
           return res.status(403).json({ error: "Not authorized to view this brief" });
         }
         result.shared = true;
@@ -157,33 +164,35 @@ exports.getBrief = (req, res) => {
   }
 };
 
-exports.generateEmail = (req, res) => {
+exports.generateEmail = async (req, res) => {
   try {
     const db = getDb();
-    const briefResult = db.exec(
-      "SELECT id, user_id, client_name, project_name, analyzed_text, missing_fields FROM briefs WHERE id = ?",
-      [req.params.id]
-    );
-    const row = briefResult[0]?.values?.[0];
+    const { data: row, error } = await db
+      .from("briefs")
+      .select("id, user_id, client_name, project_name, analyzed_text, missing_fields")
+      .eq("id", req.params.id)
+      .maybeSingle();
+
+    if (error) throw error;
     if (!row) {
       return res.status(404).json({ error: "Brief not found" });
     }
 
     const brief = {
-      id: row[0],
-      userId: row[1],
-      clientName: row[2],
-      projectName: row[3],
-      analyzedText: row[4],
-      missingFields: row[5],
+      id: row.id,
+      userId: row.user_id,
+      clientName: row.client_name,
+      projectName: row.project_name,
+      analyzedText: row.analyzed_text,
+      missingFields: row.missing_fields,
     };
 
     if (brief.userId !== req.user.id) {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    const analysis = tryParseJson(brief.analyzedText);
-    const missingFields = tryParseJson(brief.missingFields);
+    const analysis = brief.analyzedText;
+    const missingFields = brief.missingFields;
     const tone = analysis?.suggestedTone || "professional and collaborative";
 
     const { subject, body, html } = generateClarificationEmail({
@@ -210,22 +219,25 @@ exports.getFields = (_req, res) => {
   res.json({ fields: FIELDS });
 };
 
-exports.getDashboardStats = (req, res) => {
+exports.getDashboardStats = async (req, res) => {
   try {
     const uid = req.user.id;
     const db = getDb();
 
-    const result = db.exec(
-      "SELECT completeness_score, status, created_at, project_name, industry FROM briefs WHERE user_id = ? ORDER BY created_at ASC",
-      [uid]
-    );
+    const { data: rows, error } = await db
+      .from("briefs")
+      .select("completeness_score, status, created_at, project_name, industry")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: true });
 
-    const mapped = (result[0]?.values || []).map((r) => ({
-      score: r[0],
-      status: r[1],
-      createdAt: r[2],
-      projectName: r[3],
-      industry: r[4],
+    if (error) throw error;
+
+    const mapped = (rows || []).map((r) => ({
+      score: r.completeness_score,
+      status: r.status,
+      createdAt: r.created_at,
+      projectName: r.project_name,
+      industry: r.industry,
     }));
 
     const total = mapped.length;
@@ -279,17 +291,3 @@ exports.getDashboardStats = (req, res) => {
     res.status(500).json({ error: "Failed to fetch dashboard stats" });
   }
 };
-
-function tryParseJson(str) {
-  if (!str) return null;
-  try {
-    return JSON.parse(str);
-  } catch {
-    return str;
-  }
-}
-
-function escapeHtml(text) {
-  if (typeof text !== "string") return "";
-  return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}

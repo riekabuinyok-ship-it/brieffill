@@ -1,59 +1,68 @@
-const { getDb, save } = require("../utils/db");
+const { getDb } = require("../utils/db");
 
-function upsertOutcome({ briefId, userId, rating, status, notes }) {
+async function upsertOutcome({ briefId, userId, rating, status, notes }) {
   const db = getDb();
-  db.run(
-    `INSERT INTO brief_outcomes (brief_id, user_id, rating, status, notes, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-     ON CONFLICT(brief_id) DO UPDATE SET
-       rating = excluded.rating,
-       status = excluded.status,
-       notes = excluded.notes,
-       updated_at = datetime('now')`,
-    [briefId, userId, rating, status, notes || null]
-  );
-  save();
+  const { data: existing } = await db
+    .from("brief_outcomes")
+    .select("brief_id")
+    .eq("brief_id", briefId)
+    .maybeSingle();
+
+  const now = new Date().toISOString();
+  const payload = {
+    brief_id: briefId,
+    user_id: userId,
+    rating,
+    status,
+    notes: notes || null,
+    updated_at: now,
+  };
+
+  if (existing) {
+    await db
+      .from("brief_outcomes")
+      .update(payload)
+      .eq("brief_id", briefId);
+  } else {
+    payload.created_at = now;
+    await db
+      .from("brief_outcomes")
+      .insert(payload);
+  }
 }
 
-function getOutcomeForBrief(briefId) {
+async function getOutcomeForBrief(briefId) {
   const db = getDb();
-  const result = db.exec(
-    `SELECT brief_id, rating, status, notes, created_at, updated_at
-     FROM brief_outcomes WHERE brief_id = ?`,
-    [briefId]
-  );
-  if (!result[0]?.values.length) return null;
-  const row = result[0].values[0];
+  const { data, error } = await db
+    .from("brief_outcomes")
+    .select("brief_id, rating, status, notes, created_at, updated_at")
+    .eq("brief_id", briefId)
+    .maybeSingle();
+  if (!data) return null;
   return {
-    briefId: row[0],
-    rating: row[1],
-    status: row[2],
-    notes: row[3],
-    createdAt: row[4],
-    updatedAt: row[5],
+    briefId: data.brief_id,
+    rating: data.rating,
+    status: data.status,
+    notes: data.notes,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
   };
 }
 
-function computeOutcomeStats(userId) {
+async function computeOutcomeStats(userId) {
   const db = getDb();
-  const result = db.exec(
-    `SELECT
-       COUNT(*) AS total,
-       SUM(CASE WHEN bo.status = 'success' THEN 1 ELSE 0 END) AS successCount,
-       SUM(CASE WHEN bo.status = 'failure' THEN 1 ELSE 0 END) AS failureCount,
-       SUM(CASE WHEN bo.status = 'in_progress' THEN 1 ELSE 0 END) AS inProgressCount,
-       AVG(bo.rating) AS averageRating
-     FROM brief_outcomes bo
-     JOIN briefs b ON b.id = bo.brief_id
-     WHERE bo.user_id = ?`,
-    [userId]
-  );
-  const row = result[0]?.values[0] || [0, 0, 0, 0, null];
-  const total = row[0] || 0;
-  const successCount = row[1] || 0;
-  const failureCount = row[2] || 0;
-  const inProgressCount = row[3] || 0;
-  const avgRaw = row[4];
+  const { data, error } = await db
+    .from("brief_outcomes")
+    .select("rating, status")
+    .eq("user_id", userId);
+
+  const rows = data || [];
+  const total = rows.length;
+  const successCount = rows.filter((r) => r.status === "success").length;
+  const failureCount = rows.filter((r) => r.status === "failure").length;
+  const inProgressCount = rows.filter((r) => r.status === "in_progress").length;
+  const ratings = rows.filter((r) => r.rating != null).map((r) => r.rating);
+  const avgRaw = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null;
   const averageRating = avgRaw ? Math.round(avgRaw * 10) / 10 : 0;
   const successRate = total > 0 ? Math.round((successCount / total) * 100) : 0;
   return { total, successCount, failureCount, inProgressCount, averageRating, successRate };
