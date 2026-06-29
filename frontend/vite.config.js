@@ -9,10 +9,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/_/backend": {
+      "/api": {
         target: "http://localhost:5000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/_\/backend/, ""),
+      },
+      "/uploads": {
+        target: "http://localhost:5000",
+        changeOrigin: true,
       },
     },
   },

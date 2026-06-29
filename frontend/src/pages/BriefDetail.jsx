@@ -431,7 +431,7 @@ export default function BriefDetail() {
                     {f.files?.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-outline-variant flex flex-wrap gap-2">
                         {f.files.map((fl) => (
-                          <a key={fl.id} href={`/_/backend/api/portal/${portalData.token}/files/${fl.id}`} target="_blank" rel="noopener noreferrer"
+                          <a key={fl.id} href={`/api/portal/${portalData.token}/files/${fl.id}`} target="_blank" rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
                             <Icon name="attach_file" className="text-[12px]" /> {fl.fileName}
                           </a>
