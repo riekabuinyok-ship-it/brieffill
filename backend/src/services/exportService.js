@@ -19,13 +19,12 @@ function getNotionStatus() {
 }
 
 // Google Docs: prefer the API (service account), fall back to URL trick.
+// The ?body= parameter is unreliable (Google often ignores it → blank doc),
+// so we only pass title and let the frontend copy content to clipboard.
 function getGoogleDocsUrl({ title, body }) {
   const safeTitle = (title || "BriefFill Brief").slice(0, 200);
-  const fullUrl = `https://docs.google.com/document/create?title=${encodeURIComponent(safeTitle)}&body=${encodeURIComponent(body || "")}`;
-  if (fullUrl.length > GOOGLE_DOCS_URL_LIMIT) {
-    return { url: null, truncated: true, length: fullUrl.length, limit: GOOGLE_DOCS_URL_LIMIT };
-  }
-  return { url: fullUrl, truncated: false, length: fullUrl.length, limit: GOOGLE_DOCS_URL_LIMIT };
+  const titleUrl = `https://docs.google.com/document/create?title=${encodeURIComponent(safeTitle)}`;
+  return { url: titleUrl, truncated: false, length: titleUrl.length, limit: GOOGLE_DOCS_URL_LIMIT };
 }
 
 async function createGoogleDoc({ title, body, userEmail }) {

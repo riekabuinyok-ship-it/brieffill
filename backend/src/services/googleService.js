@@ -89,7 +89,8 @@ async function createDocument({ title, content, userEmail }) {
     }
   }
 
-  // 3. Share the document with the user
+  // 3. Share the document — try user email first, fall back to public (anyone with link)
+  let shared = false;
   if (userEmail) {
     const shareRes = await fetch(
       `https://www.googleapis.com/drive/v3/files/${doc.documentId}/permissions?sendNotificationEmail=false`,
@@ -106,11 +107,34 @@ async function createDocument({ title, content, userEmail }) {
         }),
       }
     );
-    if (!shareRes.ok) {
-      const text = await shareRes.text();
-      console.error("Google Drive share failed:", text);
+    if (shareRes.ok) {
+      console.log("Google doc shared with user:", userEmail);
+      shared = true;
     } else {
-      console.log("Google doc shared with:", userEmail);
+      const text = await shareRes.text();
+      console.warn("Google Drive share with user failed, falling back to public:", text);
+    }
+  }
+  if (!shared) {
+    const publicRes = await fetch(
+      `https://www.googleapis.com/drive/v3/files/${doc.documentId}/permissions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: "writer",
+          type: "anyone",
+        }),
+      }
+    );
+    if (publicRes.ok) {
+      console.log("Google doc shared publicly (anyone with link can edit)");
+    } else {
+      const text = await publicRes.text();
+      console.error("Google Drive public share failed:", text);
     }
   }
 

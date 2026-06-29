@@ -56,22 +56,11 @@ exports.getGoogleDocsExport = async (req, res) => {
     }
   }
 
-  // Fallback: URL trick (docs.google.com/document/create?title=...&body=...)
+  // Fallback: URL trick (title only — body param is unreliable, frontend copies content)
   const result = getGoogleDocsUrl({ title, body: improvedText });
-  console.log("Google Docs URL trick result:", { truncated: result.truncated, length: result.length, limit: result.limit });
+  console.log("Google Docs URL trick fallback: title URL length =", result.length);
 
-  if (result.truncated) {
-    return res.json({
-      url: null,
-      truncated: true,
-      length: result.length,
-      limit: result.limit,
-      message: `Brief is ${result.length} chars (limit ${result.limit}). Open a blank Google Doc and paste the content instead.`,
-      blankDocUrl: "https://docs.google.com/document/create",
-    });
-  }
-
-  res.json({ url: result.url, truncated: false, method: "url" });
+  res.json({ url: result.url, truncated: false, method: "url", pasteHint: true });
 };
 
 exports.postNotionExport = async (req, res) => {

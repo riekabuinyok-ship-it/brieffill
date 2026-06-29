@@ -73,17 +73,19 @@ export default function ExportMenu({ brief, improvedText, fileNameBase }) {
     setError(null);
     try {
       const res = await api.get(`/briefs/${brief.id}/export/google-docs`, { params: { improvedText: content } });
-      if (res.data.truncated) {
-        const blank = window.open(res.data.blankDocUrl, "_blank");
-        if (!blank) setError("Popup blocked — please allow popups for this site.");
-        try {
-          await navigator.clipboard.writeText(content);
-        } catch {}
-        setError(res.data.message || "Brief too long for auto-fill. Content copied to clipboard — paste into the new doc.");
+      if (res.data.method === "api") {
+        const win = window.open(res.data.url, "_blank");
+        if (!win) setError("Popup blocked — please allow popups for this site.");
+        setOpen(false);
         return;
       }
+      // URL trick fallback: copy content to clipboard, then open blank doc
+      try {
+        await navigator.clipboard.writeText(content);
+      } catch {}
       const win = window.open(res.data.url, "_blank");
       if (!win) setError("Popup blocked — please allow popups for this site.");
+      setError("Content copied to clipboard — paste into the new Google Doc.");
       setOpen(false);
     } catch (e) {
       if (isPlanError(e)) {
