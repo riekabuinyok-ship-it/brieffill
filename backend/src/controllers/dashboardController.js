@@ -95,11 +95,11 @@ exports.getIndustryBreakdown = async (req, res) => {
     const { data: rows } = await db
       .from("briefs")
       .select("industry, completeness_score")
-      .eq("user_id", uid)
-      .not("industry", "is", null);
+      .eq("user_id", uid);
+    const rowsNN = (rows || []).filter((r) => r.industry != null && r.industry !== "");
 
     const map = {};
-    (rows || []).forEach((r) => {
+    rowsNN.forEach((r) => {
       const ind = r.industry || "Other";
       if (!map[ind]) map[ind] = { scores: [], count: 0 };
       map[ind].scores.push(r.completeness_score);

@@ -81,6 +81,7 @@ class QueryBuilder {
   lte(col, val) { this._filters.push({ col, val, op: "lte" }); return this; }
   in(col, vals) { this._filters.push({ col, val: vals, op: "in" }); return this; }
   is(col, val) { this._filters.push({ col, val, op: "is" }); return this; }
+  not(col, subOp, val) { this._filters.push({ col, subOp, val, op: "not" }); return this; }
 
   order(col, opts) {
     this._orderCol = col;
@@ -121,6 +122,7 @@ class QueryBuilder {
         case "lte": q = q.lte(f.col, f.val); break;
         case "in": q = q.in(f.col, f.val); break;
         case "is": q = q.is(f.col, f.val); break;
+        case "not": q = q.not(f.col, f.subOp, f.val); break;
       }
     }
     return q;
