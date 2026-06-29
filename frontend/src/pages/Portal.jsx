@@ -5,7 +5,7 @@ import Icon from "../components/Icon";
 import PortalProgress from "../components/PortalProgress";
 import PortalExercise from "../components/PortalExercise";
 
-const API = import.meta.env.VITE_API_URL || "/api";
+const API = import.meta.env.VITE_API_URL || "/_/backend/api";
 
 export default function Portal() {
   const { token } = useParams();
