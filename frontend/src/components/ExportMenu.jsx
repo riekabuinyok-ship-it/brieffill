@@ -74,9 +74,12 @@ export default function ExportMenu({ brief, improvedText, fileNameBase }) {
     try {
       const res = await api.get(`/briefs/${brief.id}/export/google-docs`, { params: { improvedText: content } });
       if (res.data.truncated) {
-        const open = window.open(res.data.blankDocUrl, "_blank");
-        if (!open) setError("Popup blocked — please allow popups for this site.");
-        setError(res.data.message);
+        const blank = window.open(res.data.blankDocUrl, "_blank");
+        if (!blank) setError("Popup blocked — please allow popups for this site.");
+        try {
+          await navigator.clipboard.writeText(content);
+        } catch {}
+        setError(res.data.message || "Brief too long for auto-fill. Content copied to clipboard — paste into the new doc.");
         return;
       }
       const win = window.open(res.data.url, "_blank");
@@ -84,7 +87,6 @@ export default function ExportMenu({ brief, improvedText, fileNameBase }) {
       setOpen(false);
     } catch (e) {
       if (isPlanError(e)) {
-        // UpgradePrompt modal handles the messaging; close the menu.
         setOpen(false);
       } else {
         setError(e.response?.data?.message || "Failed to build Google Docs URL");

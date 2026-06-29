@@ -1,12 +1,11 @@
-// Export service: Google Docs (via docs.new URL trick) and Notion (via official API)
+const { isConfigured, createDocument } = require("./googleService");
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY || "";
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || "";
 const NOTION_API_VERSION = "2022-06-28";
 const NOTION_BASE = "https://api.notion.com/v1";
 
-// Maximum safe URL length for the Google docs.new trick. Browsers generally
-// accept URLs up to ~8000 chars; we cap at 7500 to leave headroom.
+// Fallback URL limit when service account is not configured
 const GOOGLE_DOCS_URL_LIMIT = 7500;
 
 function getNotionStatus() {
@@ -19,10 +18,7 @@ function getNotionStatus() {
   };
 }
 
-// Google Docs: build a docs.new URL with prefilled title + body.
-// docs.google.com/document/create?title=...&body=... opens a new tab with
-// the user signed in and a fresh doc containing the content. This is an
-// unofficial but stable URL pattern that has worked for years.
+// Google Docs: prefer the API (service account), fall back to URL trick.
 function getGoogleDocsUrl({ title, body }) {
   const safeTitle = (title || "BriefFill Brief").slice(0, 200);
   const fullUrl = `https://docs.google.com/document/create?title=${encodeURIComponent(safeTitle)}&body=${encodeURIComponent(body || "")}`;
@@ -30,6 +26,14 @@ function getGoogleDocsUrl({ title, body }) {
     return { url: null, truncated: true, length: fullUrl.length, limit: GOOGLE_DOCS_URL_LIMIT };
   }
   return { url: fullUrl, truncated: false, length: fullUrl.length, limit: GOOGLE_DOCS_URL_LIMIT };
+}
+
+async function createGoogleDoc({ title, body, userEmail }) {
+  if (!isConfigured()) {
+    throw Object.assign(new Error("Google Docs API not configured"), { code: "NOT_CONFIGURED" });
+  }
+  const result = await createDocument({ title, content: body, userEmail });
+  return result;
 }
 
 // Notion: create a new page in the configured database with the brief as content.
@@ -124,4 +128,4 @@ function chunkIntoBlocks(text, chunkSize) {
   return blocks;
 }
 
-module.exports = { getGoogleDocsUrl, exportToNotion, getNotionStatus };
+module.exports = { getGoogleDocsUrl, createGoogleDoc, exportToNotion, getNotionStatus };

@@ -1,5 +1,5 @@
 const { getDb } = require("../utils/db");
-const { getGoogleDocsUrl, exportToNotion, getNotionStatus } = require("../services/exportService");
+const { getGoogleDocsUrl, createGoogleDoc, exportToNotion, getNotionStatus } = require("../services/exportService");
 
 async function loadBrief(id, userId) {
   const db = getDb();
@@ -39,7 +39,26 @@ exports.getGoogleDocsExport = async (req, res) => {
 
   const improvedText = resolveContent(brief, req.query.improvedText);
   const title = `Brief: ${brief.clientName} — ${brief.projectName}`;
+  const userEmail = req.user.email;
+
+  console.log("Google Docs export requested:", { briefId: req.params.id, title, contentLength: improvedText?.length, userEmail });
+
+  // Try Google Docs API (service account) first
+  try {
+    const apiResult = await createGoogleDoc({ title, body: improvedText, userEmail });
+    console.log("Google Docs API success:", apiResult.url);
+    return res.json({ url: apiResult.url, truncated: false, method: "api" });
+  } catch (apiErr) {
+    if (apiErr.code === "NOT_CONFIGURED") {
+      console.log("Google Docs API not configured, falling back to URL trick");
+    } else {
+      console.error("Google Docs API error:", apiErr.message);
+    }
+  }
+
+  // Fallback: URL trick (docs.google.com/document/create?title=...&body=...)
   const result = getGoogleDocsUrl({ title, body: improvedText });
+  console.log("Google Docs URL trick result:", { truncated: result.truncated, length: result.length, limit: result.limit });
 
   if (result.truncated) {
     return res.json({
@@ -52,7 +71,7 @@ exports.getGoogleDocsExport = async (req, res) => {
     });
   }
 
-  res.json({ url: result.url, truncated: false });
+  res.json({ url: result.url, truncated: false, method: "url" });
 };
 
 exports.postNotionExport = async (req, res) => {
