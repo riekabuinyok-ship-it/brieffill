@@ -14,7 +14,9 @@ const {
 
 const teamOnly = requireCapability("teamFeatures");
 
-const LOGO_DIR = path.join(__dirname, "..", "..", "uploads", "team-logos");
+const LOGO_DIR = process.env.VERCEL
+  ? path.join("/tmp/uploads/team-logos")
+  : path.join(__dirname, "..", "..", "uploads", "team-logos");
 
 const logoUpload = multer({
   storage: multer.diskStorage({

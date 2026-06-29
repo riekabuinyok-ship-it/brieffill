@@ -4,7 +4,9 @@ const fs = require("fs");
 const crypto = require("crypto");
 const multer = require("multer");
 
-const PORTAL_UPLOAD_DIR = path.join(__dirname, "..", "..", "uploads", "portal");
+const PORTAL_UPLOAD_DIR = process.env.VERCEL
+  ? path.join("/tmp/uploads/portal")
+  : path.join(__dirname, "..", "..", "uploads", "portal");
 
 const upload = multer({
   storage: multer.memoryStorage(),

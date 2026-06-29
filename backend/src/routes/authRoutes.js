@@ -6,7 +6,9 @@ const fs = require("fs");
 const auth = require("../middleware/auth");
 const { register, login, me, updateMe, uploadAvatar, changePassword, setup2fa, verify2fa, disable2fa, getSessions, revokeSession, deleteAccount } = require("../controllers/authController");
 
-const AVATAR_DIR = path.join(__dirname, "..", "..", "uploads", "avatars");
+const AVATAR_DIR = process.env.VERCEL
+  ? path.join("/tmp/uploads/avatars")
+  : path.join(__dirname, "..", "..", "uploads", "avatars");
 
 const avatarUpload = multer({
   storage: multer.diskStorage({

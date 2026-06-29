@@ -59,7 +59,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/docs", docsRoutes);
 app.use("/api/preferences", preferencesRoutes);
 app.use("/api/teams", teamRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(process.env.VERCEL ? "/tmp/uploads" : path.join(__dirname, "uploads")));
 app.use("/api/referrals", referralRoutes);
 app.use("/api", portalRoutes);
 app.use("/api/dashboard", dashboardRoutes);
