@@ -72,12 +72,17 @@ export default function Landing() {
               <p className="text-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-10">
                 Stop guessing client expectations. BriefFill analyzes your project briefs instantly, highlighting gaps, risks, and missing data before you even send a quote.
               </p>
+              <p className="mb-6 text-sm font-medium text-primary flex items-center gap-2">
+                <Icon name="check_circle" className="text-[16px]" />
+                Works with briefs from email, Slack, PDFs, or any source — not just forms you control.
+              </p>
               <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
                 <Button as="a" to="/register" size="lg" iconRight="arrow_forward">
                   Start Analyzing Your First Brief
                 </Button>
                 <Button as="a" variant="outline" size="lg" to="/sample-report">View Sample Report</Button>
               </div>
+              <p className="mt-3 text-sm text-on-surface-variant">No credit card required. Free plan includes 5 briefs.</p>
             </div>
             <div className="relative">
               <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
@@ -215,7 +220,7 @@ export default function Landing() {
                 ))}
               </ul>
               <Link to="/register" className="block w-full rounded-xl border border-primary py-3 text-center text-sm font-bold text-primary hover:bg-primary-container/5">
-                Get started
+                Choose Free
               </Link>
             </div>
 

@@ -5,7 +5,7 @@ export default function TrustedLogos() {
     <section className="bg-background py-stack-lg">
       <div className="container mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
         <h2 className="mb-stack-md text-center font-headline-lg text-headline-lg text-on-background">
-          Trusted by Thousands of Freelancers working on
+          Used by freelancers who work on
         </h2>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-gutter md:gap-stack-md">
           {PLATFORM_LOGOS.map((logo) => (

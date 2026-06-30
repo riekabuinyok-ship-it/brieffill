@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api, { isPlanError } from "../utils/api";
 import Icon from "../components/Icon";
@@ -7,21 +7,30 @@ import FileUpload from "../components/FileUpload";
 import Toast from "../components/Toast";
 import BriefAssistant from "../components/BriefAssistant";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useAuth } from "../contexts/AuthContext";
 
 const INDUSTRIES = ["SaaS", "E-commerce", "Fintech", "Healthcare", "Education", "Media", "Real Estate", "Travel", "Nonprofit", "Other"];
+const PROJECT_TYPES = ["Logo/Branding", "Website", "Campaign", "Content/Copy", "Product Launch", "Other"];
 
 export default function NewBrief() {
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = location.state?.prefill || "";
-  const [form, setForm] = useState({ clientName: "", projectName: "", briefText: prefill, industry: "" });
+  const { user } = useAuth();
+  const draftKey = "brieffill_draft";
+  const initialBrief = prefill || localStorage.getItem(draftKey) || "";
+  const [form, setForm] = useState({ clientName: "", projectName: "", briefText: initialBrief, industry: "", projectType: "" });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [emailData, setEmailData] = useState(null);
   const [emailLoading, setEmailLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [showAssistant, setShowAssistant] = useState(false);
-  const [tipsOpen, setTipsOpen] = useState(false);
+  const hadSubmitted = localStorage.getItem("hasSubmittedBrief") === "true";
+  const [tipsOpen, setTipsOpen] = useState(!hadSubmitted);
+  const [inputMode, setInputMode] = useState("paste");
+  const [draftSaved, setDraftSaved] = useState(false);
+  const isTeamOrAgency = user?.billing?.plan === "team" || user?.billing?.plan === "agency";
 
   const handleSubmit = async () => {
     if (!form.clientName || !form.projectName || !form.briefText) {
@@ -77,6 +86,25 @@ export default function NewBrief() {
     "ctrl+Enter": () => { if (!result) handleSubmit(); },
     "ctrl+shift+e": () => { if (result) generateEmail(); },
   }), [result, form]));
+
+  // Autosave brief text to localStorage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (form.briefText) {
+        localStorage.setItem(draftKey, form.briefText);
+        setDraftSaved(true);
+        setTimeout(() => setDraftSaved(false), 2000);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [form.briefText]);
+
+  // Reset draft on successful submission
+  useEffect(() => {
+    if (result) {
+      localStorage.removeItem(draftKey);
+    }
+  }, [result]);
 
   // Loading state
   if (loading) {
@@ -159,7 +187,7 @@ export default function NewBrief() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#E2E8F0] text-[#1E293B] text-sm font-semibold rounded-lg hover:bg-gray-50 transition">
                 View Details
               </button>
-              <button onClick={() => { setResult(null); setEmailData(null); setForm({ clientName: "", projectName: "", briefText: "", industry: "" }); }}
+              <button onClick={() => { setResult(null); setEmailData(null); setForm({ clientName: "", projectName: "", briefText: "", industry: "", projectType: "" }); }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 text-[#64748B] text-sm font-semibold rounded-lg hover:bg-gray-50 transition">
                 Analyze Another
               </button>
@@ -199,8 +227,8 @@ export default function NewBrief() {
       <div className="bg-white rounded-2xl border border-[#E2E8F0] p-6 md:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.06)]">
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="space-y-6">
 
-          {/* Row: 3 fields */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Row: 4 fields (2x2) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-[#1E293B]">Client Name</label>
               <input type="text" value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })}
@@ -216,25 +244,64 @@ export default function NewBrief() {
             <div className="space-y-1.5">
               <label className="text-sm font-semibold text-[#1E293B]">Industry</label>
               <select value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })}
-                className="w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-2.5 text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                className="w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-2.5 pr-8 text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition appearance-none"
+                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center", backgroundSize: "16px" }}>
                 <option value="">Select industry (optional)</option>
                 {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
               </select>
             </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-[#1E293B]">Project Type</label>
+              <select value={form.projectType} onChange={(e) => setForm({ ...form, projectType: e.target.value })}
+                className="w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-2.5 pr-8 text-sm text-[#1E293B] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition appearance-none"
+                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center", backgroundSize: "16px" }}>
+                <option value="">Select type (optional)</option>
+                {PROJECT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
           </div>
 
-          {/* Brief Text */}
+          {/* Brief Input: Paste/Upload tabs */}
           <div className="space-y-1.5">
             <label className="text-sm font-semibold text-[#1E293B]">Brief Text</label>
-            <textarea rows={8} value={form.briefText} onChange={(e) => setForm({ ...form, briefText: e.target.value })}
-              className="w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y min-h-[200px]"
-              placeholder="Paste your client's brief here. Include as much detail as possible — our AI works best with context." required />
-            <p className="text-xs text-[#64748B]">Paste your brief or upload a file. The more context, the better the analysis.</p>
-          </div>
 
-          {/* File Upload */}
-          <div>
-            <FileUpload onTextExtracted={handleFileText} onError={(m) => setToast({ message: m, type: "error" })} />
+            {/* Tab toggle */}
+            <div className="flex gap-0 border border-[#E2E8F0] rounded-lg overflow-hidden w-fit mb-3">
+              <button type="button" onClick={() => setInputMode("paste")}
+                className={`px-4 py-2 text-sm font-medium transition ${inputMode === "paste" ? "bg-blue-600 text-white" : "bg-white text-[#64748B] hover:bg-gray-50"}`}>
+                <Icon name="content_paste" className="text-[14px] align-text-top mr-1" /> Paste text
+              </button>
+              <button type="button" onClick={() => setInputMode("upload")}
+                className={`px-4 py-2 text-sm font-medium transition ${inputMode === "upload" ? "bg-blue-600 text-white" : "bg-white text-[#64748B] hover:bg-gray-50"}`}>
+                <Icon name="cloud_upload" className="text-[14px] align-text-top mr-1" /> Upload file
+              </button>
+            </div>
+
+            {inputMode === "paste" ? (
+              <>
+                <textarea rows={8} value={form.briefText} onChange={(e) => setForm({ ...form, briefText: e.target.value })}
+                  className="w-full rounded-lg border border-[#E2E8F0] bg-white px-4 py-3 text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-y min-h-[200px]"
+                  placeholder="Paste your client's brief here. Include as much detail as possible — our AI works best with context." required />
+                {form.briefText && (
+                  <p className="text-xs text-[#64748B] mt-1">
+                    ~{form.briefText.split(/\s+/).filter(Boolean).length} words
+                    {form.briefText.split(/\s+/).filter(Boolean).length < 150 && (
+                      <span className="text-amber-600"> &middot; aim for 150+ words for best results</span>
+                    )}
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="pt-1">
+                <FileUpload onTextExtracted={handleFileText} onError={(m) => setToast({ message: m, type: "error" })} />
+                <p className="text-xs text-[#64748B] mt-2">Upload a .txt, .docx, or .pdf file. Text will be extracted automatically.</p>
+              </div>
+            )}
+
+            {/* Draft saved indicator */}
+            <div className="flex items-center gap-2 min-h-[18px]">
+              {draftSaved && <span className="text-xs text-green-600 animate-pulse">Draft saved</span>}
+            </div>
           </div>
 
           {/* Pro Tips (collapsible) */}
@@ -254,12 +321,23 @@ export default function NewBrief() {
           </div>
 
           {/* CTA */}
-          <div className="flex justify-center pt-2">
+          <div className="flex flex-col items-center gap-3 pt-2">
             <button type="submit"
               className="w-full md:w-auto px-10 py-3.5 bg-blue-600 text-white text-base font-semibold rounded-xl hover:bg-blue-700 active:scale-[0.98] transition shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
               Analyze Brief
             </button>
+            <p className="text-xs text-[#94A3B8]"><Icon name="schedule" className="text-[12px] align-text-top mr-0.5" /> Takes about 20–30 seconds</p>
           </div>
+
+          {/* Bulk Analyze (Team/Agency only) */}
+          {isTeamOrAgency && (
+            <div className="flex justify-center pt-2">
+              <button type="button"
+                className="w-full md:w-auto px-8 py-2.5 border-2 border-dashed border-blue-300 text-blue-600 text-sm font-semibold rounded-xl hover:bg-blue-50 transition">
+                <Icon name="content_copy" className="text-[16px] align-text-top mr-1" /> Bulk Analyze
+              </button>
+            </div>
+          )}
         </form>
       </div>
 

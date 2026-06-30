@@ -1,7 +1,7 @@
 const STATS = [
   { value: "12", label: "Critical fields scored" },
   { value: "< 30s", label: "Average analysis time" },
-  { value: "40+", label: "Countries using BriefFill" },
+  { value: "2.4x", label: "Faster project onboarding" },
   { value: "98%", label: "Gap detection accuracy" },
 ];
 

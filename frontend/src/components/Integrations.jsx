@@ -1,28 +1,35 @@
+import Icon from "./Icon";
+
 const INTEGRATIONS = [
   {
-    name: "Notion",
-    logo: "/Notion.png",
-    tagline: "Send briefs straight to your Notion workspace",
+    name: "Gmail",
+    logo: "/Gmail.png",
+    tagline: "Generate the clarification email ready to send",
+    tier: "Free",
   },
   {
     name: "Google Docs",
     logo: "/Google-Docs.png",
     tagline: "Export polished docs in one click",
+    tier: "Team+",
+  },
+  {
+    name: "Notion",
+    logo: "/Notion.png",
+    tagline: "Send briefs straight to your Notion workspace",
+    tier: "Team+",
   },
   {
     name: "ClickUp",
     logo: "/ClickUp.png",
     tagline: "Push briefs to any ClickUp list",
+    tier: "Agency+",
   },
   {
     name: "Airtable",
     logo: "/Airtable.png",
     tagline: "Sync briefs to your Airtable base",
-  },
-  {
-    name: "Gmail",
-    logo: "/Gmail.png",
-    tagline: "Generate the clarification email ready to send",
+    tier: "Agency+",
   },
 ];
 
@@ -49,6 +56,13 @@ export default function Integrations() {
               </div>
               <h3 className="font-headline-md text-headline-md mb-2 text-on-background">{i.name}</h3>
               <p className="text-sm text-on-surface-variant">{i.tagline}</p>
+              <span className={`mt-3 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                i.tier === "Free" ? "bg-green-100 text-green-700" :
+                i.tier === "Team+" ? "bg-blue-100 text-blue-700" :
+                "bg-purple-100 text-purple-700"
+              }`}>
+                {i.tier}
+              </span>
             </div>
           ))}
         </div>
