@@ -1,5 +1,4 @@
-frontend/public/video *.mp4
-frontend/public/*.png
-database/*.sql
+**/video*.mp4
+database/add-admin-role.sql
 frontend/dev_output.txt
 frontend/dev_server_output.txt
