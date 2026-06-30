@@ -6,6 +6,7 @@ import { LocaleProvider } from "./contexts/LocaleContext";
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { LogoSprite } from "./components/Logo";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -111,7 +112,7 @@ function AppRoutes() {
       <Route path="/dashboard/billing" element={<ProtectedRoute><DashboardLayout><Billing /></DashboardLayout></ProtectedRoute>} />
       <Route path="/dashboard/referrals" element={<ProtectedRoute><DashboardLayout><Referrals /></DashboardLayout></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><DashboardLayout><Profile /></DashboardLayout></ProtectedRoute>} />
-      <Route path="/api-keys" element={<ProtectedRoute><DashboardLayout><ApiKeys /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/api-keys" element={<ProtectedRoute><DashboardLayout><ErrorBoundary><ApiKeys /></ErrorBoundary></DashboardLayout></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><DashboardLayout><Notifications /></DashboardLayout></ProtectedRoute>} />
       <Route path="/security" element={<ProtectedRoute><DashboardLayout><Security /></DashboardLayout></ProtectedRoute>} />
     </Routes>

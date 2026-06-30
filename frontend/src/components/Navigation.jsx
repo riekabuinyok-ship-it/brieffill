@@ -128,9 +128,12 @@ export default function Navigation() {
                   className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-surface-container transition-colors">
                   <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                     {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
+                      <>
+                        <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                        <span className="hidden">{user.name?.charAt(0)?.toUpperCase() || "U"}</span>
+                      </>
                     ) : (
-                      (user.name?.charAt(0)?.toUpperCase() || "U")
+                      user.name?.charAt(0)?.toUpperCase() || "U"
                     )}
                   </div>
                   <span className="hidden sm:inline text-sm font-medium text-on-surface">{user.name}</span>
@@ -184,9 +187,12 @@ export default function Navigation() {
                 <div className="flex items-center gap-3 px-3 py-2">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                     {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" />
+                      <>
+                        <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                        <span className="hidden">{user.name?.charAt(0)?.toUpperCase() || "U"}</span>
+                      </>
                     ) : (
-                      (user.name?.charAt(0)?.toUpperCase() || "U")
+                      user.name?.charAt(0)?.toUpperCase() || "U"
                     )}
                   </div>
                   <div>

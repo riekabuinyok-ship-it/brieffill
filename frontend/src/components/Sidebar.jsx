@@ -172,7 +172,10 @@ function UserCard({ user, logout }) {
     <div className="flex items-center gap-3 px-1">
       <div className="h-9 w-9 rounded-full overflow-hidden ring-1 ring-outline-variant shrink-0 bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
         {avatarUrl ? (
-          <img className="object-cover w-full h-full" src={avatarUrl} alt="" />
+          <>
+            <img className="object-cover w-full h-full" src={avatarUrl} alt="" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+            <span className="hidden">{initial}</span>
+          </>
         ) : (
           initial
         )}

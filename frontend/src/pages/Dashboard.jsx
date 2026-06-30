@@ -136,7 +136,7 @@ export default function Dashboard() {
                 {scoreData.map((item, i) => {
                   const h = Math.max((item.score / 100) * 100, 5);
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <div key={i} className="flex-1 self-stretch flex flex-col items-center gap-1">
                       <div className="w-full rounded-sm bg-primary transition-all" style={{ height: `${h}%` }} />
                       <span className="text-[9px] text-outline truncate w-full text-center">{item.date || item.briefName}</span>
                     </div>
@@ -206,7 +206,7 @@ export default function Dashboard() {
                 <div key={b.id} className="flex items-center justify-between px-6 py-4 hover:bg-surface-container-low transition">
                   <div className="min-w-0 flex-1">
                     <Link to={`/brief/${b.id}`} className="font-semibold text-sm text-on-surface hover:text-primary transition">{b.projectName || "Untitled"}</Link>
-                    <p className="text-xs text-on-surface-variant mt-0.5">{b.clientName || "—"} &middot; {b.createdAt ? new Date(b.createdAt + "Z").toLocaleDateString() : "—"}</p>
+                    <p className="text-xs text-on-surface-variant mt-0.5">{b.clientName || "—"} &middot; {b.createdAt ? formatDate(b.createdAt) : "—"}</p>
                   </div>
                   <div className="flex items-center gap-4 ml-4">
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${scoreColor}`}>{b.score}%</span>
@@ -220,6 +220,13 @@ export default function Dashboard() {
       </div>
     </div>
   );
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString();
 }
 
 function StatCard({ label, value, icon, iconBg, trend, target, subtitle }) {

@@ -123,8 +123,8 @@ export default function ApiKeys() {
                       <div>
                         <p className="text-sm font-medium text-on-surface">{key.name}</p>
                         <p className="text-xs text-on-surface-variant">
-                          Created {key.createdAt ? formatDate(key.createdAt + "Z") : "—"}
-                          {key.lastUsedAt ? ` · Last used ${formatDate(key.lastUsedAt + "Z")}` : ""}
+                          Created {key.createdAt ? formatDate(key.createdAt) : "—"}
+                          {key.lastUsedAt ? ` · Last used ${formatDate(key.lastUsedAt)}` : ""}
                         </p>
                       </div>
                       <button onClick={() => revokeApiKey(key.id)}
