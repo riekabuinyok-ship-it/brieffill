@@ -10,46 +10,49 @@
   "plan": {
     "free": {
       "name": "Free",
-      "description": "Try BriefFill on your next project.",
+      "description": "Diagnose what's missing. Start your first 5 briefs free.",
       "perks": [
         "5 briefs / month",
-        "1 user",
-        "12-field analysis",
-        "Email draft generation"
+        "AI gap detection",
+        "Completeness score",
+        "Specific clarifying questions",
+        "PDF export (watermarked)"
       ]
     },
     "pro": {
       "name": "Pro",
-      "description": "For freelancers and solo creatives.",
+      "description": "Unlock AI-powered brief improvement and exports. Most popular for solo freelancers.",
       "popular": "Most popular",
       "perks": [
-        "Unlimited briefs",
+        "150 briefs / month",
         "Brief Builder (AI rewrite)",
-        "PDF + clipboard export",
-        "12-field analysis",
-        "Outcome tracking"
+        "Industry-specific questions",
+        "AI template generation",
+        "PDF + clipboard export"
       ]
     },
     "team": {
       "name": "Team",
-      "description": "For small agencies. 5 seats.",
+      "description": "Collaborate with your team and clients seamlessly. Perfect for growing agencies.",
       "perks": [
-        "Unlimited briefs",
+        "500 briefs / month",
         "5 team members",
-        "Team collaboration",
-        "Notion + Google Docs export",
-        "All Pro features"
+        "Team collaboration + client portal",
+        "Google Docs + Notion export",
+        "Slack integration",
+        "Priority support"
       ]
     },
     "agency": {
       "name": "Agency",
-      "description": "For agencies at scale. 15 seats.",
+      "description": "Full platform access with advanced features and API. For agencies scaling their operations.",
       "perks": [
-        "Unlimited briefs",
+        "2,000 briefs / month",
         "15 team members",
         "Competitor analysis",
         "API access (REST + webhooks)",
         "White-label exports",
+        "Zapier integration",
         "Priority support"
       ]
     },
@@ -61,6 +64,7 @@
     "title": "Feature comparison",
     "row": {
       "briefs": "Briefs / month",
+      "overage": "Overage",
       "users": "Users",
       "fields": "12-field analysis",
       "email": "Email draft generation",
@@ -86,18 +90,18 @@
   },
   "faq": {
     "title": "Frequently asked questions",
-    "q1": "What happens if I exceed the Free plan limit?",
-    "a1": "BriefFill will block the analysis and show an upgrade prompt. You can upgrade to Pro for unlimited briefs, or wait until the 1st of next month when the counter resets.",
-    "q2": "When does the brief count reset?",
-    "a2": "On the 1st of each month (UTC). Pro, Team, and Agency plans have unlimited briefs — no counter.",
-    "q3": "Can I switch between monthly and annual?",
-    "a3": "Yes. The Stripe Customer Portal lets you cancel and resubscribe with any billing cycle. Annual plans get 20% off.",
-    "q4": "What payment methods do you accept?",
-    "a4": "All major credit cards via Stripe. ACH/wire for Agency plan (contact support).",
-    "q5": "Is there a free trial?",
-    "a5": "The Free plan is the trial. You get 5 briefs per month at no cost. No credit card required to sign up.",
-    "q6": "Can I cancel anytime?",
-    "a6": "Yes. Cancel from the Billing page; you keep access until the end of the current period, then drop to the Free plan."
+    "q1": "What happens if I exceed my brief limit?",
+    "a1": "You'll be charged per-brief overage at the rate listed on the pricing page. You can also upgrade to the next plan from the Billing page.",
+    "q2": "Can I downgrade or upgrade later?",
+    "a2": "Yes, you can change your plan at any time from the Billing page.",
+    "q3": "Do you offer an annual discount?",
+    "a3": "Yes, annual plans are 20% off. Pro: $182/year ($15.20/month), Team: $566/year ($47.20/month), Agency: $1,430/year ($119.20/month).",
+    "q4": "What's included in the Free plan?",
+    "a4": "5 briefs/month with AI gap detection, completeness scores, specific clarifying questions, and watermarked PDF exports.",
+    "q5": "Can I cancel anytime?",
+    "a5": "Yes, you can cancel your subscription at any time with a 14-day money-back guarantee.",
+    "q6": "What payment methods do you accept?",
+    "a6": "All major credit cards via Stripe. ACH/wire for Agency plan (contact support)."
   },
   "cta": {
     "title": "Try BriefFill free",

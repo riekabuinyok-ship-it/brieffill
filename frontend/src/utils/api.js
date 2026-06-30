@@ -28,6 +28,7 @@ api.interceptors.response.use(
     const status = err.response?.status;
     if (status === 401) {
       localStorage.removeItem("brieffill_token");
+      if (localStorage.getItem("adminToken")) return Promise.reject(err);
       if (!window.location.pathname.includes("/login")) {
         window.location.href = "/login";
       }

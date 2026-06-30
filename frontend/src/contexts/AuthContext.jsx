@@ -37,6 +37,8 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem("brieffill_token");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminEmail");
     setUser(null);
     window.location.href = "/";
   };

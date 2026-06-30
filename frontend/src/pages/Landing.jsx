@@ -200,14 +200,14 @@ export default function Landing() {
             <div className="flex flex-col rounded-[24px] border border-outline-variant bg-surface p-8">
               <div className="mb-6">
                 <h3 className="font-headline-md text-headline-md mb-2">Free</h3>
-                <p className="text-sm text-on-surface-variant">Try BriefFill on your next project.</p>
+                <p className="text-sm text-on-surface-variant">Diagnose what's missing. Start your first 5 briefs free.</p>
               </div>
               <div className="mb-6">
                 <span className="text-4xl font-bold text-on-background">$0</span>
                 <span className="text-on-surface-variant">/month</span>
               </div>
               <ul className="mb-8 flex-1 space-y-stack-sm text-sm text-on-surface">
-                {["5 briefs / month", "1 user", "12-field analysis", "Email draft generation"].map((f) => (
+                {["5 briefs / month", "AI gap detection", "Completeness score", "Specific clarifying questions", "PDF export (watermarked)"].map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Icon name="check" className="mt-0.5 flex-shrink-0 text-[18px] text-primary" />
                     <span>{f}</span>
@@ -224,7 +224,7 @@ export default function Landing() {
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-on-primary">Most popular</div>
               <div className="mb-6">
                 <h3 className="font-headline-md text-headline-md mb-2">Pro</h3>
-                <p className="text-sm text-on-surface-variant">For freelancers and solo creatives.</p>
+                <p className="text-sm text-on-surface-variant">Unlock AI-powered brief improvement and exports.</p>
               </div>
               <div className="mb-6">
                 <span className="text-4xl font-bold text-on-background">$19</span>
@@ -232,7 +232,7 @@ export default function Landing() {
                 <p className="mt-1 text-xs text-on-surface-variant">$182/yr — save 20%</p>
               </div>
               <ul className="mb-8 flex-1 space-y-stack-sm text-sm text-on-surface">
-                {["Unlimited briefs", "Brief Builder (AI rewrite)", "PDF + clipboard export", "12-field analysis", "Outcome tracking"].map((f) => (
+                {["150 briefs / month", "Brief Builder (AI rewrite)", "Industry-specific questions", "AI template generation", "PDF + clipboard export"].map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Icon name="check" className="mt-0.5 flex-shrink-0 text-[18px] text-primary" />
                     <span>{f}</span>
@@ -248,15 +248,15 @@ export default function Landing() {
             <div className="flex flex-col rounded-[24px] border border-outline-variant bg-surface p-8">
               <div className="mb-6">
                 <h3 className="font-headline-md text-headline-md mb-2">Team</h3>
-                <p className="text-sm text-on-surface-variant">For small agencies. 5 seats.</p>
+                <p className="text-sm text-on-surface-variant">Collaborate with your team and clients seamlessly.</p>
               </div>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-on-background">$49</span>
+                <span className="text-4xl font-bold text-on-background">$59</span>
                 <span className="text-on-surface-variant">/month</span>
-                <p className="mt-1 text-xs text-on-surface-variant">$470/yr — save 20%</p>
+                <p className="mt-1 text-xs text-on-surface-variant">$566/yr — save 20%</p>
               </div>
               <ul className="mb-8 flex-1 space-y-stack-sm text-sm text-on-surface">
-                {["Unlimited briefs", "5 team members", "Team collaboration", "Notion + Google Docs export", "All Pro features"].map((f) => (
+                {["500 briefs / month", "5 team members", "Team collaboration + client portal", "Google Docs + Notion export", "Slack integration", "Priority support"].map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Icon name="check" className="mt-0.5 flex-shrink-0 text-[18px] text-primary" />
                     <span>{f}</span>
@@ -272,15 +272,15 @@ export default function Landing() {
             <div className="flex flex-col rounded-[24px] border border-outline-variant bg-surface p-8">
               <div className="mb-6">
                 <h3 className="font-headline-md text-headline-md mb-2">Agency</h3>
-                <p className="text-sm text-on-surface-variant">For agencies at scale. 15 seats.</p>
+                <p className="text-sm text-on-surface-variant">Full platform access with advanced features and API.</p>
               </div>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-on-background">$99</span>
+                <span className="text-4xl font-bold text-on-background">$149</span>
                 <span className="text-on-surface-variant">/month</span>
-                <p className="mt-1 text-xs text-on-surface-variant">$950/yr — save 20%</p>
+                <p className="mt-1 text-xs text-on-surface-variant">$1,430/yr — save 20%</p>
               </div>
               <ul className="mb-8 flex-1 space-y-stack-sm text-sm text-on-surface">
-                {["Unlimited briefs", "15 team members", "Competitor analysis", "API access (REST + webhooks)", "PDF + clipboard export", "Priority support"].map((f) => (
+                {["2,000 briefs / month", "15 team members", "Competitor analysis", "API access (REST + webhooks)", "White-label exports", "Zapier integration", "Priority support"].map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <Icon name="check" className="mt-0.5 flex-shrink-0 text-[18px] text-primary" />
                     <span>{f}</span>

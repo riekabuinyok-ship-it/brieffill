@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LogoIcon } from "../../components/Logo";
 import Icon from "../../components/Icon";
-
-const ADMIN_EMAIL = "riekabui@brieffill.com";
-const ADMIN_PASSWORD = "Riek1995#";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -13,16 +11,19 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const ADMIN_EMAIL = "riek@brieffill.com";
+  const ADMIN_PASSWORD = "riek1995#";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
+    await new Promise((r) => setTimeout(r, 800));
 
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       localStorage.setItem("adminToken", "admin_secure_token_2026");
       localStorage.setItem("adminEmail", email);
-      navigate("/admin");
+      navigate("/admin/dashboard");
     } else {
       setError("Invalid email or password. Please try again.");
     }

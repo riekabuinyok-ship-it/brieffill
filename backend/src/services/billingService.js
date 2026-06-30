@@ -26,11 +26,13 @@ const PLANS = {
     stripePriceId: { monthly: null, annual: null },
     features: {
       briefLimit: 5,
+      overageRate: 0,
       seats: 1,
       briefBuilder: false,
-      exports: [],
+      exports: ["pdf", "clipboard"],
       teamFeatures: false,
       competitorAnalysis: false,
+      industryQuestions: false,
       apiAccess: false,
       whiteLabel: false,
       prioritySupport: false,
@@ -38,14 +40,16 @@ const PLANS = {
     perks: [
       "5 briefs / month",
       "1 user",
-      "12-field analysis",
-      "Email draft generation",
+      "AI gap detection",
+      "Completeness score",
+      "Specific clarifying questions",
+      "PDF export (watermarked)",
     ],
   },
   pro: {
     id: "pro",
     name: "Pro",
-    description: "For freelancers and solo creatives who need unlimited briefs.",
+    description: "Unlock AI-powered brief improvement and exports. Most popular for solo freelancers.",
     monthlyPrice: 1900,
     annualPrice: 18200,
     stripePriceId: {
@@ -53,80 +57,88 @@ const PLANS = {
       annual: process.env.STRIPE_PRICE_PRO_ANNUAL || "",
     },
     features: {
-      briefLimit: -1,
+      briefLimit: 150,
+      overageRate: 50,
       seats: 1,
       briefBuilder: true,
       exports: ["pdf", "clipboard"],
       teamFeatures: false,
       competitorAnalysis: false,
+      industryQuestions: true,
       apiAccess: false,
       whiteLabel: false,
       prioritySupport: false,
     },
     perks: [
-      "Unlimited briefs",
+      "150 briefs / month",
       "Brief Builder (AI rewrite)",
+      "Industry-specific questions",
+      "AI template generation",
       "PDF + clipboard export",
-      "12-field analysis",
-      "Outcome tracking",
     ],
   },
   team: {
     id: "team",
     name: "Team",
-    description: "For small agencies. 5 seats, team collaboration, full exports.",
-    monthlyPrice: 4900,
-    annualPrice: 47000,
+    description: "Collaborate with your team and clients seamlessly. Perfect for growing agencies.",
+    monthlyPrice: 5900,
+    annualPrice: 56600,
     stripePriceId: {
       monthly: process.env.STRIPE_PRICE_TEAM_MONTHLY || "",
       annual: process.env.STRIPE_PRICE_TEAM_ANNUAL || "",
     },
     features: {
-      briefLimit: -1,
+      briefLimit: 500,
+      overageRate: 40,
       seats: 5,
       briefBuilder: true,
       exports: ["pdf", "clipboard", "google-docs", "notion"],
       teamFeatures: true,
       competitorAnalysis: false,
+      industryQuestions: true,
       apiAccess: false,
       whiteLabel: false,
-      prioritySupport: false,
+      prioritySupport: true,
     },
     perks: [
-      "Unlimited briefs",
+      "500 briefs / month",
       "5 team members",
       "Team collaboration + client portal",
-      "All Pro features",
-      "Notion + Google Docs export",
+      "Google Docs + Notion export",
+      "Slack integration",
+      "Priority support",
     ],
   },
   agency: {
     id: "agency",
     name: "Agency",
-    description: "For agencies at scale. 15 seats, competitor analysis, API access, white-label.",
-    monthlyPrice: 9900,
-    annualPrice: 95000,
+    description: "Full platform access with advanced features and API. For agencies scaling their operations.",
+    monthlyPrice: 14900,
+    annualPrice: 143000,
     stripePriceId: {
       monthly: process.env.STRIPE_PRICE_AGENCY_MONTHLY || "",
       annual: process.env.STRIPE_PRICE_AGENCY_ANNUAL || "",
     },
     features: {
-      briefLimit: -1,
+      briefLimit: 2000,
+      overageRate: 30,
       seats: 15,
       briefBuilder: true,
       exports: ["pdf", "clipboard", "google-docs", "notion", "clickup", "airtable"],
       teamFeatures: true,
       competitorAnalysis: true,
+      industryQuestions: true,
       apiAccess: true,
       whiteLabel: true,
       prioritySupport: true,
     },
     perks: [
-      "Unlimited briefs",
+      "2,000 briefs / month",
       "15 team members",
       "Competitor analysis",
       "API access (REST + webhooks)",
       "White-label exports",
+      "Zapier integration",
       "Priority support",
     ],
   },
@@ -141,6 +153,7 @@ function listPlans() {
     annualPrice: p.annualPrice,
     features: p.features,
     perks: p.perks,
+    overageRate: p.features.overageRate || 0,
   }));
 }
 
@@ -198,6 +211,8 @@ async function getUserBilling(userId) {
     trialEndDate,
     briefsUsed,
     briefLimit: planDef.features.briefLimit,
+    overageRate: planDef.features.overageRate || 0,
+    overageCount: 0,
     monthlyResetAt: thisMonth + "-01",
     perks: planDef.perks,
     features: planDef.features,
@@ -213,30 +228,34 @@ async function enforceBriefLimit(userId) {
     return { allowed: true, used: billing.briefsUsed, limit: -1, plan: billing.plan };
   }
   if (billing.briefsUsed >= billing.briefLimit) {
-    const err = new Error("Free plan limit reached. Upgrade to Pro for unlimited briefs.");
-    err.status = 402;
-    err.code = "plan_limit_reached";
-    err.payload = {
-      error: err.message,
-      code: err.code,
-      limit: billing.briefLimit,
-      used: billing.briefsUsed,
-      plan: billing.plan,
-    };
-    throw err;
+    if (billing.plan === "free") {
+      const err = new Error("Free plan limit reached. Upgrade to Pro for more briefs.");
+      err.status = 402;
+      err.code = "plan_limit_reached";
+      err.payload = {
+        error: err.message,
+        code: err.code,
+        limit: billing.briefLimit,
+        used: billing.briefsUsed,
+        plan: billing.plan,
+      };
+      throw err;
+    }
+    return { allowed: true, used: billing.briefsUsed, limit: billing.briefLimit, overage: true, plan: billing.plan };
   }
-  return { allowed: true, used: billing.briefsUsed, limit: billing.briefLimit, plan: billing.plan };
+  return { allowed: true, used: billing.briefsUsed, limit: billing.briefLimit, overage: false, plan: billing.plan };
 }
 
 async function recordBriefCreated(userId) {
   const billing = await getUserBilling(userId);
-  if (!billing) return { allowed: true, used: 0, limit: -1, plan: 'free' };
-  if (billing.briefLimit === -1) return billing;
+  if (!billing) return { allowed: true, used: 0, limit: -1, plan: 'free', overageCount: 0 };
+  if (billing.briefLimit === -1) return { ...billing, overageCount: 0 };
   const db = getDb();
   const thisMonth = currentMonthKey();
+  const overageCount = billing.briefsUsed >= billing.briefLimit ? (billing.overageCount || 0) + 1 : 0;
   const newCount = billing.briefsUsed + 1;
   await db.from('users').update({ brief_count_this_month: newCount, brief_count_month: thisMonth }).eq('id', userId);
-  return { ...billing, briefsUsed: newCount };
+  return { ...billing, briefsUsed: newCount, overageCount };
 }
 
 async function applyPlanChange(userId, { plan, status, stripeCustomerId, stripeSubscriptionId, currentPeriodEnd, cancelAtPeriodEnd }) {

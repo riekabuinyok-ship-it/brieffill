@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../utils/api";
 import Icon from "./Icon";
@@ -134,7 +134,37 @@ function PlanCard() {
 }
 
 function UserCard({ user, logout }) {
-  if (!user) return null;
+  const isAdmin = !!localStorage.getItem("adminToken");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    if (isAdmin) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminEmail");
+    }
+    logout();
+  };
+
+  if (!user) {
+    if (isAdmin) {
+      return (
+        <div className="flex items-center gap-3 px-1">
+          <div className="h-9 w-9 rounded-full overflow-hidden ring-1 ring-outline-variant shrink-0 bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+            <Icon name="shield" className="text-[16px]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-on-surface truncate">Admin</p>
+            <p className="text-[10px] text-on-surface-variant truncate">{localStorage.getItem("adminEmail") || "riek@brieffill.com"}</p>
+          </div>
+          <button onClick={handleLogout} className="shrink-0 p-1 text-outline hover:text-primary transition-colors" title="Sign Out">
+            <Icon name="logout" className="text-[16px]" />
+          </button>
+        </div>
+      );
+    }
+    return null;
+  }
+
   const initial = user.name?.charAt(0)?.toUpperCase() || "U";
   const avatarUrl = user.avatarUrl;
 
@@ -151,7 +181,7 @@ function UserCard({ user, logout }) {
         <p className="text-xs font-bold text-on-surface truncate">{user.name}</p>
         <p className="text-[10px] text-on-surface-variant truncate">{user.email}</p>
       </div>
-      <button onClick={logout} className="shrink-0 p-1 text-outline hover:text-primary transition-colors" title="Sign Out">
+      <button onClick={handleLogout} className="shrink-0 p-1 text-outline hover:text-primary transition-colors" title="Sign Out">
         <Icon name="logout" className="text-[16px]" />
       </button>
     </div>

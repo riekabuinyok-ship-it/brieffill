@@ -1,163 +1,106 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "../../components/Icon";
-import Toast from "../../components/Toast";
+import { CreditCard, Users, DollarSign, TrendingUp, MoreVertical, CheckCircle, XCircle } from "lucide-react";
+import AdminLayout from "../../layouts/AdminLayout";
 
-const MOCK_SUBS = [
-  { id: 1, name: "Julianne Devis", initials: "JD", email: "julianne.d@corporate.com", plan: "Enterprise Tier", desc: "50 briefs/mo • API Access", cycle: "Annually", next: "Oct 12, 2024", status: "active" },
-  { id: 2, name: "Marcus Knight", initials: "MK", email: "m.knight@venture.io", plan: "Professional Plan", desc: "15 briefs/mo", cycle: "Monthly", next: "Sep 28, 2023", status: "past_due" },
-  { id: 3, name: "Sarah Lopez", initials: "SL", email: "slopez@data-sync.net", plan: "Starter", desc: "5 briefs/mo", cycle: "Monthly", next: "—", status: "cancelled" },
-  { id: 4, name: "Elena Rodriguez", initials: "ER", email: "elena.r@horizon-global.com", plan: "Agency Plan", desc: "Unlimited • Team features", cycle: "Annually", next: "Mar 15, 2025", status: "active" },
-  { id: 5, name: "Riek Abuinyok", initials: "RA", email: "riekabui@brieffill.com", plan: "Agency Plan", desc: "Unlimited • White-label", cycle: "Annually", next: "Jun 01, 2025", status: "active" },
+const SUBS_STATS = [
+  { label: "Active Subs", value: "342", icon: Users, change: "+12%", up: true },
+  { label: "Monthly Revenue", value: "$8,429", icon: DollarSign, change: "+18%", up: true },
+  { label: "Avg. Revenue/User", value: "$24.65", icon: TrendingUp, change: "+5.2%", up: true },
+  { label: "Churn Rate", value: "2.1%", icon: CreditCard, change: "-0.3%", up: false },
 ];
 
-const STATUS_BADGE = {
-  active: "bg-emerald-100 text-emerald-700",
-  past_due: "bg-amber-100 text-amber-700",
-  cancelled: "bg-gray-100 text-gray-500",
+const MOCK_SUBSCRIPTIONS = [
+  { id: 1, user: "Sarah Chen", plan: "Pro", status: "active", started: "2026-01-15", nextBilling: "2026-07-15", amount: "$19.99" },
+  { id: 2, user: "Mike Johnson", plan: "Team", status: "active", started: "2026-02-20", nextBilling: "2026-07-20", amount: "$49.99" },
+  { id: 3, user: "Emily Davis", plan: "Free", status: "active", started: "2026-03-10", nextBilling: "-", amount: "$0" },
+  { id: 4, user: "Alex Park", plan: "Pro", status: "active", started: "2026-01-28", nextBilling: "2026-07-28", amount: "$19.99" },
+  { id: 5, user: "Laura Kim", plan: "Agency", status: "active", started: "2025-12-01", nextBilling: "2026-07-01", amount: "$99.99" },
+  { id: 6, user: "James Wilson", plan: "Free", status: "suspended", started: "2026-04-05", nextBilling: "-", amount: "$0" },
+  { id: 7, user: "Priya Patel", plan: "Pro", status: "active", started: "2026-03-22", nextBilling: "2026-07-22", amount: "$19.99" },
+  { id: 8, user: "Omar Hassan", plan: "Agency", status: "active", started: "2025-11-15", nextBilling: "2026-07-15", amount: "$99.99" },
+  { id: 9, user: "Sophie Martin", plan: "Pro", status: "canceled", started: "2026-01-08", nextBilling: "-", amount: "$19.99" },
+  { id: 10, user: "David Lee", plan: "Free", status: "active", started: "2026-04-20", nextBilling: "-", amount: "$0" },
+];
+
+const PLAN_BADGES = {
+  Agency: "bg-purple-100 text-purple-700", Team: "bg-blue-100 text-blue-700",
+  Pro: "bg-indigo-100 text-indigo-700", Free: "bg-gray-100 text-gray-700",
+};
+
+const STATUS_BADGES = {
+  active: "bg-green-100 text-green-700",
+  suspended: "bg-red-100 text-red-700",
+  canceled: "bg-gray-100 text-gray-600",
 };
 
 export default function AdminSubscriptions() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [subs, setSubs] = useState(MOCK_SUBS);
-  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) navigate("/admin/login");
   }, [navigate]);
 
-  const filtered = subs.filter((s) => {
-    const q = search.toLowerCase();
-    if (q && !s.name.toLowerCase().includes(q) && !s.email.toLowerCase().includes(q)) return false;
-    if (statusFilter !== "all" && s.status !== statusFilter) return false;
-    return true;
-  });
-
-  const handleAction = (type, name) => {
-    const msg = type === "refund" ? "Refund initiated for" : "Subscription cancelled for";
-    setToast({ message: `${msg} ${name}.`, type: "success" });
-  };
-
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface">Subscription Management</h1>
-          <p className="text-on-surface-variant mt-1">Monitor billing cycles, manage plans, and oversee financial operations.</p>
-        </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:brightness-110 transition-all shadow-sm">
-          <Icon name="add_circle" className="text-[18px]" />
-          Add/Edit Plan
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        {[
-          { label: "Active Subs", value: "1,284", icon: "group", color: "text-primary" },
-          { label: "MRR Projection", value: "$42,900", icon: "payments", color: "text-secondary" },
-          { label: "Churn Rate", value: "1.2%", icon: "trending_down", color: "text-error" },
-          { label: "Pending Refunds", value: "04", icon: "history", color: "text-on-surface-variant" },
-        ].map((s) => (
-          <div key={s.label} className="bg-surface rounded-xl p-5 border border-outline-variant shadow-sm">
-            <div className="flex justify-between items-start mb-3">
-              <span className="text-[11px] text-on-surface-variant font-semibold uppercase tracking-wider">{s.label}</span>
-              <Icon name={s.icon} className={`${s.color} text-[20px]`} />
+    <AdminLayout title="Subscriptions" subtitle="Monitor and manage user subscriptions and plans.">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {SUBS_STATS.map((s) => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{s.label}</span>
+              <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                <s.icon className="w-5 h-5 text-indigo-600" />
+              </div>
             </div>
-            <div className="text-2xl font-bold text-on-surface">{s.value}</div>
+            <div className="text-2xl font-bold text-gray-900">{s.value}</div>
+            <div className={`flex items-center gap-1 mt-1 text-xs font-medium ${s.up ? "text-green-600" : "text-red-600"}`}>
+              <TrendingUp className="w-3 h-3" />
+              {s.change}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="relative flex-1 min-w-[200px]">
-          <Icon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" />
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by customer name, email..."
-            className="w-full pl-11 pr-4 py-2.5 bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-          />
-        </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2.5 bg-surface border border-outline-variant rounded-xl focus:border-primary outline-none text-sm appearance-none cursor-pointer"
-        >
-          <option value="all">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="past_due">Past Due</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-
-      <div className="bg-surface rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-surface-container-low border-b border-outline-variant">
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Customer</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Plan Details</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Billing Cycle</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
+                <th className="px-5 py-3 font-semibold">User</th>
+                <th className="px-5 py-3 font-semibold">Plan</th>
+                <th className="px-5 py-3 font-semibold">Amount</th>
+                <th className="px-5 py-3 font-semibold">Started</th>
+                <th className="px-5 py-3 font-semibold">Next Billing</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+                <th className="px-5 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant">
-              {filtered.map((s) => (
-                <tr key={s.id} className="hover:bg-surface-container-lowest transition-colors group">
-                  <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">{s.initials}</div>
-                      <div>
-                        <div className="font-bold text-on-surface">{s.name}</div>
-                        <div className="text-xs text-on-surface-variant">{s.email}</div>
-                      </div>
-                    </div>
+            <tbody className="divide-y divide-gray-100">
+              {MOCK_SUBSCRIPTIONS.map((s) => (
+                <tr key={s.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-3 text-sm font-medium text-gray-900">{s.user}</td>
+                  <td className="px-5 py-3">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PLAN_BADGES[s.plan]}`}>{s.plan}</span>
                   </td>
-                  <td className="px-6 py-5">
-                    <div className="text-on-surface font-medium">{s.plan}</div>
-                    <div className="text-xs text-on-surface-variant">{s.desc}</div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="text-on-surface">{s.cycle}</div>
-                    <div className="text-xs text-on-surface-variant">{s.next !== "—" ? `Next: ${s.next}` : s.next}</div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${STATUS_BADGE[s.status] || "bg-gray-100 text-gray-600"}`}>
-                      {s.status.replace("_", " ")}
+                  <td className="px-5 py-3 text-sm font-medium text-gray-900">{s.amount}</td>
+                  <td className="px-5 py-3 text-sm text-gray-500">{s.started}</td>
+                  <td className="px-5 py-3 text-sm text-gray-500">{s.nextBilling}</td>
+                  <td className="px-5 py-3">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGES[s.status]}`}>
+                      {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-5 text-right">
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleAction("refund", s.name)}
-                        className="p-2 text-primary hover:bg-primary-fixed rounded-lg transition-colors" title="Refund"
-                      >
-                        <Icon name="payments" className="text-[18px]" />
-                      </button>
-                      <button onClick={() => handleAction("cancel", s.name)}
-                        className="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors" title="Cancel"
-                      >
-                        <Icon name="cancel" className="text-[18px]" />
-                      </button>
-                    </div>
+                  <td className="px-5 py-3 text-right">
+                    <button className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 transition-colors">
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
-          <span className="text-xs text-on-surface-variant">Showing 1-{filtered.length} of 1,284 customers</span>
-          <div className="flex gap-2">
-            <button className="p-1.5 rounded-lg hover:bg-surface-container-high transition-colors">
-              <Icon name="chevron_left" className="text-[18px]" />
-            </button>
-            <button className="p-1.5 rounded-lg hover:bg-surface-container-high transition-colors">
-              <Icon name="chevron_right" className="text-[18px]" />
-            </button>
-          </div>
-        </div>
       </div>
-
-      <Toast message={toast?.message} type={toast?.type} onClose={() => setToast(null)} />
-    </div>
+    </AdminLayout>
   );
 }

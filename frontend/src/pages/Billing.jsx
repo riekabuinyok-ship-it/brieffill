@@ -116,8 +116,11 @@ export default function Billing() {
   }
 
   const isPaid = billing.plan !== "free";
-  const usagePct = billing.briefLimit === -1 ? 0 : Math.min(100, Math.round((billing.briefsUsed / billing.briefLimit) * 100));
-  const isLimitWarning = billing.briefLimit !== -1 && billing.briefsUsed >= billing.briefLimit;
+  const isCapped = billing.briefLimit !== -1;
+  const usagePct = isCapped ? Math.min(100, Math.round((billing.briefsUsed / billing.briefLimit) * 100)) : 0;
+  const isLimitWarning = isCapped && billing.briefsUsed >= billing.briefLimit;
+  const overageCount = Math.max(0, billing.briefsUsed - billing.briefLimit);
+  const hasOverage = isCapped && overageCount > 0;
 
   return (
     <div className="mx-auto max-w-4xl px-margin-mobile md:px-margin-desktop pt-20 md:pt-24">
@@ -139,14 +142,11 @@ export default function Billing() {
             <p className="mt-1 text-sm text-on-surface-variant">
               {isPaid ? (
                 <>
-                  {formatAmount(
-                    billing.features.briefLimit === -1 ? 0 : 0,
-                    "usd"
-                  )}
+                  {billing.briefLimit.toLocaleString()} briefs / month{billing.overageRate > 0 ? ` ($${(billing.overageRate / 100).toFixed(2)}/brief overage)` : ""}
                   {" "}— billed {billing.status === "cancelled" ? "cancelled" : "monthly"}{billing.currentPeriodEnd ? `, renews ${formatDate(billing.currentPeriodEnd)}` : ""}
                 </>
               ) : (
-                <>Free — upgrade anytime to unlock unlimited briefs and Brief Builder.</>
+                <>Free — 5 briefs / month. Upgrade anytime for pooled caps and brief builder.</>
               )}
             </p>
           </div>
@@ -171,27 +171,29 @@ export default function Billing() {
           <div className="h-3 w-full overflow-hidden rounded-full bg-surface-container">
             <div
               className={`h-full transition-all ${isLimitWarning ? "bg-error" : "bg-primary"}`}
-              style={{ width: usagePct + "%" }}
+              style={{ width: Math.min(usagePct, 100) + "%" }}
             />
           </div>
           <div className="mt-stack-sm flex items-center justify-between text-sm">
             <span className="text-on-surface">
               <strong>{billing.briefsUsed}</strong> of <strong>{billing.briefLimit}</strong> briefs used
             </span>
-            <Link to="/pricing" className="font-medium text-primary hover:underline">Upgrade to Pro</Link>
+            {billing.plan === "free" ? (
+              <Link to="/pricing" className="font-medium text-primary hover:underline">Upgrade</Link>
+            ) : (
+              <Link to="/pricing" className="font-medium text-primary hover:underline">Change plan</Link>
+            )}
           </div>
-        </section>
-      )}
-
-      {billing.briefLimit === -1 && (
-        <section className="mb-stack-lg rounded-2xl border border-primary/30 bg-primary-container/5 p-stack-md">
-          <div className="flex items-center gap-stack-sm">
-            <Icon name="check_circle" className="text-[24px] text-primary" />
-            <div>
-              <p className="font-semibold text-on-background">Unlimited briefs</p>
-              <p className="text-sm text-on-surface-variant">You're on the {billing.planName} plan — no monthly cap.</p>
+          {hasOverage && billing.overageRate > 0 && (
+            <div className="mt-stack-sm rounded-lg border border-amber-200 bg-amber-50 p-stack-sm text-sm text-amber-800">
+              <strong>{overageCount} overage brief{overageCount > 1 ? "s" : ""}</strong> — you'll be charged ${(billing.overageRate / 100).toFixed(2)}/brief on your next invoice.
             </div>
-          </div>
+          )}
+          {billing.plan !== "free" && !hasOverage && (
+            <div className="mt-stack-sm text-xs text-on-surface-variant">
+              Overage rate: ${(billing.overageRate / 100).toFixed(2)}/brief beyond {billing.briefLimit.toLocaleString()}.
+            </div>
+          )}
         </section>
       )}
 

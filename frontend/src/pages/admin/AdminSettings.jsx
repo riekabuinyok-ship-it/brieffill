@@ -1,150 +1,136 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "../../components/Icon";
-import Toast from "../../components/Toast";
+import { Save, Mail, Globe, Shield, Bell } from "lucide-react";
+import AdminLayout from "../../layouts/AdminLayout";
+
+const SETTINGS_SECTIONS = [
+  { id: "general", label: "General", icon: Globe },
+  { id: "email", label: "Email", icon: Mail },
+  { id: "security", label: "Security", icon: Shield },
+  { id: "notifications", label: "Notifications", icon: Bell },
+];
 
 export default function AdminSettings() {
   const navigate = useNavigate();
-  const [toast, setToast] = useState(null);
+  const [activeTab, setActiveTab] = useState("general");
+  const [saved, setSaved] = useState(false);
+  const [form, setForm] = useState({
+    appName: "BriefFill",
+    supportEmail: "support@brieffill.com",
+    maxFreeBriefs: "3",
+    smtpHost: "smtp.sendgrid.net",
+    smtpPort: "587",
+    rateLimit: "100",
+    sessionTimeout: "60",
+    notifyNewUser: true,
+    notifyPayment: true,
+    notifySuspension: true,
+  });
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) navigate("/admin/login");
   }, [navigate]);
 
+  const handleSave = (e) => {
+    e.preventDefault();
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const update = (key, val) => setForm((prev) => ({ ...prev, [key]: val }));
+
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-on-surface">System Settings</h1>
-        <p className="text-on-surface-variant mt-1">Manage system configuration and preferences.</p>
+    <AdminLayout title="Settings" subtitle="Configure platform settings and preferences.">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="flex border-b border-gray-200">
+          {SETTINGS_SECTIONS.map((s) => (
+            <button key={s.id} onClick={() => setActiveTab(s.id)}
+              className={`flex items-center gap-2 px-5 py-3.5 text-sm font-semibold border-b-2 transition-colors ${
+                activeTab === s.id ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}>
+              <s.icon className="w-4 h-4" />
+              {s.label}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleSave} className="p-6 max-w-2xl">
+          {activeTab === "general" && (
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Application Name</label>
+                <input type="text" value={form.appName} onChange={(e) => update("appName", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Support Email</label>
+                <input type="email" value={form.supportEmail} onChange={(e) => update("supportEmail", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Max Briefs (Free Tier)</label>
+                <input type="number" value={form.maxFreeBriefs} onChange={(e) => update("maxFreeBriefs", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "email" && (
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">SMTP Host</label>
+                <input type="text" value={form.smtpHost} onChange={(e) => update("smtpHost", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">SMTP Port</label>
+                <input type="text" value={form.smtpPort} onChange={(e) => update("smtpPort", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "security" && (
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Rate Limit (requests/min)</label>
+                <input type="number" value={form.rateLimit} onChange={(e) => update("rateLimit", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Session Timeout (minutes)</label>
+                <input type="number" value={form.sessionTimeout} onChange={(e) => update("sessionTimeout", e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
+              </div>
+            </div>
+          )}
+
+          {activeTab === "notifications" && (
+            <div className="space-y-4">
+              {[
+                { key: "notifyNewUser", label: "New user registration" },
+                { key: "notifyPayment", label: "Payment received" },
+                { key: "notifySuspension", label: "Account suspension" },
+              ].map(({ key, label }) => (
+                <label key={key} className="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" checked={form[key]} onChange={(e) => update(key, e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                  <span className="text-sm text-gray-700">{label}</span>
+                </label>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+            <p className="text-xs text-gray-400">Changes are saved locally (mock).</p>
+            <button type="submit"
+              className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-all">
+              <Save className="w-4 h-4" />
+              {saved ? "Saved!" : "Save Changes"}
+            </button>
+          </div>
+        </form>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="bg-surface rounded-xl border border-outline-variant p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-on-surface mb-4">General Settings</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1">Company Name</label>
-              <input type="text" defaultValue="BriefFill"
-                className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1">Support Email</label>
-              <input type="email" defaultValue="support@brieffill.com"
-                className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1">Default Locale</label>
-              <select className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary outline-none text-sm appearance-none cursor-pointer">
-                <option>English (US)</option>
-                <option>Spanish</option>
-                <option>French</option>
-                <option>German</option>
-              </select>
-            </div>
-            <button onClick={() => setToast({ message: "General settings saved.", type: "success" })}
-              className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:brightness-110 transition-all"
-            >
-              Save Settings
-            </button>
-          </div>
-        </section>
-
-        <section className="bg-surface rounded-xl border border-outline-variant p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-on-surface mb-4">Security Settings</h3>
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-on-surface">Two-Factor Authentication</p>
-                <p className="text-sm text-on-surface-variant">Require 2FA for all admin accounts</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" />
-              </label>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-on-surface">Session Timeout</p>
-                <p className="text-sm text-on-surface-variant">Auto-logout after 30 minutes of inactivity</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" />
-              </label>
-            </div>
-            <button onClick={() => setToast({ message: "Security settings updated.", type: "success" })}
-              className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:brightness-110 transition-all"
-            >
-              Save Security
-            </button>
-          </div>
-        </section>
-
-        <section className="bg-surface rounded-xl border border-outline-variant p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-on-surface mb-4">Email Settings</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1">SMTP Host</label>
-              <input type="text" placeholder="smtp.example.com"
-                className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">SMTP Port</label>
-                <input type="text" placeholder="587"
-                  className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">Encryption</label>
-                <select className="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary outline-none text-sm appearance-none cursor-pointer">
-                  <option>TLS</option>
-                  <option>SSL</option>
-                  <option>None</option>
-                </select>
-              </div>
-            </div>
-            <button onClick={() => setToast({ message: "Email settings saved.", type: "success" })}
-              className="px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:brightness-110 transition-all"
-            >
-              Save Email
-            </button>
-          </div>
-        </section>
-
-        <section className="bg-surface rounded-xl border border-outline-variant p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-on-surface mb-4">Maintenance</h3>
-          <div className="space-y-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-on-surface">Maintenance Mode</p>
-                <p className="text-sm text-on-surface-variant">Temporarily disable user access</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" />
-                <div className="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all" />
-              </label>
-            </div>
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-              <Icon name="info" className="text-amber-600 text-[20px] shrink-0" filled />
-              <div>
-                <p className="text-sm font-semibold text-amber-800">Cache cleared automatically</p>
-                <p className="text-xs text-amber-700 mt-0.5">Static assets and route cache are purged every 24 hours.</p>
-              </div>
-            </div>
-            <button onClick={() => setToast({ message: "Cache cleared successfully.", type: "success" })}
-              className="px-5 py-2.5 border border-outline text-primary font-semibold rounded-xl hover:bg-surface-container-high transition-all"
-            >
-              Clear Cache
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <Toast message={toast?.message} type={toast?.type} onClose={() => setToast(null)} />
-    </div>
+    </AdminLayout>
   );
 }

@@ -1,186 +1,157 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "../../components/Icon";
-import Toast from "../../components/Toast";
+import { Search, Filter, MoreVertical, UserCheck, UserX, Trash2, X } from "lucide-react";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const MOCK_USERS = [
-  { id: 1, name: "Julianne Davis", initials: "JD", email: "j.davis@nexusmedia.com", plan: "team", status: "active" },
-  { id: 2, name: "Marcus Kane", initials: "MK", email: "m.kane@freelance.io", plan: "free", status: "active" },
-  { id: 3, name: "Thomas Halloway", initials: "TH", email: "thalloway@corp-gov.us", plan: "pro", status: "suspended" },
-  { id: 4, name: "Elena Rodriguez", initials: "ER", email: "elena.r@horizon-global.com", plan: "agency", status: "active" },
-  { id: 5, name: "Sarah Chen", initials: "SC", email: "sarah@example.com", plan: "pro", status: "active" },
-  { id: 6, name: "Mike Johnson", initials: "MJ", email: "mike@example.com", plan: "team", status: "active" },
-  { id: 7, name: "Alex Park", initials: "AP", email: "alex@example.com", plan: "pro", status: "active" },
-  { id: 8, name: "Laura Kim", initials: "LK", email: "laura@example.com", plan: "agency", status: "active" },
-  { id: 9, name: "Riek Abuinyok", initials: "RA", email: "riekabui@brieffill.com", plan: "agency", status: "active" },
+  { id: 1, name: "Sarah Chen", email: "sarah@example.com", plan: "Pro", status: "active", joined: "2026-01-15" },
+  { id: 2, name: "Mike Johnson", email: "mike@example.com", plan: "Team", status: "active", joined: "2026-02-20" },
+  { id: 3, name: "Emily Davis", email: "emily@example.com", plan: "Free", status: "active", joined: "2026-03-10" },
+  { id: 4, name: "Alex Park", email: "alex@example.com", plan: "Pro", status: "active", joined: "2026-01-28" },
+  { id: 5, name: "Laura Kim", email: "laura@example.com", plan: "Agency", status: "active", joined: "2025-12-01" },
+  { id: 6, name: "James Wilson", email: "james@example.com", plan: "Free", status: "suspended", joined: "2026-04-05" },
+  { id: 7, name: "Priya Patel", email: "priya@example.com", plan: "Pro", status: "active", joined: "2026-03-22" },
+  { id: 8, name: "Omar Hassan", email: "omar@example.com", plan: "Agency", status: "active", joined: "2025-11-15" },
+  { id: 9, name: "Emma Thompson", email: "emma@example.com", plan: "Free", status: "active", joined: "2026-05-01" },
+  { id: 10, name: "Ryan Garcia", email: "ryan@example.com", plan: "Team", status: "active", joined: "2026-02-14" },
+  { id: 11, name: "Sophie Martin", email: "sophie@example.com", plan: "Pro", status: "inactive", joined: "2026-01-08" },
+  { id: 12, name: "David Lee", email: "david@example.com", plan: "Free", status: "active", joined: "2026-04-20" },
 ];
 
-const PLAN_COLORS = {
-  free: "bg-outline-variant/30 text-on-surface-variant",
-  pro: "bg-primary/10 text-primary",
-  team: "bg-secondary/10 text-secondary",
-  agency: "bg-primary/20 text-primary font-bold",
+const STATUS_BADGES = {
+  active: "bg-green-100 text-green-700",
+  suspended: "bg-red-100 text-red-700",
+  inactive: "bg-gray-100 text-gray-600",
 };
 
-const planOrder = ["all", "free", "pro", "team", "agency"];
-
-function getInitials(name) {
-  return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
-}
-
-function bgForInitials(name) {
-  const colors = ["bg-primary-fixed", "bg-surface-container-high", "bg-secondary-fixed-dim", "bg-error-container/20"];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
-}
+const PLAN_BADGES = {
+  Agency: "bg-purple-100 text-purple-700", Team: "bg-blue-100 text-blue-700",
+  Pro: "bg-indigo-100 text-indigo-700", Free: "bg-gray-100 text-gray-700",
+};
 
 export default function AdminUsers() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [planFilter, setPlanFilter] = useState("all");
+  const [planFilter, setPlanFilter] = useState("All");
   const [users, setUsers] = useState(MOCK_USERS);
-  const [toast, setToast] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) navigate("/admin/login");
   }, [navigate]);
 
   const filtered = users.filter((u) => {
-    const q = search.toLowerCase();
-    if (q && !u.name.toLowerCase().includes(q) && !u.email.toLowerCase().includes(q)) return false;
-    if (planFilter !== "all" && u.plan !== planFilter) return false;
-    return true;
+    const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
+    const matchPlan = planFilter === "All" || u.plan === planFilter;
+    return matchSearch && matchPlan;
   });
 
   const toggleStatus = (id) => {
-    setUsers((prev) => prev.map((u) => {
-      if (u.id !== id) return u;
-      const newStatus = u.status === "active" ? "suspended" : "active";
-      setToast({ message: `${u.name} ${newStatus === "active" ? "activated" : "suspended"}.`, type: "success" });
-      return { ...u, status: newStatus };
-    }));
+    setUsers((prev) => prev.map((u) => u.id === id ? { ...u, status: u.status === "active" ? "suspended" : "active" } : u));
+    setMenuOpen(null);
   };
 
-  const deleteUser = (id) => {
-    const u = users.find((x) => x.id === id);
-    setUsers((prev) => prev.filter((x) => x.id !== id));
-    setToast({ message: `${u.name} deleted permanently.`, type: "success" });
+  const handleDelete = (id) => {
+    setUsers((prev) => prev.filter((u) => u.id !== id));
+    setConfirmDelete(null);
   };
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-on-surface">User Management</h1>
-          <p className="text-on-surface-variant mt-1">Review, filter, and manage user access.</p>
+    <AdminLayout title="User Management" subtitle="View and manage all registered users.">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search by name or email..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none text-sm" />
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:brightness-110 transition-all shadow-sm">
-          <Icon name="person_add" className="text-[18px]" />
-          Invite User
-        </button>
-      </div>
-
-      <div className="bg-surface rounded-xl border border-outline-variant p-4 mb-6">
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-80">
-            <Icon name="search" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name or email..."
-              className="w-full pl-11 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm"
-            />
-          </div>
-          <div className="flex p-1 bg-surface-container-low rounded-xl gap-0.5">
-            {planOrder.map((p) => (
-              <button key={p} onClick={() => setPlanFilter(p)}
-                className={`px-4 py-1.5 text-sm font-medium rounded-lg whitespace-nowrap transition-all ${
-                  planFilter === p ? "bg-surface text-on-surface shadow-sm" : "text-on-surface-variant hover:text-on-surface"
-                }`}
-              >
-                {p === "all" ? "All" : p.charAt(0).toUpperCase() + p.slice(1)}
-              </button>
-            ))}
-          </div>
+        <div className="flex gap-2 flex-wrap">
+          {["All", "Free", "Pro", "Team", "Agency"].map((p) => (
+            <button key={p} onClick={() => setPlanFilter(p)}
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors border ${
+                planFilter === p ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600"
+              }`}>{p}</button>
+          ))}
         </div>
       </div>
 
-      <div className="bg-surface rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-surface-container-low border-b border-outline-variant">
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">User</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Plan</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+              <tr className="bg-gray-50 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-wider">
+                <th className="px-5 py-3 font-semibold">User</th>
+                <th className="px-5 py-3 font-semibold">Email</th>
+                <th className="px-5 py-3 font-semibold">Plan</th>
+                <th className="px-5 py-3 font-semibold">Joined</th>
+                <th className="px-5 py-3 font-semibold">Status</th>
+                <th className="px-5 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant">
+            <tbody className="divide-y divide-gray-100">
               {filtered.map((u) => (
-                <tr key={u.id} className={`hover:bg-surface-container-lowest transition-colors group ${u.status === "suspended" ? "bg-surface-container-lowest/50" : ""}`}>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full ${bgForInitials(u.name)} flex items-center justify-center text-sm font-bold`}>
-                        {getInitials(u.name)}
-                      </div>
-                      <span className="font-medium text-on-surface">{u.name}</span>
-                    </div>
+                <tr key={u.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-3 text-sm font-medium text-gray-900">{u.name}</td>
+                  <td className="px-5 py-3 text-sm text-gray-500">{u.email}</td>
+                  <td className="px-5 py-3">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PLAN_BADGES[u.plan]}`}>{u.plan}</span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-on-surface-variant">{u.email}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${PLAN_COLORS[u.plan]}`}>
-                      {u.plan.charAt(0).toUpperCase() + u.plan.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      u.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${u.status === "active" ? "bg-emerald-500" : "bg-red-500"}`} />
+                  <td className="px-5 py-3 text-sm text-gray-500">{u.joined}</td>
+                  <td className="px-5 py-3">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGES[u.status]}`}>
                       {u.status.charAt(0).toUpperCase() + u.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-on-surface-variant hover:text-primary rounded-lg hover:bg-primary/5 transition-colors" title="View">
-                        <Icon name="visibility" className="text-[18px]" />
-                      </button>
-                      <button onClick={() => toggleStatus(u.id)}
-                        className={`p-2 rounded-lg transition-colors ${
-                          u.status === "active" ? "text-on-surface-variant hover:text-error hover:bg-error-container/20" : "text-on-surface-variant hover:text-emerald-600 hover:bg-emerald-50"
-                        }`}
-                        title={u.status === "active" ? "Suspend" : "Activate"}
-                      >
-                        <Icon name={u.status === "active" ? "block" : "check_circle"} className="text-[18px]" />
-                      </button>
-                      <button onClick={() => deleteUser(u.id)}
-                        className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-lg transition-colors" title="Delete"
-                      >
-                        <Icon name="delete" className="text-[18px]" />
-                      </button>
-                    </div>
+                  <td className="px-5 py-3 text-right relative">
+                    <button onClick={() => setMenuOpen(menuOpen === u.id ? null : u.id)}
+                      className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                      <MoreVertical className="w-4 h-4 text-gray-400" />
+                    </button>
+                    {menuOpen === u.id && (
+                      <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg border border-gray-200 shadow-lg py-1 z-10">
+                        <button onClick={() => toggleStatus(u.id)}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                          {u.status === "active" ? <UserX className="w-4 h-4 text-amber-500" /> : <UserCheck className="w-4 h-4 text-green-500" />}
+                          {u.status === "active" ? "Suspend" : "Activate"}
+                        </button>
+                        <button onClick={() => { setConfirmDelete(u.id); setMenuOpen(null); }}
+                          className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
-          <span className="text-sm text-on-surface-variant">Showing <strong>{filtered.length}</strong> of <strong>{users.length}</strong> users</span>
-          <div className="flex items-center gap-2">
-            <button className="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant disabled:opacity-50" disabled={filtered.length <= 8}>
-              <Icon name="chevron_left" className="text-[18px]" />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary text-sm font-medium">1</button>
-            <button className="p-1.5 rounded-lg hover:bg-surface-container-high text-on-surface-variant">
-              <Icon name="chevron_right" className="text-[18px]" />
-            </button>
+        {filtered.length === 0 && (
+          <div className="text-center py-12 text-gray-400">
+            <Search className="w-12 h-12 mx-auto mb-3" />
+            <p className="font-medium">No users found</p>
           </div>
-        </div>
+        )}
       </div>
 
-      <Toast message={toast?.message} type={toast?.type} onClose={() => setToast(null)} />
-    </div>
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl border border-gray-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Delete User?</h3>
+            </div>
+            <p className="text-sm text-gray-500 mb-6">This will permanently remove this user and all their data.</p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setConfirmDelete(null)} className="px-5 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+              <button onClick={() => handleDelete(confirmDelete)} className="px-5 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-all">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
   );
 }

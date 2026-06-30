@@ -7,30 +7,31 @@ import Button from "../components/Button";
 import Toast from "../components/Toast";
 
 const FAQ = [
-  { q: "What happens if I exceed the Free plan limit?", a: "BriefFill will block the analysis and show an upgrade prompt. You can upgrade to Pro for unlimited briefs, or wait until the 1st of next month when the counter resets." },
-  { q: "When does the brief count reset?", a: "On the 1st of each month (UTC). Pro, Team, and Agency plans have unlimited briefs — no counter." },
-  { q: "Can I switch between monthly and annual?", a: "Yes. The Stripe Customer Portal lets you cancel and resubscribe with any billing cycle. Annual plans get 20% off." },
+  { q: "What happens if I exceed my brief limit?", a: "You'll be charged per-brief overage at the rate listed below the plan. You can also upgrade to the next plan from the Billing page." },
+  { q: "Can I downgrade or upgrade later?", a: "Yes, you can change your plan at any time from the Billing page." },
+  { q: "Do you offer an annual discount?", a: "Yes, annual plans are 20% off. Pro: $182/year ($15.20/month), Team: $566/year ($47.20/month), Agency: $1,430/year ($119.20/month)." },
+  { q: "What's included in the Free plan?", a: "5 briefs/month with AI gap detection, completeness scores, specific clarifying questions, and watermarked PDF exports." },
+  { q: "Can I cancel anytime?", a: "Yes, you can cancel your subscription at any time with a 14-day money-back guarantee." },
   { q: "What payment methods do you accept?", a: "All major credit cards via Stripe. ACH/wire for Agency plan (contact support)." },
-  { q: "Is there a free trial?", a: "The Free plan is the trial. You get 5 briefs per month at no cost. No credit card required to sign up." },
-  { q: "Can I cancel anytime?", a: "Yes. Cancel from the Billing page; you keep access until the end of the current period, then drop to the Free plan." },
 ];
 
 const CARD_FEATURES = {
-  free: ["5 briefs / month", "AI gap detection", "Completeness score", "Specific clarifying questions", "File upload", "10 templates"],
-  pro: ["Unlimited briefs", "All Free features", "42+ templates", "Create custom templates", "AI template generation", "Brief Builder", "Export to PDF", "Copy to clipboard"],
-  team: ["Everything in Pro", "5 team members", "Team collaboration", "Client portal", "Collaboration Portal", "Role-based access", "Team analytics", "Team template sharing", "Google Docs + Notion export", "Slack integration"],
-  agency: ["Everything in Team", "15 team members", "Competitor analysis", "API access", "Priority support", "White-label export", "Custom branding", "Zapier integration"],
+  free: ["5 briefs / month", "AI gap detection", "Completeness score", "Specific clarifying questions", "PDF export (watermarked)"],
+  pro: ["150 briefs / month", "$0.50/brief overage", "Brief Builder", "Industry-specific questions", "AI template generation", "42+ templates", "Create custom templates", "PDF + clipboard export"],
+  team: ["500 briefs / month", "$0.40/brief overage", "5 team members", "Team collaboration", "Client portal", "Google Docs + Notion export", "Slack integration", "Priority support"],
+  agency: ["2,000 briefs / month", "$0.30/brief overage", "15 team members", "Competitor analysis", "API access", "White-label export", "Custom branding", "Zapier integration", "Priority support"],
 };
 
 const COMPARISON_SECTIONS = [
   {
     heading: "Brief Analysis",
     rows: [
-      { row: "Briefs / month", free: "5", pro: "Unlimited", team: "Unlimited", agency: "Unlimited" },
+      { row: "Briefs / month", free: "5", pro: "150 pooled", team: "500 pooled", agency: "2,000 pooled" },
+      { row: "Overage", free: "—", pro: "$0.50/brief", team: "$0.40/brief", agency: "$0.30/brief" },
       { row: "AI gap detection", free: true, pro: true, team: true, agency: true },
       { row: "Completeness score", free: true, pro: true, team: true, agency: true },
       { row: "Specific clarifying questions", free: true, pro: true, team: true, agency: true },
-      { row: "Industry-specific questions", free: true, pro: true, team: true, agency: true },
+      { row: "Industry-specific questions", free: false, pro: true, team: true, agency: true },
       { row: "File upload", free: true, pro: true, team: true, agency: true },
     ],
   },
@@ -50,13 +51,14 @@ const COMPARISON_SECTIONS = [
       { row: "Fix low-scoring briefs", free: false, pro: true, team: true, agency: true },
       { row: "Side-by-side comparison", free: false, pro: true, team: true, agency: true },
       { row: "AI-generated improvements", free: false, pro: true, team: true, agency: true },
+      { row: "Clarification email drafts", free: false, pro: true, team: true, agency: true },
     ],
   },
   {
     heading: "Exports & Integrations",
     rows: [
-      { row: "Export to PDF", free: false, pro: true, team: true, agency: true },
-      { row: "Copy to clipboard", free: false, pro: true, team: true, agency: true },
+      { row: "Export to PDF", free: true, pro: true, team: true, agency: true },
+      { row: "Copy to clipboard", free: true, pro: true, team: true, agency: true },
       { row: "Export to Google Docs", free: false, pro: false, team: true, agency: true },
       { row: "Export to Notion", free: false, pro: false, team: true, agency: true },
       { row: "Slack integration", free: false, pro: false, team: true, agency: true },
@@ -70,7 +72,7 @@ const COMPARISON_SECTIONS = [
       { row: "Team collaboration", free: false, pro: false, team: true, agency: true },
       { row: "Client portal", free: false, pro: false, team: true, agency: true },
       { row: "Collaboration Portal", free: false, pro: false, team: true, agency: true },
-      { row: "Role-based access", free: false, pro: false, team: true, agency: true },
+      { row: "Role-based access", free: false, pro: false, team: false, agency: true },
       { row: "Team analytics", free: false, pro: false, team: true, agency: true },
     ],
   },
@@ -79,7 +81,7 @@ const COMPARISON_SECTIONS = [
     rows: [
       { row: "Competitor analysis", free: false, pro: false, team: false, agency: true },
       { row: "API access", free: false, pro: false, team: false, agency: true },
-      { row: "Priority support", free: false, pro: false, team: false, agency: true },
+      { row: "Priority support", free: false, pro: false, team: true, agency: true },
       { row: "White-label export", free: false, pro: false, team: false, agency: true },
       { row: "Custom branding", free: false, pro: false, team: false, agency: true },
     ],
@@ -92,7 +94,7 @@ function formatPrice(cents) {
 }
 
 function planHighlight(planId) {
-  return planId === "team";
+  return planId === "pro";
 }
 
 export default function Pricing() {
