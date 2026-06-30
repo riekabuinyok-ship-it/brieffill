@@ -175,7 +175,7 @@ export default function Settings() {
 
   useEffect(() => {
     api.get("/docs/api-keys").then((res) => {
-      setApiKeys(res.data.keys || []);
+      setApiKeys(Array.isArray(res.data.keys) ? res.data.keys : []);
     }).catch(() => {}).finally(() => setApiKeysLoading(false));
   }, []);
 

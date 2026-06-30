@@ -26,9 +26,9 @@ export default function Dashboard() {
         api.get("/dashboard/industry-breakdown"),
       ]);
       setStats(statsRes.data);
-      setRecentBriefs(briefsRes.data);
-      setScoreData(scoresRes.data);
-      setIndustries(industriesRes.data);
+      setRecentBriefs(Array.isArray(briefsRes.data) ? briefsRes.data : []);
+      setScoreData(Array.isArray(scoresRes.data) ? scoresRes.data : []);
+      setIndustries(Array.isArray(industriesRes.data) ? industriesRes.data : []);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
       setError("Failed to load dashboard data");

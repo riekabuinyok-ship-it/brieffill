@@ -24,7 +24,7 @@ export default function ApiKeys() {
 
   useEffect(() => {
     api.get("/docs/api-keys").then((res) => {
-      setApiKeys(res.data.keys || []);
+      setApiKeys(Array.isArray(res.data.keys) ? res.data.keys : []);
     }).catch(() => {}).finally(() => setApiKeysLoading(false));
     api.get("/billing/me").then((res) => {
       setBillingData(res.data.billing);
