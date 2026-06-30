@@ -39,7 +39,7 @@ export default function ApiKeys() {
     try {
       const res = await api.post("/docs/api-keys", { name });
       setNewKeyData(res.data.key);
-      setApiKeys((prev) => [{ id: res.data.key.id, name: res.data.key.name, createdAt: res.data.key.createdAt }, ...prev]);
+      setApiKeys((prev) => [{ id: res.data.key.id, name: res.data.key.name, createdAt: res.data.key.createdAt || new Date().toISOString() }, ...prev]);
       setKeyName("");
     } catch (err) {
       setKeyError(err.response?.data?.error || "Failed to create key");

@@ -29,7 +29,7 @@ async function createApiKey(userId, name) {
     .select()
     .maybeSingle();
   if (error) throw error;
-  return { id: data.id, name, plain, prefix: plain.slice(0, 8) };
+  return { id: data.id, name, plain, prefix: plain.slice(0, 8), createdAt: data.created_at };
 }
 
 async function listApiKeys(userId) {
