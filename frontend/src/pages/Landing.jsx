@@ -113,25 +113,16 @@ export default function Landing() {
       <section className="bg-surface-container-low py-12 md:py-16">
         <div className="container mx-auto px-margin-mobile md:px-margin-desktop max-w-container-max">
           <div className="mb-stack-md text-center">
-            <h2 className="font-headline-lg text-headline-lg mb-4">See BriefFill in Action</h2>
-            <p className="text-body-lg text-on-surface-variant">Watch how our AI analyzes your briefs and surfaces critical gaps.</p>
+            <h2 className="font-headline-lg text-headline-lg mb-4">Stop Losing Money on Vague Client Briefs</h2>
+            <p className="text-body-lg text-on-surface-variant">Watch how BriefFill analyzes your briefs and surfaces critical gaps in seconds.</p>
           </div>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-lg">
-              <video src="/video%201.mp4" controls muted playsInline className="w-full"
-                poster="/hero.png"
-                onMouseOver={(e) => e.target.play()}
-                onMouseOut={(e) => e.target.pause()}>
-              </video>
-              <p className="px-4 py-3 text-sm font-medium text-on-surface-variant">AI Gap Analysis Demo</p>
-            </div>
-            <div className="overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-lg">
-              <video src="/video%202.mp4" controls muted playsInline className="w-full"
-                poster="/hero.png"
-                onMouseOver={(e) => e.target.play()}
-                onMouseOut={(e) => e.target.pause()}>
-              </video>
-              <p className="px-4 py-3 text-sm font-medium text-on-surface-variant">Brief Builder Walkthrough</p>
+          <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-outline-variant bg-surface shadow-lg">
+            <div className="relative aspect-video">
+              <iframe src="https://www.youtube.com/embed/xIthq34Lpbk" title="BriefFill Demo"
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen>
+              </iframe>
             </div>
           </div>
         </div>

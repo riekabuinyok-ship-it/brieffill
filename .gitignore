@@ -13,3 +13,4 @@ backups/
 .idea/
 
 .vercel
+frontend/public/video *.mp4
