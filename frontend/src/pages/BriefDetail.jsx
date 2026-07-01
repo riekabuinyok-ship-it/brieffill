@@ -108,6 +108,33 @@ export default function BriefDetail() {
     } catch (err) {
       const msg = err.response?.data?.error || err.message || "Failed to generate proposal";
       setToast({ message: msg, type: "error" });
+      // Fallback: show a template proposal so the user still gets value
+      if (!winningResponse) {
+        setWinningResponse({
+          subject: `Proposal for ${brief.projectName}`,
+          body: `Hi ${brief.clientName},
+
+I've reviewed your brief for ${brief.projectName} and I'm excited about the opportunity.
+
+Here's how I can help:
+• [Key approach point 1]
+• [Key approach point 2]
+• [Key approach point 3]
+
+I've helped similar clients achieve [specific result].
+
+Timeline: [Your timeframe]
+Investment: [Your price]
+
+Let's schedule a quick call to discuss this further.
+
+Best regards,
+${user?.name || "[Your Name]"}`,
+          wordCount: 120,
+          readTime: 1,
+        });
+        setShowWinningModal(true);
+      }
     } finally {
       setProposalLoading(false);
     }
