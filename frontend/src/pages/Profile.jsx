@@ -103,7 +103,10 @@ export default function Profile() {
               {profile.avatarPreview ? (
                 <img src={profile.avatarPreview} alt="" className="w-full h-full object-cover" />
               ) : user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                <>
+                  <img src={user.avatarUrl.startsWith("http") || user.avatarUrl.startsWith("/uploads/") ? user.avatarUrl : `/uploads/avatars/${user.avatarUrl}`} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                  <Icon name="person" className="hidden text-3xl text-primary" />
+                </>
               ) : (
                 <Icon name="person" className="text-3xl text-primary" />
               )}

@@ -6,6 +6,7 @@ const {
   listBriefs,
   getBrief,
   generateEmail,
+  generateProposal,
   getFields,
   getDashboardStats,
 } = require("../controllers/briefController");
@@ -16,6 +17,7 @@ router.get("/dashboard-stats", auth, getDashboardStats);
 router.get("/:id", auth, getBrief);
 router.post("/:id/email", auth, generateEmail);
 router.post("/:id/generate-email", auth, generateEmail);
+router.post("/:id/generate-proposal", auth, generateProposal);
 router.get("/fields", getFields);
 
 module.exports = router;

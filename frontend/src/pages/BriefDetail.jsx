@@ -15,6 +15,7 @@ import BriefBuilder from "../components/BriefBuilder";
 import OutcomePanel from "../components/OutcomePanel";
 import CompetitorAnalysis from "../components/CompetitorAnalysis";
 import PortalShare from "../components/PortalShare";
+import WinningResponseModal from "../components/WinningResponseModal";
 
 export default function BriefDetail() {
   const { id } = useParams();
@@ -33,6 +34,9 @@ export default function BriefDetail() {
   const [responses, setResponses] = useState(null);
   const [responsesLoading, setResponsesLoading] = useState(false);
   const responsesRef = useRef(null);
+  const [showWinningModal, setShowWinningModal] = useState(false);
+  const [winningResponse, setWinningResponse] = useState(null);
+  const [proposalLoading, setProposalLoading] = useState(false);
 
   useEffect(() => {
     api.get(`/briefs/${id}/outcome`).then((res) => setOutcome(res.data.outcome)).catch(() => {});
@@ -87,6 +91,24 @@ export default function BriefDetail() {
       setToast({ message: "Failed to load responses", type: "error" });
     } finally {
       setResponsesLoading(false);
+    }
+  };
+
+  const generateWinningResponse = async () => {
+    setProposalLoading(true);
+    try {
+      const res = await api.post(`/briefs/${id}/generate-proposal`, {
+        briefText: brief.originalText,
+        clientName: brief.clientName,
+        projectName: brief.projectName,
+        analysis: brief.analyzedText,
+      });
+      setWinningResponse(res.data);
+      setShowWinningModal(true);
+    } catch (err) {
+      setToast({ message: err.response?.data?.error || "Failed to generate proposal", type: "error" });
+    } finally {
+      setProposalLoading(false);
     }
   };
 
@@ -183,6 +205,18 @@ export default function BriefDetail() {
           <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-2">Detailed Brief Analysis</h1>
           <p className="max-w-2xl text-on-surface-variant">We've identified gaps in this submission. Review the missing data and generate a professional clarification email.</p>
         </div>
+        <button
+          onClick={generateWinningResponse}
+          disabled={proposalLoading}
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-500 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:from-amber-600 hover:to-yellow-600 hover:shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {proposalLoading ? (
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+          ) : (
+            <Icon name="emoji_events" filled />
+          )}
+          {proposalLoading ? "Generating..." : "Generate Winning Response"}
+        </button>
       </section>
 
       <section className="mb-stack-lg">
@@ -455,6 +489,13 @@ export default function BriefDetail() {
       )}
 
       <Toast message={toast?.message} type={toast?.type} onClose={() => setToast(null)} />
+
+      {showWinningModal && winningResponse && (
+        <WinningResponseModal
+          response={winningResponse}
+          onClose={() => setShowWinningModal(false)}
+        />
+      )}
 
       {showBuilder && (
         <BriefBuilder

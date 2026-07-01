@@ -49,6 +49,7 @@ export default function ApiKeys() {
   };
 
   const revokeApiKey = async (id) => {
+    if (!id) return;
     try {
       await api.delete(`/docs/api-keys/${id}`);
       setApiKeys((prev) => prev.filter((k) => k.id !== id));

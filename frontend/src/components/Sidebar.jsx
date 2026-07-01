@@ -166,7 +166,11 @@ function UserCard({ user, logout }) {
   }
 
   const initial = user.name?.charAt(0)?.toUpperCase() || "U";
-  const avatarUrl = user.avatarUrl;
+  const avatarUrl = user.avatarUrl
+    ? (user.avatarUrl.startsWith("http") || user.avatarUrl.startsWith("/uploads/"))
+      ? user.avatarUrl
+      : `/uploads/avatars/${user.avatarUrl}`
+    : null;
 
   return (
     <div className="flex items-center gap-3 px-1">

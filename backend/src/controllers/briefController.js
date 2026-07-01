@@ -1,5 +1,6 @@
 const { getDb } = require("../utils/db");
 const { analyzeBrief: runAnalysis } = require("../services/aiService");
+const { generateWinningResponse } = require("../services/winningResponseService");
 const { sanitizeAiResponse } = require("../utils/validation");
 const { generateClarificationEmail } = require("../services/emailService");
 const { emit } = require("../services/eventService");
@@ -212,6 +213,34 @@ exports.generateEmail = async (req, res) => {
   } catch (err) {
     console.error("generateEmail error:", err);
     res.status(500).json({ error: "Failed to generate email" });
+  }
+};
+
+exports.generateProposal = async (req, res) => {
+  try {
+    const db = getDb();
+    const { data: row, error } = await db
+      .from("briefs")
+      .select("id, user_id, client_name, project_name, original_text, analyzed_text")
+      .eq("id", req.params.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!row) return res.status(404).json({ error: "Brief not found" });
+    if (row.user_id !== req.user.id) return res.status(403).json({ error: "Not authorized" });
+
+    const { briefText, clientName, projectName } = req.body;
+    const proposal = await generateWinningResponse({
+      briefText: briefText || row.original_text,
+      clientName: clientName || row.client_name,
+      projectName: projectName || row.project_name,
+      analysis: row.analyzed_text,
+    });
+
+    res.json(proposal);
+  } catch (err) {
+    console.error("generateProposal error:", err);
+    res.status(500).json({ error: err.message || "Failed to generate proposal" });
   }
 };
 

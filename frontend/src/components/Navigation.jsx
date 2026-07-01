@@ -4,6 +4,12 @@ import { useAuth } from "../contexts/AuthContext";
 import Icon from "./Icon";
 import { LogoIcon } from "./Logo";
 
+function normalizeAvatarUrl(url) {
+  if (!url) return null;
+  if (url.startsWith("http") || url.startsWith("/uploads/")) return url;
+  return `/uploads/avatars/${url}`;
+}
+
 const productLinks = [
   { name: "Features", href: "/features" },
   { name: "How It Works", href: "/how-it-works" },
@@ -127,9 +133,9 @@ export default function Navigation() {
                 <button onClick={() => setUserMenuOpen((v) => !v)}
                   className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-surface-container transition-colors">
                   <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                    {user.avatarUrl ? (
+                    {normalizeAvatarUrl(user.avatarUrl) ? (
                       <>
-                        <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                        <img src={normalizeAvatarUrl(user.avatarUrl)} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
                         <span className="hidden">{user.name?.charAt(0)?.toUpperCase() || "U"}</span>
                       </>
                     ) : (
@@ -186,9 +192,9 @@ export default function Navigation() {
               <>
                 <div className="flex items-center gap-3 px-3 py-2">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-                    {user.avatarUrl ? (
+                    {normalizeAvatarUrl(user.avatarUrl) ? (
                       <>
-                        <img src={user.avatarUrl} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                        <img src={normalizeAvatarUrl(user.avatarUrl)} alt="" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
                         <span className="hidden">{user.name?.charAt(0)?.toUpperCase() || "U"}</span>
                       </>
                     ) : (

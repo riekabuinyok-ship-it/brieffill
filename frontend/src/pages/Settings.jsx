@@ -29,6 +29,12 @@ function formatDate(value) {
   return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
+function normalizeLogoUrl(url) {
+  if (!url) return null;
+  if (url.startsWith("http") || url.startsWith("/uploads/")) return url;
+  return `/uploads/team-logos/${url}`;
+}
+
 function formatAmount(cents, currency) {
   if (cents == null) return "—";
   const value = (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -693,8 +699,11 @@ export default function Settings() {
                     <p className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-2">Team Logo</p>
                     <div className="flex items-center gap-3">
                       <div className="flex h-14 w-14 items-center justify-center rounded-xl border-2 border-outline-variant bg-surface-container overflow-hidden">
-                        {logoPreview || teamDetail?.team?.logoUrl ? (
-                          <img src={logoPreview || teamDetail.team.logoUrl} alt="" className="w-full h-full object-cover" />
+                        {logoPreview || normalizeLogoUrl(teamDetail?.team?.logoUrl) ? (
+                          <>
+                            <img src={logoPreview || normalizeLogoUrl(teamDetail.team.logoUrl)} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = "none"; e.target.nextElementSibling?.classList.remove("hidden"); }} />
+                            <Icon name="groups" className="hidden text-2xl text-on-surface-variant" />
+                          </>
                         ) : (
                           <Icon name="groups" className="text-2xl text-on-surface-variant" />
                         )}
