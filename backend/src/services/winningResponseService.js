@@ -1,7 +1,12 @@
 const Groq = require('groq-sdk');
 
+const API_KEY = process.env.GROQ_API_KEY;
+if (!API_KEY) {
+  console.error("winningResponseService: GROQ_API_KEY is not set");
+}
+
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: API_KEY,
 });
 
 const SYSTEM_PROMPT = `You are a professional proposal writer who helps freelancers and agencies win projects.
@@ -53,15 +58,23 @@ ${analysis ? `\nKey analysis:\n${JSON.stringify(analysis, null, 2)}` : ''}`;
     });
 
     const responseText = chatCompletion.choices[0]?.message?.content || '';
+    if (!responseText) {
+      throw new Error('Groq returned empty response');
+    }
+
     const jsonStart = responseText.indexOf('{');
     const jsonEnd = responseText.lastIndexOf('}') + 1;
 
-    if (jsonStart !== -1 && jsonEnd !== -1) {
-      const jsonStr = responseText.substring(jsonStart, jsonEnd);
-      return JSON.parse(jsonStr);
+    if (jsonStart === -1 || jsonEnd === -1) {
+      throw new Error('No JSON found in AI response. Raw: ' + responseText.slice(0, 200));
     }
 
-    throw new Error('No JSON found in response');
+    try {
+      const jsonStr = responseText.substring(jsonStart, jsonEnd);
+      return JSON.parse(jsonStr);
+    } catch (parseErr) {
+      throw new Error('Failed to parse AI response: ' + parseErr.message);
+    }
   } catch (error) {
     console.error('Winning Response Generation Error:', error);
     throw error;

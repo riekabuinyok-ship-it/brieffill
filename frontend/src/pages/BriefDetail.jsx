@@ -106,7 +106,8 @@ export default function BriefDetail() {
       setWinningResponse(res.data);
       setShowWinningModal(true);
     } catch (err) {
-      setToast({ message: err.response?.data?.error || "Failed to generate proposal", type: "error" });
+      const msg = err.response?.data?.error || err.message || "Failed to generate proposal";
+      setToast({ message: msg, type: "error" });
     } finally {
       setProposalLoading(false);
     }
